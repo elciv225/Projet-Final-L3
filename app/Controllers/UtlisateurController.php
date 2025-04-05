@@ -5,7 +5,12 @@ class UtlisateurController
 {
     public function show($id): Response
     {
-        return new Response("Utilisateur avec l'ID : $id");
+        return Response::view('utilisateur', [
+            'title' => 'Profil utilisateur',
+            'heading' => 'Profil de l\'utilisateur',
+            'id' => $id,
+            'content' => "Voici les informations de l'utilisateur avec l'ID : $id"
+        ]);
     }
 
 }

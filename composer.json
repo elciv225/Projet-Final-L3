@@ -9,6 +9,7 @@
     "psr-4": {
         "System\\": "src/",
         "System\\Http\\": "src/Http/",
+        "System\\View\\": "src/View/",
         "App\\": "app/",
         "App\\Controllers\\": "app/Controllers/"
     }
