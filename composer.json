@@ -7,11 +7,13 @@
   },
   "autoload": {
     "psr-4": {
-        "System\\": "src/",
-        "System\\Http\\": "src/Http/",
-        "System\\View\\": "src/View/",
-        "App\\": "app/",
-        "App\\Controllers\\": "app/Controllers/"
+      "System\\": "src/",
+      "System\\Http\\": "src/Http/",
+      "System\\View\\": "src/View/",
+      "System\\Database\\": "src/Database/",
+      "App\\": "app/",
+      "App\\Controllers\\": "app/Controllers/",
+        "App\\Models\\": "app/Models/"
     }
   },
   "authors": [
