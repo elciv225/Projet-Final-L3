@@ -13,7 +13,7 @@
       "System\\Database\\": "src/Database/",
       "App\\": "app/",
       "App\\Controllers\\": "app/Controllers/",
-        "App\\Models\\": "app/Models/"
+      "App\\Models\\": "app/Models/"
     }
   },
   "authors": [
@@ -21,10 +21,10 @@
       "name": "Assy Eliel"
     },
     {
-      "name": "Assy Eliel"
+        "name": "Ouattara Katie"
     },
     {
-      "name": "Assy Eliel"
+      "name": "Bahou Stephane"
     }
   ]
 }
