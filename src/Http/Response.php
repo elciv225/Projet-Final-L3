@@ -8,8 +8,8 @@ class Response
 {
     public function __construct(
         private string|View|null $content = '',
-        private int     $status = 200,
-        private array   $headers = [],
+        private int              $status = 200,
+        private array            $headers = [],
     )
     {
         http_response_code($status);
@@ -46,5 +46,12 @@ class Response
             return new self(View::make('errors/404'), 404);
         }
     }
+
+    public static function json(array $data, int $status = 200, array $headers = []): self
+    {
+        $headers['Content-Type'] = 'application/json';
+        return new self(json_encode($data), $status, $headers);
+    }
+
 
 }

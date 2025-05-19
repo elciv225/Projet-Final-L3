@@ -12,6 +12,6 @@ class AccueilController
             'title' => 'Accueil',
             'heading' => 'Bienvenue sur mon site',
             'content' => 'Ceci est la page d\'accueil de mon application.'
-        ], ['menu']);
+        ]);
     }
 }

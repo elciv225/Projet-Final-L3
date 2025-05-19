@@ -17,4 +17,3 @@ $response = $kernel->handle($request);
 
 $response->send();
 
-

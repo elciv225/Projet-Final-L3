@@ -6,7 +6,7 @@ class View
 {
     private string $view;
     private array $data;
-    private array $components = [];
+    private array $layouts = [];
 
     public function __construct(string $view, array $data = [])
     {
@@ -14,9 +14,9 @@ class View
         $this->data = $data;
     }
 
-    public function withComponents(array $components): self
+    public function withlayouts(array $layouts): self
     {
-        $this->components = $components;
+        $this->layouts = $layouts;
         return $this;
     }
 
@@ -29,18 +29,18 @@ class View
         $finalContent = '';
 
         // Inclusion des composants
-        if ($this->components) {
-            foreach ($this->components as $component) {
+        if ($this->layouts) {
+            foreach ($this->layouts as $layout) {
                 // Démarrage d'un tampon
                 ob_start();
 
-                $componentPath = BASE_PATH . '/views/components/' . $component . '.php';
+                $layoutPath = BASE_PATH . '/views/layouts/' . $layout . '.php';
 
-                if (!file_exists($componentPath)) {
-                    throw new \Exception("Le composant {$component} n'existe pas");
+                if (!file_exists($layoutPath)) {
+                    throw new \Exception("Le composant {$layout} n'existe pas");
                 }
 
-                require $componentPath;
+                require_once $layoutPath;
 
                 // Ajout du composant au contenu final
                 $finalContent .= ob_get_clean();
