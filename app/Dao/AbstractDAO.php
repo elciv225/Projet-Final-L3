@@ -9,6 +9,7 @@ abstract class AbstractDAO
     protected PDO $pdo;
     protected string $table;
     protected string $model;
+    protected string $primaryKey;
 
     /**
      * Constructeur de la classe DAO
@@ -16,21 +17,22 @@ abstract class AbstractDAO
      * @param string $table Nom de la table
      * @param string $model Nom du modèle associé
      */
-    public function __construct(PDO $pdo, string $table, string $model)
+    public function __construct(PDO $pdo, string $table, string $model, string $primaryKey = 'Identifiant')
     {
         $this->pdo = $pdo;
         $this->table = $table;
         $this->model = $model;
+        $this->primaryKey = $primaryKey;
     }
 
     /**
-     * Trouver un enregistremet avec son identifiant
+     * Trouver un enregistremet avec son Identifiant
      * @param string $id Identitifiant de l'enregistrement
      * @return object|null Le Model de l'enregistrement
      */
     public function recupererParId(string $id): ?object
     {
-        $query = "SELECT * FROM $this->table WHERE identifiant = :id";
+        $query = "SELECT * FROM $this->table WHERE $this->primaryKey = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->setFetchMode(PDO::FETCH_CLASS, $this->model);
@@ -88,7 +90,7 @@ abstract class AbstractDAO
         }
         $set = rtrim($set, ", ");
 
-        $sql = "UPDATE $this->table SET $set WHERE identifiant = :id";
+        $sql = "UPDATE $this->table SET $set WHERE $this->primaryKey = :id";
         $stmt = $this->pdo->prepare($sql);
         foreach ($data as $key => $value) {
             $stmt->bindValue(":$key", $value);
@@ -104,7 +106,7 @@ abstract class AbstractDAO
      */
     public function supprimer(string $id): bool
     {
-        $sql = "DELETE FROM $this->table WHERE identifiant = :id";
+        $sql = "DELETE FROM $this->table WHERE $this->primaryKey = :id";
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':id', $id);
         return $stmt->execute();
@@ -184,6 +186,5 @@ abstract class AbstractDAO
         }
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
 
 }
