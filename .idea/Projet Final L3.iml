@@ -9,6 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/View" isTestSource="false" packagePrefix="System\View\" />
       <sourceFolder url="file://$MODULE_DIR$/app/Models" isTestSource="false" packagePrefix="App\Models\" />
       <sourceFolder url="file://$MODULE_DIR$/src/Database" isTestSource="false" packagePrefix="System\Database\" />
+      <sourceFolder url="file://$MODULE_DIR$/app/Dao" isTestSource="false" packagePrefix="App\Dao\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/graham-campbell/result-type" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/nikic/fast-route" />

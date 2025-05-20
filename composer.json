@@ -13,7 +13,8 @@
       "System\\Database\\": "src/Database/",
       "App\\": "app/",
       "App\\Controllers\\": "app/Controllers/",
-      "App\\Models\\": "app/Models/"
+      "App\\Models\\": "app/Models/",
+      "App\\Dao\\": "app/Dao"
     }
   },
   "authors": [
