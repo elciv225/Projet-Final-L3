@@ -5,7 +5,7 @@ namespace App\Controllers;
 use System\Http\Request;
 use System\Http\Response;
 
-class AuthentificationController
+class AuthentificationController extends Controller
 {
 
     public function index(): Response
@@ -15,23 +15,16 @@ class AuthentificationController
 
     public function login(): Response
     {
-
         $request = Request::create();
 
-        $login = $request->getPostParams('login');
-        $password = $request->getPostParams('password');
+        $login = $this->request->getPostParams('login');
+        $password = $this->request->getPostParams('password');
 
         if ($request->getMethod() === 'POST') {
             if ($login == "admin" && $password == "1234") {
-                return Response::json([
-                    'statut' => 'succes',
-                    'message' => 'Connexion Réussie'
-                ]);
+                $this->succes('Connexion Réussie');
             } else {
-                return Response::json([
-                    'statut' => 'error',
-                    'message' => 'Erreur de connexion'
-                ]);
+                $this->error('Erreur de connexion');
             }
         }
 

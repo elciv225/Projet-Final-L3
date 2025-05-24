@@ -4,7 +4,7 @@ namespace App\Dao;
 
 use PDO;
 
-abstract class AbstractDAO
+abstract class DAO
 {
     protected PDO $pdo;
     protected string $table;
@@ -141,8 +141,8 @@ abstract class AbstractDAO
 
         $sql = "SELECT * FROM $this->table";
 
-        if (!empty($whereClause)) {
-            $sql .= " WHERE $whereClause";
+        if (!empty($where)) {
+            $sql .= " WHERE $where";
         }
 
         if ($orderBy) {
@@ -165,8 +165,27 @@ abstract class AbstractDAO
      */
     public function compter(array $criteres = []): int
     {
-       $date = $this->rechercher(array());
-       return count($date);
+        $sql = "SELECT COUNT(*) FROM {$this->table}";
+        $params = [];
+
+        if (!empty($criteres)) {
+            $whereParts = [];
+            foreach ($criteres as $colonne => $valeur) {
+                // Sanitize column name if necessary, though binding protects value
+                $paramName = str_replace('.', '_', $colonne); // Basic sanitization for param name
+                if ($valeur === null) {
+                    $whereParts[] = "$colonne IS NULL";
+                } else {
+                    $whereParts[] = "$colonne = :$paramName";
+                    $params[$paramName] = $valeur;
+                }
+            }
+            $sql .= " WHERE " . implode(" AND ", $whereParts);
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
     }
 
     /**
