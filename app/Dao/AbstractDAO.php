@@ -17,7 +17,7 @@ abstract class AbstractDAO
      * @param string $table Nom de la table
      * @param string $model Nom du modèle associé
      */
-    public function __construct(PDO $pdo, string $table, string $model, string $primaryKey = 'Identifiant')
+    public function __construct(PDO $pdo, string $table, string $model, string $primaryKey = 'id')
     {
         $this->pdo = $pdo;
         $this->table = $table;
