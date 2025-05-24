@@ -6,9 +6,9 @@
     <title><?= $title ?? 'Mon application' ?></title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Poor Richard", Serif;
             line-height: 1.6;
-            margin: 0;
+            margin: 10px;
             padding: 20px;
         }
 
