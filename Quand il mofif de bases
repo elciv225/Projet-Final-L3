@@ -1,0 +1,46 @@
+# Git - Remplacer un fichier ou dossier avec la version d'une autre branche (ex: main)
+
+1. Se placer sur la branche à modifier :
+
+    git checkout <branch>
+
+2. Remplacer un fichier ou dossier depuis la branche main :
+
+    - Pour un fichier spécifique :
+
+        git checkout main -- <fichier>
+
+    - Pour un dossier complet :
+
+        git checkout main -- <dossier>/
+
+3. Vérifier les modifications apportées :
+
+    git status
+
+4. Ajouter et commiter les changements :
+
+    git add <fichier ou dossier>
+    git commit -m "Remplacer <fichier> par la version de main"
+
+
+# Autres commandes utiles
+
+- Mettre à jour les références distantes :
+
+    git fetch
+
+- Intégrer les modifications de main dans une autre branche (rebase) :
+
+    git checkout <branch>
+    git rebase origin/main
+
+- Mettre à jour localement avec les changements du main :
+
+    git pull origin main
+
+- Fusionner une branche dans main :
+
+    git checkout main
+    git merge <branch>
+    git push origin main
