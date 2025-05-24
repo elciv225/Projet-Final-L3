@@ -41,8 +41,11 @@
 
 - Fusionner une branche dans main :
 
-    git checkout main
-    git merge <branch>
+    git checkout main -- <fichier>
+    ou
+    git checkout main -- /<dossier
+    git add <fichier ou dossier>
+    git commit -m "Fusionner <fichier> de main dans <branch>"ma
     git push origin main
 
 - Récupérer les branches distantes :
