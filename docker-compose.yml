@@ -6,9 +6,9 @@ services:
       dockerfile: Dockerfile
     container_name: php_app_local
     volumes:
-      - ./:/var/www/html # Monte le répertoire courant pour les modifications en temps réel
+      - ./public:/var/www/html # Monte le répertoire courant pour les modifications en temps réel
     ports:
-      - "8081:80" # Accessible sur http://localhost:8081
+      - "8000:80" # Port 8000 sur l'hôte vers port 80 Apache dans le container
     environment:
       # Variables d'environnement spécifiques au développement local
       APP_ENV: local
@@ -50,7 +50,7 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     container_name: phpmyadmin_local
     ports:
-      - "8082:80" # Accessible sur http://localhost:8082
+      - "8080:80" # Accessible sur http://localhost:8080
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
@@ -79,7 +79,7 @@ services:
     container_name: mailhog_local
     ports:
       - "1025:1025" # Port SMTP
-      - "8083:8025" # Interface web accessible sur http://localhost:8083
+      - "8025:8025" # Interface web accessible sur http://localhost:8025
     networks:
       - app_network
 
