@@ -1,0 +1,90 @@
+# Utilise l'image officielle PHP avec Apache
+FROM php:8.2-apache
+
+# Installation des dépendances système et extensions PHP
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    libicu-dev \
+    libonig-dev \
+    libxml2-dev \
+    unzip \
+    git \
+    curl \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+    gd \
+    pdo \
+    pdo_mysql \
+    mysqli \
+    zip \
+    intl \
+    opcache \
+    mbstring \
+    xml \
+    bcmath
+
+# Installation de Xdebug pour le développement
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
+# Configuration de Xdebug
+RUN echo "xdebug.mode=develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+# Configuration d'Apache pour pointer vers le dossier public
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Activation des modules Apache nécessaires
+RUN a2enmod rewrite headers
+
+# Configuration Apache pour supporter les applications modernes
+COPY <<EOF /etc/apache2/conf-available/modern-web.conf
+# Support pour les fichiers JavaScript ES6+ et autres ressources modernes
+<FilesMatch "\.(js|mjs|css|json|woff2?|ttf|eot|svg|png|jpg|jpeg|gif|webp|ico)$">
+    Header set Cache-Control "public, max-age=31536000"
+    Header unset ETag
+    FileETag None
+</FilesMatch>
+
+# Configuration pour les modules JavaScript ES6+
+AddType application/javascript .js
+AddType application/javascript .mjs
+
+# Headers de sécurité
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"
+EOF
+
+RUN a2enconf modern-web
+
+# Installation de Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Définit le répertoire de travail
+WORKDIR /var/www/html
+
+# Copie les fichiers de l'application
+COPY . /var/www/html
+
+# Installation des dépendances Composer si composer.json existe
+RUN if [ -f composer.json ]; then composer install --no-dev --optimize-autoloader; fi
+
+# Permissions appropriées
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html \
+    && chmod -R 775 /var/www/html/storage 2>/dev/null || true \
+    && chmod -R 775 /var/www/html/bootstrap/cache 2>/dev/null || true
+
+# Expose le port 80
+EXPOSE 80
+
+# Commande par défaut
+CMD ["apache2-foreground"]
