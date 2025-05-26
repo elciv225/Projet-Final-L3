@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reçu d'Inscription</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .receipt-container {
+            width: 210mm; /* A4 width */
+            height: 297mm; /* A4 height */
+            margin: 20mm auto; /* Margins for screen display */
+            background-color: #ffffff;
+            padding: 20mm; /* Internal padding, acts as print margins */
+            border: 1px solid #ccc; /* Light border for screen display */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box; /* Include padding in total dimensions */
+            position: relative; /* For absolute positioning if needed */
+            font-size: 0.95em;
+        }
+
+        /* Header Section */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee; /* Light separator */
+        }
+
+        .header-left p {
+            margin: 0;
+            line-height: 1.2;
+            font-size: 0.85em;
+            color: #555;
+        }
+
+        .header-left p:first-child {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .logo-ufr-mi img{
+            width: 100px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7em;
+            font-weight: bold;
+            color: #0056b3;
+        }
+
+        /* Receipt Title Section */
+        .receipt-title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 30px;
+        }
+
+        .receipt-title {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #0056b3;
+            border-bottom: 3px double #0056b3;
+            padding-bottom: 5px;
+            display: inline-block; /* Pour que la bordure double s'adapte au texte */
+        }
+
+        .receipt-number {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .receipt-value {
+            text-decoration: underline; /* Pour simuler les champs à remplir */
+            padding: 0 5px;
+            color: #000;
+        }
+
+        /* Student Info Section */
+        .student-info-section p {
+            margin-bottom: 15px;
+            font-size: 1em;
+            color: #333;
+        }
+
+        .receipt-underline {
+            border-bottom: 1px solid #000;
+            padding-bottom: 2px;
+            display: inline-block;
+            min-width: 200px; /* Largeur par défaut pour la ligne */
+        }
+
+        .receipt-underline.long {
+            min-width: 400px; /* Plus large pour la somme */
+        }
+
+        /* Payment Details Section */
+        .payment-details-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Deux colonnes principales */
+            gap: 20px 0; /* Espacement vertical et horizontal */
+            margin-top: 30px;
+            border: 1px solid #eee; /* Border around this section */
+            padding: 15px;
+        }
+
+        .payment-row {
+            grid-column: 1 / -1; /* S'étend sur les deux colonnes */
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .payment-type p, .payment-date p {
+            margin: 0 0 5px 0;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .checkbox-box {
+            width: 15px;
+            height: 15px;
+            border: 1px solid #333;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .payment-signature {
+            grid-column: 1 / 2; /* Première colonne */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .stamp-area {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed #0056b3; /* Simule le cachet */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            flex-direction: column;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #0056b3;
+        }
+
+        .stamp-text {
+            line-height: 1.2;
+        }
+
+        .payment-next {
+            grid-column: 2 / -1; /* Deuxième colonne */
+            padding-left: 20px;
+            border-left: 1px solid #eee; /* Séparateur vertical */
+        }
+
+        .payment-next p {
+            margin-bottom: 10px;
+        }
+
+
+        /* Note Section */
+        .note-section {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            text-align: center;
+            font-style: italic;
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        /* --- RÈGLES SPÉCIFIQUES POUR L'IMPRESSION --- */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+
+            body {
+                background-color: #fff;
+                margin: 0;
+                padding: 0;
+            }
+
+            .receipt-container {
+                width: 210mm;
+                height: 297mm; /* Use height for exact A4 size for print */
+                margin: 0;
+                padding: 20mm; /* Print margins */
+                border: none; /* No border for print */
+                box-shadow: none;
+                box-sizing: border-box;
+            }
+
+            /* Force black text for all elements */
+            * {
+                color: #000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Remove backgrounds */
+            .receipt-container,
+            .logo-ufr-mi {
+                background-color: #fff !important;
+            }
+
+            /* Adjust borders to black */
+            header {
+                border-bottom: 1px solid #000;
+            }
+
+            .receipt-title {
+                border-bottom: 3px double #000;
+            }
+
+            .receipt-underline {
+                border-bottom: 1px solid #000;
+            }
+
+            .payment-details-section {
+                border: 1px solid #000;
+            }
+
+            .payment-next {
+                border-left: 1px solid #000;
+            }
+
+            .stamp-area {
+                border: 2px dashed #000;
+            }
+
+            .note-section {
+                border-top: 1px solid #000;
+            }
+
+            /* Ensure specific elements are visible and properly rendered */
+            .checkbox-box {
+                border: 1px solid #000;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="receipt-container">
+    <header>
+        <div class="header-left">
+            <p>FILIÈRES PROFESSIONNALISÉES, UFR MI</p>
+            <p>UNIVERSITÉ DE COCODY</p>
+            <p>03 BP 007 Abidjan 03</p>
+            <p>Tél. (Fax): 27 22 41 05 14 / 27 22 48 91 56</p>
+            <p>Cel.: 07 07 06 94 09 / 07 78 57 73 98</p>
+        </div>
+        <div class="header-right">
+            <div class="logo-ufr-mi"><img src="logo-math-info.png"></div>
+        </div>
+    </header>
+
+    <section class="receipt-title-section">
+        <div class="receipt-title">REÇU</div>
+        <div class="receipt-number">N° <span class="receipt-value">0001</span></div>
+    </section>
+
+    <section class="student-info-section">
+        <p>Reçu de M. <span class="receipt-underline">NOM PRÉNOM DE L'ÉTUDIANT</span></p>
+        <p>La somme de <span class="receipt-underline long">CENT MILLE (100.000) FRANCS CFA</span></p>
+        <p>En règlement de: <span class="receipt-underline">FRAIS D'INSCRIPTION MIAGE-GI</span></p>
+    </section>
+
+    <section class="payment-details-section">
+        <div class="payment-row">
+            <div class="payment-type">
+                <p>Année d'Études: <span class="receipt-value">2024-2025</span></p>
+                <p>En règlement:</p>
+                <div class="checkbox-group">
+                    <div class="checkbox-item"><span class="checkbox-box">&#10003;</span> Espèces</div>
+                    <div class="checkbox-item"><span class="checkbox-box"></span> Chèque</div>
+                </div>
+            </div>
+            <div class="payment-date">
+                <p>Date: <span class="receipt-value">25/05/2025</span></p>
+            </div>
+        </div>
+        <div class="payment-signature">
+            <p>Signature et Cachet</p>
+            <div class="stamp-area">
+                <p class="stamp-text">Filière <br> MIAGE-GI</p>
+            </div>
+        </div>
+        <div class="payment-next">
+            <p>Reste à payer: <span class="receipt-value">0.00 XOF</span></p>
+            <p>Montant prochain versement: <span class="receipt-value">--</span></p>
+            <p>Date prochain versement: <span class="receipt-value">--</span></p>
+        </div>
+    </section>
+
+    <section class="note-section">
+        <p>N.B: Aucun remboursement n'est possible après versement.</p>
+    </section>
+</div>
+</body>
+</html>
