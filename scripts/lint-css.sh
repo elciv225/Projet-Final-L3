@@ -20,8 +20,8 @@ output=$(stylelint "**/*.css")
 if [ $? -ne 0 ]; then
   echo "❌ Certaines erreurs CSS n'ont pas pu être corrigées automatiquement :"
   echo
-  # shellcheck disable=SC2001
-  echo "$output" | sed 's/^/   ⚠️  /'
+  # Filtrer les lignes vides pour ne pas afficher de ligne "⚠️" seule
+  echo "$output" | grep -v '^$' | sed 's/^/   ⚠️  /'
   echo
   exit 1
 fi
