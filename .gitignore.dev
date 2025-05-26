@@ -5,3 +5,5 @@
 Thumbs.db
 
 # Fichier sensible
+.env.dev
+.env.prod

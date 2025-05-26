@@ -1,0 +1,15 @@
+.dockerignore
+.env.dev
+.env.prod
+.gitignore.dev
+.gitignore.prod
+.gitignore
+.stylelintignore
+.stylelintrc.json
+.idea
+docker-compose.dev.yml
+docker-compose.prod.yml
+docker-compose.yml
+vendor/
+node_modules/
+.git/

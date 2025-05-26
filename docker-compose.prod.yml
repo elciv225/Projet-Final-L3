@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # Application PHP avec Apache
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: php_app_prod
+    # Volumes: Code is copied into the image by Dockerfile.prod
+    # Add specific persistent volumes if needed, e.g. for uploads:
+    volumes:
+      - ./public:/var/www/html
+    ports:
+      - "8000:80" # May need adjustment in a real production setup (e.g., if behind a reverse proxy)
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: false
+    depends_on:
+      - db
+      - redis # Redis is used in production
+    networks:
+      - app_network_prod
+
+  # Base de données MySQL
+  db:
+    image: mysql:8.0
+    container_name: mysql_db_prod
+    # ports: # Not typically exposed externally in production
+    # - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - db_data_prod:/var/lib/mysql # Persistance des données
+      - ./sql/init:/docker-entrypoint-initdb.d # Scripts d'initialisation SQL (optionnel)
+    networks:
+      - app_network_prod
+
+  # Redis pour le cache
+  redis:
+    image: redis:alpine
+    container_name: redis_prod
+    # ports: # Not typically exposed externally in production
+    # - "6379:6379"
+    volumes:
+      - redis_data_prod:/data
+    networks:
+      - app_network_prod
+
+# Volumes pour la persistance des données
+volumes:
+  db_data_prod:
+    driver: local
+  redis_data_prod:
+    driver: local
+
+# Réseau pour permettre la communication entre containers
+networks:
+  app_network_prod:
+    driver: bridge

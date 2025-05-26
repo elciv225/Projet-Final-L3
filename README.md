@@ -24,6 +24,8 @@ project/
 │   └── errors/             # Pages d'erreur
 ├── .env                    # Variables d'environnement
 └── composer.json           # Configuration des dépendances
+└── Dockerfile              # Configuration Docker
+└── docker-compose.yml              # Configuration Docker
 ```
 
 ## Fonctionnalités
