@@ -3,7 +3,3 @@
 .vscode/
 .DS_Store
 Thumbs.db
-
-# Fichier sensible
-.env.dev
-.env.prod

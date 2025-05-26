@@ -9,21 +9,33 @@ fi
 
 REMOTE_URL=$(git remote get-url "$REMOTE_NAME" 2>/dev/null)
 
+# Fonction pour copier un .gitignore si le fichier source existe
+copy_gitignore_file() {
+  local SOURCE_FILE="$1"
+
+  if [ -f "$SOURCE_FILE" ]; then
+    echo "✅ Copie de $SOURCE_FILE ➜ .gitignore"
+    cp "$SOURCE_FILE" .gitignore
+  else
+    echo "❌ Fichier $SOURCE_FILE introuvable. Aucune copie effectuée."
+  fi
+}
+
 if [ -z "$REMOTE_URL" ]; then
   echo "⚠️  Remote '$REMOTE_NAME' introuvable. Fallback sur .gitignore.dev"
-  cp .gitignore.dev .gitignore
+  copy_gitignore_file ".gitignore.dev"
   exit 0
 fi
 
 if echo "$REMOTE_URL" | grep -qi "gitlab"; then
   echo "🎯 Remote actif : GitLab ($REMOTE_NAME) ➜ .gitignore.prod"
-  cp .gitignore.prod .gitignore
+  copy_gitignore_file ".gitignore.prod"
 elif echo "$REMOTE_URL" | grep -qi "github"; then
   echo "💻 Remote actif : GitHub ($REMOTE_NAME) ➜ .gitignore.dev"
-  cp .gitignore.dev .gitignore
+  copy_gitignore_file ".gitignore.dev"
 else
   echo "🤷 Remote '$REMOTE_NAME' non reconnu ➜ .gitignore.dev"
-  cp .gitignore.dev .gitignore
+  copy_gitignore_file ".gitignore.dev"
 fi
 
 exit 0
