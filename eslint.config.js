@@ -1,10 +1,9 @@
-export default [
+module.exports = [
     {
         ignores: [
             "node_modules/**",
             "vendor/**"
-            // autres dossiers ou fichiers à ignorer
         ],
     },
-    // ... autres règles ou plugins ESLint ici ...
+    // autres règles/plugins si besoin
 ];
