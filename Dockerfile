@@ -1,10 +1,10 @@
-# Utilise l'image officielle PHP avec Apache
-FROM php:8.2-apache
+# Utilise l'image officielle PHP 8.3 avec Apache
+FROM php:8.3-apache
 
-# Définit le répertoire de travail
+# Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# Installation des dépendances système et Xdebug
+# Installer les dépendances système nécessaires
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg62-turbo-dev \
@@ -16,9 +16,11 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
+    vim \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Installation des extensions PHP nécessaires
+# Installer les extensions PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
     gd \
@@ -32,12 +34,12 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     soap \
     opcache
 
-# Installation de Redis
-RUN pecl channel-update pecl.php.net \
-    && pecl install redis \
-    && docker-php-ext-enable redis
+# Installer Xdebug et Redis via PECL
+RUN pecl update-channels \
+    && pecl install xdebug redis \
+    && docker-php-ext-enable xdebug redis
 
-# Configuration d'Apache
+# Activer les modules Apache nécessaires
 RUN a2enmod rewrite headers
 
 # Configuration PHP pour le développement
@@ -46,36 +48,31 @@ RUN echo "memory_limit=512M" >> /usr/local/etc/php/conf.d/memory.ini \
     && echo "post_max_size=50M" >> /usr/local/etc/php/conf.d/uploads.ini \
     && echo "max_execution_time=300" >> /usr/local/etc/php/conf.d/timeouts.ini
 
-# Configuration OPcache pour la production
-RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache-prod.ini \
-    && echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/opcache-prod.ini \
-    && echo "opcache.interned_strings_buffer=8" >> /usr/local/etc/php/conf.d/opcache-prod.ini \
-    && echo "opcache.max_accelerated_files=10000" >> /usr/local/etc/php/conf.d/opcache-prod.ini \
-    && echo "opcache.validate_timestamps=0" >> /usr/local/etc/php/conf.d/opcache-prod.ini \
-    && echo "opcache.revalidate_freq=0" >> /usr/local/etc/php/conf.d/opcache-prod.ini
+# Configuration de Xdebug
+RUN echo "xdebug.mode=develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-# Configuration PHP pour la production
-RUN echo "display_errors=Off" >> /usr/local/etc/php/conf.d/php-prod.ini \
-    && echo "log_errors=On" >> /usr/local/etc/php/conf.d/php-prod.ini \
-    && echo "error_reporting=E_ALL & ~E_DEPRECATED & ~E_STRICT" >> /usr/local/etc/php/conf.d/php-prod.ini
+# Configuration OPcache
+RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.validate_timestamps=1" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.revalidate_freq=0" >> /usr/local/etc/php/conf.d/opcache.ini
 
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Configuration du DocumentRoot Apache (si nécessaire)
+# Configuration du DocumentRoot Apache
 ENV APACHE_DOCUMENT_ROOT /var/www/html
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Copie des fichiers de l'application
-COPY . /var/www/html
-
-# Définit les permissions appropriées
+# Permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Expose le port 80
+# Exposer le port HTTP
 EXPOSE 80
 
-# Commande par défaut
+# Lancer Apache en foreground
 CMD ["apache2-foreground"]

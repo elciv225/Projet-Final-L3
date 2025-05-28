@@ -3,21 +3,3 @@
 .vscode/
 .DS_Store
 Thumbs.db
-
-# Fichier sensible
-.env.dev
-.env.prod
-.gitignore.dev
-.gitignore.prod
-docker-compose.dev.yml
-docker-compose.prod.yml
-Dockerfile.prod
-Dockerfile.dev
-
-/scripts
-
-eslint.config.js
-.stylelintignore
-.stylelintrc.json
-Rappel Commande GIT
-README.md
