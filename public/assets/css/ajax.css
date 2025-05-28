@@ -6,21 +6,21 @@
     padding: 15px 25px;
     border-radius: 5px;
     color: white;
-    box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
+    box-shadow: var(--shadow-sm);
     z-index: 1000;
     animation: slide-in 0.5s ease-out;
 }
 
 .popup.success {
-    background-color: #4caf50;
+    background-color: var(--success);
 }
 
 .popup.error {
-    background-color: #f44336;
+    background-color: var(--error);
 }
 
 .popup.info {
-    background-color: #2196F3;
+    background-color: var(--info);
 }
 
 @keyframes slide-in {

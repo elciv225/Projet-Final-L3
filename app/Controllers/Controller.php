@@ -38,4 +38,16 @@ class Controller
             'message' => $message
         ]);
     }
+
+    /**
+     * Fonction de pop up info
+     * @param string $message
+     * @return Response JSON pour la pop up
+     */
+    public function info(string $message):Response{
+        return Response::json([
+            'statut' => 'info',
+            'message' => $message
+        ]);
+    }
 }

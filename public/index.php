@@ -1,4 +1,5 @@
 <?php
+session_start();
 use System\Http\Request;
 use System\Http\Kernel;
 use System\Database\Database;

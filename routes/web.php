@@ -9,5 +9,5 @@ return [
     ['GET', '/utilisateur/{id:\d+}', [UtlisateurController::class, 'show']],
     ['GET', '/authentification', [AuthentificationController::class, 'index']],
     /* === Routes des traitement === */
-    ['POST', '/login', [AuthentificationController::class, 'login']],
+    ['POST', '/authentification', [AuthentificationController::class, 'authentification']],
 ];
