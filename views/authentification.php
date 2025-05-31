@@ -10,7 +10,10 @@
     <script src="/assets/js/ajax.js" defer></script>
 </head>
 <body>
-<form action="/authentification" method="post" class="ajax-form" >
+<form action="/authentification"
+      method="post"
+      class="ajax-form"
+      data-warning="Tu es sûr de vouloir soutenir ?">
     <h2>Authentification</h2>
 
     <?php if ($etape === 'verification'): ?>

@@ -43,6 +43,30 @@ function createGlobalElements() {
         loader.innerHTML = '<div class="loader"></div>';
         document.body.appendChild(loader);
     }
+
+    // Warning Card - Nouvelle card de confirmation
+    if (!document.getElementById('warning-card')) {
+        const warningCard = document.createElement('div');
+        warningCard.id = 'warning-card';
+        warningCard.className = 'warning-overlay';
+        warningCard.style.display = 'none';
+        warningCard.innerHTML = `
+            <div class="warning-card">
+                <div class="warning-header">
+                    <span class="warning-icon">⚠</span>
+                    <h3>Attention</h3>
+                </div>
+                <div class="warning-content">
+                    <p id="warning-message"></p>
+                </div>
+                <div class="warning-actions">
+                    <button id="warning-cancel" class="btn-secondary">Annuler</button>
+                    <button id="warning-continue" class="btn-primary">Continuer</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(warningCard);
+    }
 }
 
 function showPopup(message, type = 'info') {
@@ -90,12 +114,82 @@ function hideLoader() {
 }
 
 // -------------------------------------------------------------------
+// Fonctions pour la Warning Card
+// -------------------------------------------------------------------
+function showWarningCard(message, onConfirm) {
+    const warningCard = document.getElementById('warning-card');
+    const warningMessage = document.getElementById('warning-message');
+    const continueBtn = document.getElementById('warning-continue');
+    const cancelBtn = document.getElementById('warning-cancel');
+
+    if (!warningCard || !warningMessage) return;
+
+    // Définir le message
+    warningMessage.textContent = message;
+
+    // Afficher la card
+    warningCard.style.display = 'flex';
+
+    // Gestionnaire pour le bouton Continuer
+    const handleContinue = () => {
+        hideWarningCard();
+        if (onConfirm) onConfirm();
+        cleanup();
+    };
+
+    // Gestionnaire pour le bouton Annuler
+    const handleCancel = () => {
+        hideWarningCard();
+        cleanup();
+    };
+
+    // Gestionnaire pour fermer en cliquant sur l'overlay
+    const handleOverlayClick = (e) => {
+        if (e.target === warningCard) {
+            handleCancel();
+        }
+    };
+
+    // Nettoyer les anciens event listeners
+    const cleanup = () => {
+        continueBtn.removeEventListener('click', handleContinue);
+        cancelBtn.removeEventListener('click', handleCancel);
+        warningCard.removeEventListener('click', handleOverlayClick);
+    };
+
+    // Ajouter les event listeners
+    continueBtn.addEventListener('click', handleContinue);
+    cancelBtn.addEventListener('click', handleCancel);
+    warningCard.addEventListener('click', handleOverlayClick);
+}
+
+function hideWarningCard() {
+    const warningCard = document.getElementById('warning-card');
+    if (warningCard) {
+        warningCard.style.display = 'none';
+    }
+}
+
+// -------------------------------------------------------------------
 // Fonctions modifiées/ajoutées
 // -------------------------------------------------------------------
 function bindAjaxForms() {
     document.querySelectorAll('form.ajax-form').forEach(form => {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
+
+            // Vérifier si le formulaire a un attribut warning
+            const warningMessage = form.dataset.warning || form.getAttribute('warning');
+            if (warningMessage && !form.dataset.warningConfirmed) {
+                // Afficher la card de warning
+                showWarningCard(warningMessage, () => {
+                    // Si l'utilisateur confirme, marquer comme confirmé et soumettre
+                    form.dataset.warningConfirmed = 'true';
+                    submitAjaxForm(form);
+                });
+                return;
+            }
+
             await submitAjaxForm(this);
         });
     });
@@ -170,7 +264,7 @@ async function handleResponse(response, form) {
     }
 
     // Ensuite traiter les messages/statuts JSON (après la mise à jour de la vue)
-    if (data.statut === 'succes' || data.status === 'success') {
+    if (data.statut === 'succes' || data.statut === 'success') {
         showPopup(data.message || 'Opération réussie', 'success');
 
         // Callback personnalisé
@@ -191,13 +285,13 @@ async function handleResponse(response, form) {
             }, data.redirectDelay || 2000);
         }
     }
-    else if (data.statut === 'error' || data.status === 'error') {
+    else if (data.statut === 'error' || data.statut === 'error') {
         showPopup(data.message || 'Une erreur est survenue', 'error');
     }
-    else if (data.statut === 'warning' || data.status === 'warning') {
+    else if (data.statut === 'warning' || data.statut === 'warning') {
         showPopup(data.message || 'Avertissement', 'warning');
     }
-    else if (data.statut === 'info' || data.status === 'info') {
+    else if (data.statut === 'info' || data.statut === 'info') {
         showPopup(data.message || 'Information', 'info');
     }
     // Si on a seulement du HTML sans statut, pas de popup supplémentaire
@@ -327,16 +421,16 @@ window.ajaxRequest = async function(url, options = {}) {
 
         // Gestion des réponses JSON avec statut
         if (typeof data === 'object' && data !== null) {
-            if (data.statut === 'succes' || data.status === 'success') {
+            if (data.statut === 'succes') {
                 if (options.success) options.success(data);
                 else showPopup(data.message || 'Opération réussie', 'success');
-            } else if (data.statut === 'error' || data.status === 'error') {
+            } else if (data.statut === 'error') {
                 if (options.error) options.error(data);
                 else showPopup(data.message || 'Une erreur est survenue', 'error');
-            } else if (data.statut === 'warning' || data.status === 'warning') {
+            } else if (data.statut === 'warning') {
                 showPopup(data.message || 'Avertissement', 'warning');
                 if (options.success) options.success(data);
-            } else if (data.statut === 'info' || data.status === 'info') {
+            } else if (data.statut === 'info') {
                 showPopup(data.message || 'Information', 'info');
                 if (options.success) options.success(data);
             } else {
@@ -358,3 +452,5 @@ window.showPopup = showPopup;
 window.closePopup = closePopup;
 window.showLoader = showLoader;
 window.hideLoader = hideLoader;
+window.showWarningCard = showWarningCard;
+window.hideWarningCard = hideWarningCard;
