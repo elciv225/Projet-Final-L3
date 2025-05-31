@@ -6,22 +6,12 @@ services:
       dockerfile: Dockerfile
     container_name: php_app_local
     volumes:
-      - ./public:/var/www/html # Monte le répertoire courant pour les modifications en temps réel
+      - ./:/var/www/html # Monte le répertoire courant pour les modifications en temps réel
     ports:
-      - "8000:80" # Port 8000 sur l'hôte vers port 80 Apache dans le container
+      - "8081:80" # Accessible sur http://localhost:8081
     environment:
-      # Variables d'environnement spécifiques au développement local
-      APP_ENV: local
-      APP_DEBUG: true
       XDEBUG_MODE: develop,debug
       XDEBUG_CONFIG: "client_host=host.docker.internal client_port=9003"
-      # Configuration email pour MailHog
-      MAIL_MAILER: smtp
-      MAIL_HOST: mailhog
-      MAIL_PORT: 1025
-      MAIL_USERNAME: null
-      MAIL_PASSWORD: null
-      MAIL_ENCRYPTION: null
     depends_on:
       - db
       - mailhog
@@ -50,7 +40,7 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     container_name: phpmyadmin_local
     ports:
-      - "8080:80" # Accessible sur http://localhost:8080
+      - "8082:80" # Accessible sur http://localhost:8082
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
@@ -79,7 +69,7 @@ services:
     container_name: mailhog_local
     ports:
       - "1025:1025" # Port SMTP
-      - "8025:8025" # Interface web accessible sur http://localhost:8025
+      - "8083:8025" # Interface web accessible sur http://localhost:8083
     networks:
       - app_network
 

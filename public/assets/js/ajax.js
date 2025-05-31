@@ -1,186 +1,87 @@
 /**
- * AJAX pour la gestion de tous les formulaires
- * avec gestion de popups et loader
+ * Système AJAX avancé - Support des vues complètes et fragments
+ * - Gestion des réponses JSON et HTML
+ * - Mise à jour du DOM et de l'URL
+ * - Compatible avec l'ancien code et le CSS existant
  */
 
-// Fonction d'initialisation à exécuter quand la page est chargée
 document.addEventListener('DOMContentLoaded', function() {
-    // Création des éléments globaux nécessaires
+    // Initialisation
     createGlobalElements();
-
-    // Recherche de tous les formulaires avec la classe "ajax-form"
-    const ajaxForms = document.querySelectorAll('form.ajax-form');
-
-    // Attache les gestionnaires d'événements à chaque formulaire
-    ajaxForms.forEach(form => {
-        initAjaxForm(form);
-    });
+    bindAjaxForms();
+    bindHistoryEvents();
 });
 
-/**
- * Crée les éléments globaux nécessaires pour les popups et le loader
- */
+// -------------------------------------------------------------------
+// Fonctions existantes (corrigées pour respecter le CSS)
+// -------------------------------------------------------------------
 function createGlobalElements() {
-    // Création du popup s'il n'existe pas déjà
+    // Popup - Structure corrigée pour correspondre au CSS
     if (!document.getElementById('ajax-popup')) {
-        const popupDiv = document.createElement('div');
-        popupDiv.id = 'ajax-popup';
-        popupDiv.className = 'popup';
-        popupDiv.innerHTML = `
+        const popup = document.createElement('div');
+        popup.id = 'ajax-popup';
+        popup.className = 'popup';
+        popup.style.display = 'none'; // Respecte le CSS existant
+        popup.innerHTML = `
             <div class="popup-content">
                 <span id="popup-message"></span>
-                <span class="close-popup">&times;</span>
+                <button class="close-popup">&times;</button>
             </div>
         `;
-        document.body.appendChild(popupDiv);
+        document.body.appendChild(popup);
 
-        // Ajouter le gestionnaire d'événement pour fermer le popup
-        const closeBtn = popupDiv.querySelector('.close-popup');
-        closeBtn.addEventListener('click', () => closePopup());
+        // Fermeture du popup
+        popup.querySelector('.close-popup').addEventListener('click', closePopup);
     }
 
-    // Création du loader s'il n'existe pas déjà
+    // Loader - Structure corrigée
     if (!document.getElementById('ajax-loader')) {
-        const loaderDiv = document.createElement('div');
-        loaderDiv.id = 'ajax-loader';
-        loaderDiv.className = 'loader-overlay';
-        loaderDiv.innerHTML = '<div class="loader"></div>';
-        document.body.appendChild(loaderDiv);
+        const loader = document.createElement('div');
+        loader.id = 'ajax-loader';
+        loader.className = 'loader-overlay';
+        loader.style.display = 'none'; // Respecte le CSS existant
+        loader.innerHTML = '<div class="loader"></div>';
+        document.body.appendChild(loader);
     }
 }
 
-/**
- * Initialise un formulaire pour gérer les soumissions en AJAX
- * @param {HTMLFormElement} form - Le formulaire à initialiser
- */
-function initAjaxForm(form) {
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        // Récupère l'URL d'action du formulaire
-        const actionUrl = form.getAttribute('action') || window.location.href;
-        const method = form.getAttribute('method') || 'POST';
-
-        // Collecte des données du formulaire
-        const formData = new FormData(form);
-
-        // Affichage du loader
-        showLoader();
-
-        // Option avancée : afficher un indicateur de chargement sur le bouton
-        const submitButton = form.querySelector('button[type="submit"]');
-        if (submitButton) submitButton.classList.add('loading');
-
-        // Envoi de la requête AJAX
-        fetch(actionUrl, {
-            method: method,
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-            .then(response => {
-                // Vérifie si la réponse est un JSON
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    return response.json();
-                }
-                throw new Error('La réponse n\'est pas au format JSON');
-            })
-            .then(data => {
-                // Traitement de la réponse
-                if (data.statut === 'succes' || data.status === 'success') {
-                    // En cas de succès
-                    showPopup(data.message || 'Opération réussie', 'success');
-
-                    // Si une redirection est demandée
-                    if (data.redirect) {
-                        setTimeout(() => {
-                            window.location.href = data.redirect;
-                        }, data.redirectDelay || 2000);
-                    }
-
-                    // Si une fonction callback est définie (via data-callback)
-                    const callback = form.getAttribute('data-callback');
-                    if (callback && window[callback] && typeof window[callback] === 'function') {
-                        window[callback](data);
-                    }
-
-                    // Réinitialiser le formulaire si option activée
-                    if (form.getAttribute('data-reset') !== 'false') {
-                        form.reset();
-                    }
-                } else {
-                    // En cas d'erreur côté serveur
-                    showPopup(data.message || 'Une erreur est survenue', 'error');
-                }
-            })
-            .catch(error => {
-                // En cas d'erreur réseau/technique
-                showPopup('Erreur de communication avec le serveur', 'error');
-                console.error('Erreur AJAX:', error);
-            })
-            .finally(() => {
-                // Masque le loader à la fin
-                hideLoader();
-                // Retire l'indicateur de chargement du bouton
-                if (submitButton) submitButton.classList.remove('loading');
-            });
-    });
-}
-
-/**
- * Affiche un message popup
- * @param {string} message - Le message à afficher
- * @param {string} type - Le type de popup (success, error, info)
- */
 function showPopup(message, type = 'info') {
     const popup = document.getElementById('ajax-popup');
-    const messageElement = document.getElementById('popup-message');
+    if (!popup) return;
 
-    if (popup && messageElement) {
-        messageElement.textContent = message;
+    // Remise à zéro des classes puis ajout du type
+    popup.className = `popup ${type}`;
+    popup.querySelector('#popup-message').textContent = message;
+    popup.style.display = 'block'; // Utilise display au lieu de classList
 
-        // Reset des classes et ajout de la classe de type
-        popup.className = 'popup';
-        popup.classList.add(type);
-        popup.style.display = 'block';
-        popup.style.animation = 'slideIn 0.5s ease-out';
-
-        // Fermeture automatique après 3 secondes
+    // Auto-fermeture après 3 secondes avec animation
+    setTimeout(() => {
+        popup.style.animation = 'fade-out 0.5s ease-out';
         setTimeout(() => {
-            closePopup();
-        }, 3000);
-    }
+            popup.style.display = 'none';
+            popup.style.animation = ''; // Reset animation
+        }, 500);
+    }, 3000);
 }
 
-/**
- * Ferme le popup avec animation
- */
 function closePopup() {
     const popup = document.getElementById('ajax-popup');
     if (popup) {
-        popup.style.animation = 'fadeOut 0.5s forwards';
+        popup.style.animation = 'fade-out 0.5s ease-out';
         setTimeout(() => {
             popup.style.display = 'none';
-            popup.style.animation = 'slideIn 0.5s ease-out';
+            popup.style.animation = '';
         }, 500);
     }
 }
 
-/**
- * Affiche le loader global
- */
 function showLoader() {
     const loader = document.getElementById('ajax-loader');
     if (loader) {
-        loader.style.display = 'flex';
+        loader.style.display = 'flex'; // Utilise flex comme dans le CSS
     }
 }
 
-/**
- * Masque le loader global
- */
 function hideLoader() {
     const loader = document.getElementById('ajax-loader');
     if (loader) {
@@ -188,83 +89,223 @@ function hideLoader() {
     }
 }
 
-/**
- * Fonction utilitaire pour faire des requêtes AJAX
- * Peut être utilisée en dehors des formulaires
- *
- * @param {string} url - L'URL de la requête
- * @param {Object} options - Options de la requête
- * @param {string} options.method - Méthode HTTP (GET, POST, etc.)
- * @param {Object|FormData} options.data - Données à envoyer
- * @param {Function} options.success - Fonction de rappel en cas de succès
- * @param {Function} options.error - Fonction de rappel en cas d'erreur
- * @param {boolean} options.showLoader - Afficher le loader ou non
- */
-function ajaxRequest(url, options = {}) {
-    const method = options.method || 'GET';
-    const showLoaderIndicator = options.showLoader !== false;
-
-    // Configuration de la requête
-    let fetchOptions = {
-        method: method,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    };
-
-    // Préparation des données selon la méthode
-    if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
-        if (options.data instanceof FormData) {
-            fetchOptions.body = options.data;
-        } else if (options.data) {
-            fetchOptions.headers['Content-Type'] = 'application/json';
-            fetchOptions.body = JSON.stringify(options.data);
-        }
-    } else if (options.data) {
-        // Pour GET, ajouter les paramètres à l'URL
-        const params = new URLSearchParams();
-        Object.keys(options.data).forEach(key => {
-            params.append(key, options.data[key]);
+// -------------------------------------------------------------------
+// Fonctions modifiées/ajoutées
+// -------------------------------------------------------------------
+function bindAjaxForms() {
+    document.querySelectorAll('form.ajax-form').forEach(form => {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            await submitAjaxForm(this);
         });
-        url = `${url}${url.includes('?') ? '&' : '?'}${params.toString()}`;
-    }
-
-    // Affichage du loader si nécessaire
-    if (showLoaderIndicator) showLoader();
-
-    // Envoi de la requête
-    fetch(url, fetchOptions)
-        .then(response => {
-            // Vérification du type de réponse
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                return response.json();
-            }
-            return response.text();
-        })
-        .then(data => {
-            if (options.success && typeof options.success === 'function') {
-                options.success(data);
-            }
-        })
-        .catch(error => {
-            if (options.error && typeof options.error === 'function') {
-                options.error(error);
-            } else {
-                showPopup('Erreur de communication avec le serveur', 'error');
-                console.error('Erreur AJAX:', error);
-            }
-        })
-        .finally(() => {
-            if (showLoaderIndicator) hideLoader();
-        });
+    });
 }
 
+async function submitAjaxForm(form) {
+    const action = form.action || window.location.href;
+    const method = form.method || 'POST';
+    const formData = new FormData(form);
+    const submitButton = form.querySelector('button[type="submit"]');
 
+    // Animation du bouton de soumission
+    if (submitButton) {
+        submitButton.classList.add('loading');
+        submitButton.disabled = true;
+    }
 
-// Exposition des fonctions publiques
+    showLoader();
+
+    try {
+        const response = await fetch(action, {
+            method,
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json, text/html'
+            }
+        });
+
+        await handleResponse(response, form);
+
+    } catch (error) {
+        showPopup('Erreur réseau', 'error');
+        console.error('Erreur AJAX:', error);
+    } finally {
+        hideLoader();
+
+        // Restauration du bouton
+        if (submitButton) {
+            submitButton.classList.remove('loading');
+            submitButton.disabled = false;
+        }
+    }
+}
+
+async function handleResponse(response, form) {
+    const contentType = response.headers.get('content-type');
+    let data;
+
+    // Détection du type de réponse
+    if (contentType?.includes('application/json')) {
+        data = await response.json();
+    } else if (contentType?.includes('text/html')) {
+        data = { html: await response.text() };
+    } else {
+        throw new Error('Type de réponse non supporté');
+    }
+
+    // Traitement unifié
+    if (data.redirect) {
+        window.location.href = data.redirect; // Redirection classique
+    }
+    else if (data.html) {
+        if (isFullPage(data.html)) {
+            replaceFullPage(data.html, form.action); // Vue complète
+        } else {
+            updateContent(data.html, form); // Fragment HTML
+        }
+    }
+    else if (data.status === 'success') {
+        handleSuccess(data, form); // Ancienne logique JSON
+    }
+    else if (data.status === 'error') {
+        showPopup(data.message || 'Erreur', 'error');
+    }
+}
+
+function isFullPage(html) {
+    return html.includes('<!DOCTYPE html>') || html.includes('<html');
+}
+
+function replaceFullPage(html, url) {
+    // Extraire le contenu du <body>
+    const bodyContent = html.split('<body>')[1]?.split('</body>')[0] || html;
+    document.body.innerHTML = bodyContent;
+
+    // Mettre à jour l'URL
+    if (url && url !== window.location.href) {
+        window.history.pushState({}, '', url);
+    }
+
+    // Recréer les éléments globaux après remplacement du body
+    createGlobalElements();
+
+    // Rebind les événements
+    bindAjaxForms();
+
+    // Ré-exécuter les scripts
+    reloadScripts();
+
+    showPopup('Page mise à jour', 'success');
+}
+
+function updateContent(html, form) {
+    const target = form.dataset.target || '#main-content';
+    const container = document.querySelector(target);
+
+    if (container) {
+        container.innerHTML = html;
+
+        if (form.action !== window.location.href) {
+            window.history.pushState({}, '', form.action);
+        }
+
+        // Rebind les nouveaux formulaires AJAX dans le contenu mis à jour
+        container.querySelectorAll('form.ajax-form').forEach(newForm => {
+            newForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await submitAjaxForm(this);
+            });
+        });
+
+        showPopup('Contenu mis à jour', 'success');
+    } else {
+        showPopup('Conteneur cible introuvable', 'error');
+    }
+}
+
+function reloadScripts() {
+    document.querySelectorAll('script').forEach(oldScript => {
+        if (oldScript.src || oldScript.type === 'module') {
+            const newScript = document.createElement('script');
+            Array.from(oldScript.attributes).forEach(attr => {
+                newScript.setAttribute(attr.name, attr.value);
+            });
+            newScript.textContent = oldScript.textContent;
+            oldScript.parentNode.replaceChild(newScript, oldScript);
+        }
+    });
+}
+
+function handleSuccess(data, form) {
+    showPopup(data.message || 'Succès', 'success');
+
+    // Callback personnalisé
+    const callback = form.dataset.callback;
+    if (callback && window[callback]) {
+        window[callback](data);
+    }
+
+    // Réinitialisation du formulaire
+    if (form.dataset.reset !== 'false') {
+        form.reset();
+    }
+}
+
+function bindHistoryEvents() {
+    window.addEventListener('popstate', async () => {
+        showLoader();
+        try {
+            const response = await fetch(window.location.href, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const html = await response.text();
+            replaceFullPage(html, window.location.href);
+        } catch (error) {
+            console.error('Erreur de navigation:', error);
+            showPopup('Erreur de navigation', 'error');
+        } finally {
+            hideLoader();
+        }
+    });
+}
+
+// -------------------------------------------------------------------
+// API publique (pour rétrocompatibilité)
+// -------------------------------------------------------------------
+window.ajaxRequest = async function(url, options = {}) {
+    const method = options.method || 'GET';
+    const shouldShowLoader = options.showLoader !== false;
+
+    if (shouldShowLoader) showLoader();
+
+    try {
+        const response = await fetch(url, {
+            method,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json, text/html',
+                ...(method !== 'GET' && { 'Content-Type': 'application/json' })
+            },
+            body: method === 'GET' ? null : JSON.stringify(options.data)
+        });
+
+        const contentType = response.headers.get('content-type');
+        const data = contentType?.includes('application/json')
+            ? await response.json()
+            : await response.text();
+
+        if (options.success) options.success(data);
+
+    } catch (error) {
+        if (options.error) options.error(error);
+        else showPopup('Erreur serveur', 'error');
+    } finally {
+        if (shouldShowLoader) hideLoader();
+    }
+};
+
 window.showPopup = showPopup;
 window.closePopup = closePopup;
 window.showLoader = showLoader;
 window.hideLoader = hideLoader;
-window.ajaxRequest = ajaxRequest;

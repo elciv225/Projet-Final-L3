@@ -1,63 +1,200 @@
+/* Popup améliorée utilisant les variables CSS du thème */
 .popup {
     display: none;
     position: fixed;
     top: 20px;
     right: 20px;
-    padding: 15px 25px;
-    border-radius: 5px;
-    color: white;
-    box-shadow: var(--shadow-sm);
+    padding: 16px 20px;
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 14px;
+    box-shadow: var(--shadow-lg), var(--shadow-md);
     z-index: 1000;
-    animation: slide-in 0.5s ease-out;
+    animation: slide-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-width: 280px;
+    max-width: 400px;
+    font-family: mulish-variable, sans-serif;
 }
 
 .popup.success {
-    background-color: var(--success);
+    background: var(--success);
+    border-left: 4px solid var(--primary-color);
+    color: var(--text-primary);
 }
 
 .popup.error {
-    background-color: var(--error);
+    background: var(--error);
+    border-left: 4px solid #dc2626;
+    color: var(--text-primary);
 }
 
 .popup.info {
-    background-color: var(--info);
+    background: var(--info);
+    border-left: 4px solid var(--primary-color);
+    color: var(--text-primary);
 }
 
+.popup.warning {
+    background: var(--warning);
+    border-left: 4px solid var(--secondary-color);
+    color: var(--text-primary);
+}
+
+/* Animations améliorées */
 @keyframes slide-in {
     from {
-        transform: translateX(100%);
+        transform: translateX(100%) scale(0.9);
         opacity: 0;
     }
-
     to {
-        transform: translateX(0);
+        transform: translateX(0) scale(1);
         opacity: 1;
     }
 }
 
 @keyframes fade-out {
     from {
+        transform: translateX(0) scale(1);
         opacity: 1;
     }
-
     to {
+        transform: translateX(100%) scale(0.9);
         opacity: 0;
     }
 }
 
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+/* Contenu de la popup */
 .popup-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
 }
 
+#popup-message {
+    flex: 1;
+    line-height: 1.4;
+    letter-spacing: 0.025em;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Bouton de fermeture amélioré */
 .close-popup {
-    margin-left: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: var(--text-primary);
     cursor: pointer;
     font-weight: bold;
+    font-size: 16px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
-/* Styles pour le loader */
+.close-popup:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.close-popup:active {
+    transform: scale(0.95);
+}
+
+/* Icônes pour les différents types */
+.popup.success::before {
+    content: "✓";
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.popup.error::before {
+    content: "✕";
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 12px;
+    color: #dc2626;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.popup.info::before {
+    content: "i";
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.popup.warning::before {
+    content: "⚠";
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    color: var(--secondary-color);
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Effet de hover sur la popup */
+.popup:hover {
+    animation: pulse 0.6s ease;
+    box-shadow: var(--shadow-lg), 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Loader amélioré utilisant les variables du thème */
 .loader-overlay {
     display: none;
     position: fixed;
@@ -65,51 +202,134 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgb(0 0 0 / 50%);
+    background: var(--overlay);
+    backdrop-filter: blur(4px);
     z-index: 1001;
     justify-content: center;
     align-items: center;
 }
 
 .loader {
-    width: 48px;
-    height: 48px;
-    border: 5px solid #FFF;
-    border-bottom-color: #4caf50;
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top: 4px solid var(--primary-color);
     border-radius: 50%;
     animation: loader-spin 1s linear infinite;
+    box-shadow: 0 4px 20px rgb(26 94 99 / 30%);
 }
 
 @keyframes loader-spin {
     0% {
         transform: rotate(0deg);
     }
-
     100% {
         transform: rotate(360deg);
     }
 }
 
-/* Styles pour les formulaires ajaxifiés, facultatif */
+/* Amélioration des boutons de formulaire AJAX */
 .ajax-form button[type="submit"] {
     position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
 }
 
 .ajax-form button[type="submit"].loading {
     color: transparent;
+    pointer-events: none;
 }
 
 .ajax-form button[type="submit"].loading::after {
     content: "";
     position: absolute;
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     top: 50%;
     left: 50%;
-    margin-top: -8px;
-    margin-left: -8px;
-    border: 2px solid rgb(255 255 255 / 30%);
+    margin-top: -9px;
+    margin-left: -9px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     border-top-color: white;
-    animation: loader-spin 1s infinite linear;
+    animation: loader-spin 0.8s infinite linear;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    .popup {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+        min-width: unset;
+        max-width: unset;
+    }
+
+    .popup-content {
+        gap: 8px;
+    }
+
+    #popup-message {
+        font-size: 13px;
+    }
+}
+
+/* Animation d'entrée différée pour plusieurs popups */
+.popup:nth-of-type(2) {
+    animation-delay: 0.1s;
+    top: 80px;
+}
+
+.popup:nth-of-type(3) {
+    animation-delay: 0.2s;
+    top: 140px;
+}
+
+/* Effet de brillance subtil */
+.popup::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent
+    );
+    transition: left 0.6s ease;
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+.popup:hover::after {
+    left: 100%;
+}
+
+/* Support du mode sombre automatique */
+@media (prefers-color-scheme: dark) {
+    .popup {
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .close-popup {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .close-popup:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .popup.success::before,
+    .popup.error::before,
+    .popup.info::before,
+    .popup.warning::before {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
 }

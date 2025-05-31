@@ -10,6 +10,7 @@
       "System\\": "src/",
       "System\\Http\\": "src/Http/",
       "System\\View\\": "src/View/",
+      "System\\Security\\": "src/Security/",
       "System\\Database\\": "src/Database/",
       "App\\": "app/",
       "App\\Controllers\\": "app/Controllers/",

@@ -2,127 +2,137 @@
 
 namespace App\Controllers;
 
-use System\Http\Request;
 use System\Http\Response;
 
 class AuthentificationController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
-     * Fonction Principale de traitement de l'authentification
+     * Point d'entrée principal - traite toutes les étapes d'authentification
      */
     public function authentification(): Response
     {
-        if ($this->request->getPostParams('verification')) {
-            // Vérification de l'IP
-            return $this->verificationIP();
-        } elseif ($this->request->getPostParams('connexion')) {
-            // Connexion de l'utilisateur
-            return $this->connexion();
-        } elseif ($this->request->getPostParams('envoieMail')) {
-            // Envoi du mail de vérification
-            return $this->envoieMail();
-        } elseif ($this->request->getPostParams('inscription')) {
-            // Inscription de l'utilisateur
-            return $this->inscription();
+        // Récupérer l'étape actuelle du processus
+        $etapeActuelle = $this->request->getPostParams('etape');
+
+        // Traiter selon l'étape demandée
+        switch ($etapeActuelle) {
+            case 'verification':
+                return $this->verifierIP();
+            case 'envoi_email':
+                return $this->envoyerCodeEmail();
+            case 'verification_code':
+                return $this->verifierCode();
+            case 'enregistrement':
+                return $this->creerCompte();
         }
-        // Si aucune action n'est effectuée, on retourne une erreur
-        return $this->error("Aucune action n'a été effectuée.");
+
+        return $this->error("A faire : $etapeActuelle");
     }
 
     /**
-     * Fonction de vérification du statut de l'utilisateur
-     * @return Response
+     * ÉTAPE 1 : Vérifier l'identifiant permanent (IP)
      */
-    private function verificationIP(): Response
+    private
+    function verifierIP(): Response
     {
-        // Un if pour vérifier si l'IP est valide et autorisé à Soumettre un formulaire
-        // Cas valide : L'IP est valide et autorisé à Soumettre un formulaire
-        $_SESSION['auth_etudiant'] = [
-            'nouvelleConnexion' => true,
-            'messageEnvoye' => false,
-            'etapeAuthentification' => 'envoieMail',
-            'txtButton' => "Envoyer le code de vérification",
-            'ip' => $this->request->getPostParams('ip'), // Récupération de l'IP depuis le formulaire
-            'email' => '', // Récupération de l'email si présent
-            'code_verification' => '', // Initialisation du code de vérification
-            'password' => '', // Initialisation du mot de passe
-            'password_confirm' => '' // Initialisation de la confirmation du mot de passe
-        ];
+        // Récupérer l'IP saisie par l'utilisateur
+        $identifiantPermanent = $this->request->getPostParams('ip');
 
-        return Response::json(
-            [
-                'statut' => 'succes',
-                'message' => "Le statut de l'étudiant est vérifié. Vous pouvez maintenant envoyer le code de vérification.",
-                'redirect' => '/authentification', // Redirection vers la page d'authentification
-                'redirectDelay' => 0 // Délai de redirection en millisecondes
-            ]
-        );
-
-        //return $this->info("Le statut de l'étudiant est vérifié. Vous pouvez maintenant envoyer le code de vérification.");
-    }
-
-    /**
-     * Fonction de connexion
-     * @return Response
-     */
-    private function connexion(): Response
-    {
-        // Simuler une connexion réussie
-        return Response::json(
-            [
-                'statut' => 'succes',
-                'message' => 'Connexion réussie. Un e-mail de confirmation a été envoyé.',
-                'redirect' => '/', // Redirection vers la page d'authentification
-                'redirectDelay' => 1500 // Délai de redirection en millisecondes
-            ]
-        );
-    }
-
-    /**
-     * Fonction d'envoi du mail de vérification
-     * @return Response
-     */
-    private function envoieMail(): Response
-    {
-        // Ici, vous pouvez ajouter la logique d'envoi de l'e-mail de vérification
-        // Par exemple, envoyer un e-mail avec un lien de confirmation.
-
-        // Simuler un envoi d'e-mail réussi
+        // Valider l'IP
+        if (!$this->estIPValide($identifiantPermanent)) {
+            return $this->error("Identifiant permanent invalide");
+        }
+        // Passer à l'étape suivante
         return Response::view('authentification', [
-            'nouvelleConnexion' => false, // Indique que c'est une nouvelle connexion
-            'etapeAuthentification' => 'connexion', // Indique l'étape suivante de l'authentification
-            'txtButton' => "S'inscrire" // Texte du bouton
+            'ip' => $identifiantPermanent,
+            'etape' => 'envoi_email',
+            'txtButton' => 'Envoyer le code'
         ]);
     }
 
     /**
-     * Fonction d'inscription de l'utilisateur
-     * @return Response
+     * Valider un identifiant permanent
      */
-    private function inscription(): Response
+    private
+    function estIPValide(string $ip): bool
     {
-        // Ici, vous pouvez ajouter la logique d'inscription de l'utilisateur
-        // Par exemple, enregistrer les informations dans la base de données
-        // et envoyer un e-mail de confirmation.
-
-        // Simuler une inscription réussie
-        return Response::json(
-            [
-                'statut' => 'succes',
-                'message' => 'Inscription réussie. Un e-mail de confirmation a été envoyé.',
-                'redirect' => '/authentification', // Redirection vers la page d'authentification
-                'redirectDelay' => 1500 // Délai de redirection en millisecondes
-            ]
-        );
+        // TODO: Implémenter votre logique de validation
+        return !empty($ip) && strlen($ip) >= 3;
     }
 
-    public function index(): Response
+    /**
+     * ÉTAPE 2 : Envoyer le code de vérification par email
+     */
+    private
+    function envoyerCodeEmail(): Response
+    {
+        // Récupérer l'email saisi
+        $emailUtilisateur = $this->request->getPostParams('email');
+
+        return $this->info("A faire : Envoyer un email à $emailUtilisateur avec le code de vérification");
+    }
+
+    /**
+     * ÉTAPE 3 : Vérifier le code saisi par l'utilisateur
+     */
+    private
+    function verifierCode(): Response
+    {
+        // Code saisi par l'utilisateur
+        $codeSaisiParUtilisateur = $this->request->getPostParams('code');
+        // Générer un code de vérification (pour l'exemple, on utilise un code fixe)
+        $codeVerification = $this->genererCodeVerification(); // Nope on doit conserver le code envoyé par email
+        return $this->info("A faire : Vérifier le code saisi ($codeSaisiParUtilisateur) avec le code envoyé ($codeVerification)");
+    }
+
+    /**
+     * ÉTAPE 4 : Créer le compte utilisateur
+     */
+    private
+    function creerCompte(): Response
+    {
+        // Récupérer les mots de passe
+        $motDePasse = $this->request->getPostParams('password');
+        $confirmationMotDePasse = $this->request->getPostParams('password_confirm');
+
+        // Vérifier que les mots de passe correspondent
+        if ($motDePasse !== $confirmationMotDePasse) {
+            return $this->error("Les mots de passe ne correspondent pas");
+        }
+
+        // TODO: Enregistrer l'utilisateur en base de données
+
+        return $this->succes("Compte créé avec succès");
+    }
+
+    /*****************************************************************
+     * MÉTHODES UTILITAIRES
+     ****************************************************************/
+
+    /**
+     * Page d'accueil - première visite
+     */
+    public
+    function index(): Response
     {
         return Response::view('authentification', [
-            'etapeAuthentification' => 'verification',
-            'txtButton' => "Vérifié le statut" // Texte du bouton
+            'etape' => 'verification',
+            'txtButton' => 'Vérifier le statut'
         ]);
+    }
+
+    /**
+     * Générer un code de vérification à 6 chiffres
+     */
+    private
+    function genererCodeVerification(): string
+    {
+        return (string)rand(100000, 999999);
     }
 
 }
