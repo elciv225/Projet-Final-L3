@@ -157,20 +157,50 @@ async function handleResponse(response, form) {
     // Traitement unifié
     if (data.redirect) {
         window.location.href = data.redirect; // Redirection classique
+        return;
     }
-    else if (data.html) {
+
+    // Si on a du HTML (vue), le traiter en premier
+    if (data.html) {
         if (isFullPage(data.html)) {
             replaceFullPage(data.html, form.action); // Vue complète
         } else {
             updateContent(data.html, form); // Fragment HTML
         }
     }
-    else if (data.status === 'success') {
-        handleSuccess(data, form); // Ancienne logique JSON
+
+    // Ensuite traiter les messages/statuts JSON (après la mise à jour de la vue)
+    if (data.statut === 'succes' || data.status === 'success') {
+        showPopup(data.message || 'Opération réussie', 'success');
+
+        // Callback personnalisé
+        const callback = form.dataset.callback;
+        if (callback && window[callback]) {
+            window[callback](data);
+        }
+
+        // Réinitialisation du formulaire
+        if (form.dataset.reset !== 'false') {
+            form.reset();
+        }
+
+        // Si une redirection est demandée (avec délai)
+        if (data.redirect) {
+            setTimeout(() => {
+                window.location.href = data.redirect;
+            }, data.redirectDelay || 2000);
+        }
     }
-    else if (data.status === 'error') {
-        showPopup(data.message || 'Erreur', 'error');
+    else if (data.statut === 'error' || data.status === 'error') {
+        showPopup(data.message || 'Une erreur est survenue', 'error');
     }
+    else if (data.statut === 'warning' || data.status === 'warning') {
+        showPopup(data.message || 'Avertissement', 'warning');
+    }
+    else if (data.statut === 'info' || data.status === 'info') {
+        showPopup(data.message || 'Information', 'info');
+    }
+    // Si on a seulement du HTML sans statut, pas de popup supplémentaire
 }
 
 function isFullPage(html) {
@@ -238,7 +268,7 @@ function reloadScripts() {
 }
 
 function handleSuccess(data, form) {
-    showPopup(data.message || 'Succès', 'success');
+    showPopup(data.message || 'Opération réussie', 'success');
 
     // Callback personnalisé
     const callback = form.dataset.callback;
@@ -295,7 +325,26 @@ window.ajaxRequest = async function(url, options = {}) {
             ? await response.json()
             : await response.text();
 
-        if (options.success) options.success(data);
+        // Gestion des réponses JSON avec statut
+        if (typeof data === 'object' && data !== null) {
+            if (data.statut === 'succes' || data.status === 'success') {
+                if (options.success) options.success(data);
+                else showPopup(data.message || 'Opération réussie', 'success');
+            } else if (data.statut === 'error' || data.status === 'error') {
+                if (options.error) options.error(data);
+                else showPopup(data.message || 'Une erreur est survenue', 'error');
+            } else if (data.statut === 'warning' || data.status === 'warning') {
+                showPopup(data.message || 'Avertissement', 'warning');
+                if (options.success) options.success(data);
+            } else if (data.statut === 'info' || data.status === 'info') {
+                showPopup(data.message || 'Information', 'info');
+                if (options.success) options.success(data);
+            } else {
+                if (options.success) options.success(data);
+            }
+        } else {
+            if (options.success) options.success(data);
+        }
 
     } catch (error) {
         if (options.error) options.error(error);

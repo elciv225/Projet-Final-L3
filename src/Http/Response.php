@@ -28,21 +28,62 @@ class Response
         }
     }
 
-    public static function view(string $view, array $data = [], ?array $components = [], int $status = 200, array $headers = []): self
-    {
+    /**
+     * Retourne une vue HTML ou du JSON selon le contexte
+     * Utilise les paramètres nommés PHP 8+ pour plus de clarté
+     *
+     * @param string $view Nom de la vue
+     * @param array $data Données pour la vue
+     * @param array $components Composants à inclure dans la vue
+     * @param array $json Données JSON pour les requêtes AJAX
+     * @param int $status Code de statut HTTP
+     * @param array $headers En-têtes HTTP
+     * @return self
+     */
+    public static function view(
+        string $view,
+        array $data = [],
+        array $components = [],
+        array $json = [],
+        int $status = 200,
+        array $headers = []
+    ): self {
+        // Détecter si c'est une requête AJAX
+        $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
         try {
             $viewInstance = View::make($view, $data);
 
-            if ($components) {
+            // Ajouter les composants s'ils sont fournis
+            if (!empty($components)) {
                 $viewInstance->withComponents($components);
             }
 
+            // Si c'est une requête AJAX ET qu'on a des données JSON
+            if ($isAjax && !empty($json)) {
+                // Retourner JSON avec le HTML de la vue inclus
+                $htmlContent = $viewInstance->render();
+                $jsonResponse = array_merge($json, ['html' => $htmlContent]);
+                return self::json($jsonResponse, $status, $headers);
+            }
+
+            // Sinon, retourner la vue normale
             return new self($viewInstance, $status, $headers);
+
         } catch (\Exception $e) {
             // Optionnel : journaliser l'erreur
             error_log($e->getMessage());
 
-            // Renvoyer une vue 404 avec le code 404
+            // Si c'est AJAX et qu'on a une erreur, retourner JSON
+            if ($isAjax) {
+                return self::json([
+                    'statut' => 'error',
+                    'message' => 'Erreur lors du chargement de la vue'
+                ], 404, $headers);
+            }
+
+            // Sinon renvoyer une vue 404 avec le code 404
             return new self(View::make('errors/404'), 404);
         }
     }
@@ -53,5 +94,44 @@ class Response
         return new self(json_encode($data), $status, $headers);
     }
 
+    /**
+     * Méthodes de convenance pour les réponses courantes
+     */
+    public static function success(string $message, array $data = [], string $redirect = null): self
+    {
+        $response = [
+            'statut' => 'succes',
+            'message' => $message,
+        ];
 
+        if (!empty($data)) {
+            $response['data'] = $data;
+        }
+
+        if ($redirect) {
+            $response['redirect'] = $redirect;
+        }
+
+        return self::json($response);
+    }
+
+    public static function error(string $message, array $data = [], int $status = 400): self
+    {
+        $response = [
+            'statut' => 'error',
+            'message' => $message,
+        ];
+
+        if (!empty($data)) {
+            $response['data'] = $data;
+        }
+
+        return self::json($response, $status);
+    }
+
+    public static function redirect(string $url, int $status = 302): self
+    {
+        $headers = ['Location' => $url];
+        return new self('', $status, $headers);
+    }
 }

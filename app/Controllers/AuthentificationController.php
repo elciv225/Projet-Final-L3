@@ -42,25 +42,38 @@ class AuthentificationController extends Controller
         // Récupérer l'IP saisie par l'utilisateur
         $identifiantPermanent = $this->request->getPostParams('ip');
 
-        // Valider l'IP
-        if (!$this->estIPValide($identifiantPermanent)) {
-            return $this->error("Identifiant permanent invalide");
+        // Lancement de la validation de l'IP
+        $erreur = $this->estIPValide($identifiantPermanent);
+        if ($erreur !== null) {
+            return $erreur; // Retourne l'erreur si IP invalide
         }
         // Passer à l'étape suivante
-        return Response::view('authentification', [
+        return Response::view('authentification', data: [
             'ip' => $identifiantPermanent,
             'etape' => 'envoi_email',
             'txtButton' => 'Envoyer le code'
+        ], json: [
+            'statut' => 'succes',
+            'message' => "Identifiant permanent valide : $identifiantPermanent"
         ]);
     }
 
     /**
      * Valider un identifiant permanent
      */
-    private function estIPValide(string $ip): bool
+    private function estIPValide(string $ip): null|Response
     {
         // TODO: Implémenter votre logique de validation
-        return !empty($ip) && strlen($ip) >= 3;
+        if (empty($ip)) {
+            return $this->error("L'identifiant permanent ne peut pas être vide");
+        } elseif (strlen($ip) < 14) {
+            return $this->error("L'identifiant permanent doit faire au moins 14 caractères");
+        } elseif (strlen($ip) > 14) {
+            return $this->error("L'identifiant permanent ne doit pas dépasser 14 caractères");
+        } elseif (!preg_match('/^[A-Z0-9]{14}$/', $ip)) {
+            return $this->error("L'identifiant permanent doit contenir uniquement des lettres majuscules et des chiffres");
+        }
+        return null; // IP valide
     }
 
     /**

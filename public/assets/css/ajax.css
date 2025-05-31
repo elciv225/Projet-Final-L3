@@ -68,15 +68,6 @@
     }
 }
 
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.02);
-    }
-}
 
 /* Contenu de la popup */
 .popup-content {
@@ -191,11 +182,7 @@
     border: 1px solid rgb(255 255 255 / 30%);
 }
 
-/* Effet de hover sur la popup */
-.popup:hover {
-    animation: pulse 0.6s ease;
-    box-shadow: var(--shadow-lg), 0 8px 25px rgb(0 0 0 / 15%);
-}
+
 
 /* Loader amélioré utilisant les variables du thème */
 .loader-overlay {
