@@ -38,4 +38,6 @@ else
   copy_gitignore_file ".gitignore.dev"
 fi
 
+git rm -r --cached .
+
 exit 0

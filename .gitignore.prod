@@ -21,3 +21,9 @@ eslint.config.js
 .stylelintrc.json
 Rappel Commande GIT
 README.md
+node_modules/
+vendor/
+composer.lock
+package-lock.json
+package.json
+Rappel Commande GIT

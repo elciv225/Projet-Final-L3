@@ -3,3 +3,10 @@
 .vscode/
 .DS_Store
 Thumbs.db
+
+.gitignore.dev
+.gitignore.prod
+.env.prod
+.env.dev
+docker-compose.prod.yml
+docker-compose.dev.yml
