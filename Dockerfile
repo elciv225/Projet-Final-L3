@@ -13,8 +13,6 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     libonig-dev \
     libxml2-dev \
-    libssl-dev \
-    openssl \
     unzip \
     git \
     curl \
@@ -22,7 +20,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Installer les extensions PHP (OpenSSL inclus par défaut dans PHP 8.3)
+# Installer les extensions PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
     gd \
@@ -42,7 +40,7 @@ RUN pecl update-channels \
     && docker-php-ext-enable xdebug redis
 
 # Activer les modules Apache nécessaires
-RUN a2enmod rewrite headers ssl
+RUN a2enmod rewrite headers
 
 # Configuration PHP pour le développement
 RUN echo "memory_limit=512M" >> /usr/local/etc/php/conf.d/memory.ini \
@@ -65,7 +63,7 @@ RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Configuration du DocumentRoot Apache
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+ENV APACHE_DOCUMENT_ROOT /var/www/html
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 

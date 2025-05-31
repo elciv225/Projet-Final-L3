@@ -37,8 +37,7 @@ class AuthentificationController extends Controller
     /**
      * ÉTAPE 1 : Vérifier l'identifiant permanent (IP)
      */
-    private
-    function verifierIP(): Response
+    private function verifierIP(): Response
     {
         // Récupérer l'IP saisie par l'utilisateur
         $identifiantPermanent = $this->request->getPostParams('ip');
@@ -58,8 +57,7 @@ class AuthentificationController extends Controller
     /**
      * Valider un identifiant permanent
      */
-    private
-    function estIPValide(string $ip): bool
+    private function estIPValide(string $ip): bool
     {
         // TODO: Implémenter votre logique de validation
         return !empty($ip) && strlen($ip) >= 3;
@@ -68,8 +66,7 @@ class AuthentificationController extends Controller
     /**
      * ÉTAPE 2 : Envoyer le code de vérification par email
      */
-    private
-    function envoyerCodeEmail(): Response
+    private function envoyerCodeEmail(): Response
     {
         // Récupérer l'email saisi
         $emailUtilisateur = $this->request->getPostParams('email');
@@ -80,8 +77,7 @@ class AuthentificationController extends Controller
     /**
      * ÉTAPE 3 : Vérifier le code saisi par l'utilisateur
      */
-    private
-    function verifierCode(): Response
+    private function verifierCode(): Response
     {
         // Code saisi par l'utilisateur
         $codeSaisiParUtilisateur = $this->request->getPostParams('code');
@@ -91,10 +87,21 @@ class AuthentificationController extends Controller
     }
 
     /**
+     * Générer un code de vérification à 6 chiffres
+     */
+    private function genererCodeVerification(): string
+    {
+        return (string)rand(100000, 999999);
+    }
+
+    /*****************************************************************
+     * MÉTHODES UTILITAIRES
+     ****************************************************************/
+
+    /**
      * ÉTAPE 4 : Créer le compte utilisateur
      */
-    private
-    function creerCompte(): Response
+    private function creerCompte(): Response
     {
         // Récupérer les mots de passe
         $motDePasse = $this->request->getPostParams('password');
@@ -110,10 +117,6 @@ class AuthentificationController extends Controller
         return $this->succes("Compte créé avec succès");
     }
 
-    /*****************************************************************
-     * MÉTHODES UTILITAIRES
-     ****************************************************************/
-
     /**
      * Page d'accueil - première visite
      */
@@ -124,15 +127,6 @@ class AuthentificationController extends Controller
             'etape' => 'verification',
             'txtButton' => 'Vérifier le statut'
         ]);
-    }
-
-    /**
-     * Générer un code de vérification à 6 chiffres
-     */
-    private
-    function genererCodeVerification(): string
-    {
-        return (string)rand(100000, 999999);
     }
 
 }

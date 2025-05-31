@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/authentification.css">
+    <link rel="stylesheet" href="/assets/css/ajax.css">
     <script src="/assets/js/ajax.js" defer></script>
 </head>
 <body>
