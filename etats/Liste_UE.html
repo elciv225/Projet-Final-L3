@@ -1,10 +1,332 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des UE</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0; /* Pas de padding sur le body pour un format A4 */
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 297mm; /* Largeur A4 en paysage */
+            min-height: 297mm; /* Hauteur A4, min-height pour permettre le débordement */
+            margin: 20mm auto; /* Marge du document sur la page */
+            background-color: #ffffff;
+            padding: 25mm 20mm; /* Marges intérieures du document */
+            border-radius: 0; /* Pas de bords arrondis pour un document imprimable */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Ombre pour l'affichage écran */
+            box-sizing: border-box; /* Inclure padding dans la largeur/hauteur totale */
+        }
+
+        /* Styles pour l'en-tête */
+        .report-header {
+            display: flex;
+            justify-content: flex-end; /* Aligner la date à droite */
+            align-items: flex-start;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .date-section {
+            text-align: right;
+        }
+
+        .date-section p {
+            margin: 0 0 5px 0;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .date-section .date-value {
+            font-weight: bold;
+            color: #0056b3;
+        }
+
+        .institution-logos {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo-placeholder {
+            width: 120px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #0056b3;
+            font-weight: bold;
+            font-size: 0.9em;
+            border-radius: 5px;
+        }
+
+
+        .institution-logos img {
+            width: 120px;
+            height: auto;
+            object-fit: contain;
+        }
+
+
+        .report-main-title {
+            text-align: center;
+            color: #0056b3;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #d0e7ff;
+            padding-bottom: 10px;
+        }
+
+        .printed-by-info {
+            text-align: right;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .printed-by-info .printer-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Styles pour le tableau des règlements */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+
+        .data-table th, .data-table td {
+            border: 1px solid #e0e0e0;
+            padding: 12px 15px;
+            text-align: left; /* Aligné à gauche pour les données */
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        .data-table th {
+            background-color: #eaf6ff;
+            color: #0056b3;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center; /* Centré pour les titres de colonne */
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .footer-left, .footer-right {
+            font-weight: bold;
+        }
+
+        /* --- RÈGLES SPÉCIFIQUES POUR L'IMPRESSION --- */
+        /* --- RÈGLES SPÉCIFIQUES POUR L'IMPRESSION --- */
+        @media print {
+            /* La règle suivante est cruciale pour le mode paysage */
+            @page {
+                size: A4 landscape; /* Définit la taille de la page et l'orientation */
+                margin: 0; /* Important pour que le padding du .container prenne le dessus */
+            }
+
+            body {
+                background-color: #fff;
+                margin: 0;
+                padding: 0;
+            }
+
+            .container {
+                /* Inverser les dimensions pour le paysage A4 */
+                width: 297mm; /* Largeur A4 en paysage */
+                min-height: 210mm; /* Hauteur A4 en paysage */
+                margin: 0; /* Pas de marge sur la page imprimée */
+                padding: 20mm 25mm; /* Ajuster le padding pour le paysage (ex: 20mm haut/bas, 25mm gauche/droite) */
+                box-shadow: none;
+                border-radius: 0;
+                overflow: hidden;
+            }
+
+            /* Le reste des règles d'impression (couleurs, bordures, etc.) reste inchangé */
+            h1, h2, h3, h4, h5, h6 {
+                color: #000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            p, li, table, th, td {
+                color: #000;
+            }
+
+            .data-table th,
+            .data-table tr:nth-child(even) {
+                background-color: #fff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .data-table th, .data-table td {
+                border: 1px solid #000;
+            }
+
+            .report-header {
+                border-bottom: 1px solid #000;
+            }
+
+            .report-main-title {
+                border-bottom: 2px solid #000;
+            }
+
+            .institution-logos {
+                border-bottom: 1px solid #000;
+            }
+
+            .logo-placeholder {
+                background-color: #fff !important;
+                border: 1px dashed #000;
+                color: #000;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            footer {
+                border-top: 1px solid #000;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+<div class="container">
+    <header class="report-header">
+        <div class="date-section">
+            <p>Date d'édition: <span class="date-value">JJ/MM/AAAA</span></p>
+        </div>
+    </header>
 
+    <section class="institution-logos">
+        <div class="logo-placeholder"><img src="logo-univ.png"></div>
+        <div class="logo-placeholder"><img src="logo-math-info.png"></div>
+    </section>
+
+    <h1 class="report-main-title">REGLEMENTS DES FRAIS D'INSCRIPTION</h1>
+
+    <div class="printed-by-info">
+        <p>IMPRIMER PAR: <span class="printer-name">S( )</span></p>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>N°étudiant</th>
+            <th>Nom</th>
+            <th>Prénoms</th>
+            <th>Frais scolaire</th>
+            <th>Scolarité Payée</th>
+            <th>Reste à Payée</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>001</td>
+            <td>DUPONT</td>
+            <td>Jean</td>
+            <td>500.000 XOF</td>
+            <td>300.000 XOF</td>
+            <td>200.000 XOF</td>
+        </tr>
+        <tr>
+            <td>002</td>
+            <td>MARTIN</td>
+            <td>Sophie</td>
+            <td>500.000 XOF</td>
+            <td>500.000 XOF</td>
+            <td>0 XOF</td>
+        </tr>
+        <tr>
+            <td>003</td>
+            <td>BERTRAND</td>
+            <td>Marc</td>
+            <td>500.000 XOF</td>
+            <td>100.000 XOF</td>
+            <td>400.000 XOF</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <footer>
+        <div class="footer-left">Nom plateforme</div>
+        <div class="footer-right">Miage / NotifPage</div>
+    </footer>
+</div>
 </body>
 </html>
