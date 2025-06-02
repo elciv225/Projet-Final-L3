@@ -4,26 +4,9 @@
 .DS_Store
 Thumbs.db
 
-# Fichier sensible
-.env.dev
-.env.prod
 .gitignore.dev
 .gitignore.prod
-docker-compose.dev.yml
+.env.prod
+.env.dev
 docker-compose.prod.yml
-Dockerfile.prod
-Dockerfile.dev
-
-/scripts
-
-eslint.config.js
-.stylelintignore
-.stylelintrc.json
-Rappel Commande GIT
-README.md
-node_modules/
-vendor/
-composer.lock
-package-lock.json
-package.json
-Rappel Commande GIT
+docker-compose.dev.yml
