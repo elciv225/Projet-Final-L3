@@ -57,7 +57,7 @@
     --link-hover: #1A5E63;
 }
 
-/* Mode sombre */
+/* Mode sombre
 @media (prefers-color-scheme: dark) {
     :root {
         --primary-color: #1A5E63;
@@ -94,6 +94,7 @@
         --link-hover: #15484B;
     }
 }
+*/
 
 * {
     padding: 0;
