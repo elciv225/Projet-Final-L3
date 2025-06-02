@@ -1004,25 +1004,25 @@
             <div class="section-content">
                 <div class="form-grid">
                     <div class="form-group">
-                        <input type="text" class="form-input" placeholder=" " id="personnel-number">
+                        <input type="text" name="personnelNumber" class="form-input" placeholder=" " id="personnel-number">
                         <label class="form-label" for="personnel-number">Numéro Matricule</label>
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-input" placeholder=" " id="personnel-lastname">
+                        <input type="text" name="personnelLastname" class="form-input" placeholder=" " id="personnel-lastname">
                         <label class="form-label" for="personnel-lastname">Nom</label>
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-input" placeholder=" " id="personnel-firstname">
+                        <input type="text" name="personnelFirstname" class="form-input" placeholder=" " id="personnel-firstname">
                         <label class="form-label" for="personnel-firstname">Prénoms</label>
                     </div>
                     <div class="form-group">
-                        <input type="date" class="form-input" placeholder=" " id="birth-date">
+                        <input type="date" name="dateBirth" class="form-input" placeholder=" " id="birth-date">
                         <label class="form-label" for="birth-date">Date de Naissance</label>
                     </div>
                 </div>
                 <div class="form-grid" style=" margin-top: 20px;">
                     <div class="form-group" style=" padding-right: 300px;">
-                        <input type="mail" class="form-input" placeholder=" " id="email">
+                        <input type="mail" name="email" class="form-input" placeholder=" " id="email">
                         <label class="form-label" for="email">Email</label>
                     </div>
                     <div class="radio-group">
@@ -1063,15 +1063,15 @@
                         <label class="form-label" for="poste">Poste occupé</label>
                     </div>
                     <div class="form-group">
-                        <input type="date" class="form-input" placeholder=" " id="date-affectation">
+                        <input type="date" name="dateAffectation" class="form-input" placeholder=" " id="date-affectation">
                         <label class="form-label" for="date-affectation">Date d'Affectation</label>
                     </div>
                     <div class="form-group">
-                        <input type="date" class="form-input" placeholder=" " id="date-embauche">
+                        <input type="date" name="dateEmbauche" class="form-input" placeholder=" " id="date-embauche">
                         <label class="form-label" for="date-embauche">Date D'Embauche</label>
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-input" placeholder=" " id="contact">
+                        <input type="text" name="contact" class="form-input" placeholder=" " id="contact">
                         <label class="form-label" for="contact">contact</label>
                     </div>
                 </div>
@@ -1090,7 +1090,7 @@
                 <div class="header-actions">
                     <div class="search-container">
                         <span class="search-icon">🔍</span>
-                        <input type="text" class="search-input" placeholder="Rechercher par ...">
+                        <input type="text" name="search" class="search-input" placeholder="Rechercher par ...">
                     </div>
 
                 </div>
