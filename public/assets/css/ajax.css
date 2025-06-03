@@ -169,7 +169,6 @@
         transform: scale(0.9);
         opacity: 0;
     }
-
     to {
         transform: scale(1);
         opacity: 1;
@@ -202,13 +201,82 @@
     }
 }
 
+/* ========================================= */
+/* NOUVEAU: Loaders spécifiques aux conteneurs */
+/* ========================================= */
+
+.container-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.container-loader-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgb(255 255 255 / 80%);
+    backdrop-filter: blur(2px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    font-family: mulish-variable, sans-serif;
+}
+
+.container-loader-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgb(26 94 99 / 20%);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: container-loader-spin 1s linear infinite;
+    box-shadow: 0 4px 15px rgb(26 94 99 / 20%);
+}
+
+.container-loader-overlay p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+}
+
+@keyframes container-loader-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Variation pour le mode sombre */
+@media (prefers-color-scheme: dark) {
+    .container-loader-overlay {
+        background: rgb(0 0 0 / 70%);
+    }
+
+    .container-loader-spinner {
+        border: 3px solid rgb(255 255 255 / 20%);
+        border-top: 3px solid var(--primary-color);
+        box-shadow: 0 4px 15px rgb(0 0 0 / 30%);
+    }
+}
+
+/* ========================================= */
+/* Styles existants (améliorés) */
+/* ========================================= */
+
 /* Animations améliorées */
 @keyframes slide-in {
     from {
         transform: translateX(100%) scale(0.9);
         opacity: 0;
     }
-
     to {
         transform: translateX(0) scale(1);
         opacity: 1;
@@ -220,7 +288,6 @@
         transform: translateX(0) scale(1);
         opacity: 1;
     }
-
     to {
         transform: translateX(100%) scale(0.9);
         opacity: 0;
@@ -231,7 +298,6 @@
     0%, 100% {
         transform: scale(1);
     }
-
     50% {
         transform: scale(1.02);
     }
@@ -356,7 +422,7 @@
     box-shadow: var(--shadow-lg), 0 8px 25px rgb(0 0 0 / 15%);
 }
 
-/* Loader amélioré utilisant les variables du thème */
+/* Loader global amélioré */
 .loader-overlay {
     display: none;
     position: fixed;
@@ -382,13 +448,8 @@
 }
 
 @keyframes loader-spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Amélioration des boutons de formulaire AJAX */
@@ -418,7 +479,38 @@
     animation: loader-spin 0.8s infinite linear;
 }
 
+/* ========================================= */
+/* États de navigation pour les liens AJAX */
+/* ========================================= */
+
+.nav-link-ajax {
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.nav-link-ajax.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.nav-link-ajax.loading::after {
+    content: "";
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgb(255 255 255 / 30%);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: loader-spin 0.8s infinite linear;
+}
+
+/* ========================================= */
 /* Responsive design */
+/* ========================================= */
+
 @media (width <= 480px) {
     .popup {
         top: 10px;
@@ -434,6 +526,16 @@
     }
 
     #popup-message {
+        font-size: 13px;
+    }
+
+    .container-loader-spinner {
+        width: 32px;
+        height: 32px;
+        border-width: 2px;
+    }
+
+    .container-loader-overlay p {
         font-size: 13px;
     }
 }

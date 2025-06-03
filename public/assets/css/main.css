@@ -115,6 +115,11 @@ body {
 /* === Menu === */
 
 /* === Container principal === */
-.main-container {
-    display: flex;
+
+/* Content Area - Zone de contenu principal */
+#content-area {
+    position: relative; /* Important pour le positionnement du loader */
+    min-height: 100vh;
+    width: 100%;
+    background: var(--background-secondary);
 }

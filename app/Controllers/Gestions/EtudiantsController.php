@@ -13,10 +13,19 @@ class EtudiantsController
      */
     public function index(): Response
     {
-        return Response::view('gestions/etudiants/index', [
+        $data = [
             'title' => 'Gestion des Étudiants',
-            'heading' => 'Liste des Étudiants',
-            'content' => 'Ceci est la page de gestion des étudiants.'
-        ]);
+            'heading' => 'Étudiants',
+            'content' => 'Gestion des étudiants de l\'établissement.'
+        ];
+
+// Toujours retourner la vue de gestion, jamais la page complète
+        return Response::view('gestions/etudiants/index', $data);
+    }
+
+    private function isAjaxRequest(): bool
+    {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     }
 }

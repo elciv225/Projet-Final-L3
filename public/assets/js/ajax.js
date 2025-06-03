@@ -1,7 +1,9 @@
 /**
- * Système AJAX avancé - Support des vues complètes et fragments
+ * Système AJAX avancé - Support des vues complètes, fragments ET navigation
  * - Gestion des réponses JSON et HTML
  * - Mise à jour du DOM et de l'URL
+ * - Navigation dynamique avec liens AJAX
+ * - Loader spécifique aux conteneurs
  * - Compatible avec l'ancien code et le CSS existant
  */
 
@@ -9,11 +11,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialisation
     createGlobalElements();
     bindAjaxForms();
+    bindAjaxLinks(); // Nouvelle fonction pour les liens
     bindHistoryEvents();
 });
 
 // -------------------------------------------------------------------
-// Fonctions existantes (corrigées pour respecter le CSS)
+// Fonctions existantes (conservées)
 // -------------------------------------------------------------------
 function createGlobalElements() {
     // Popup - Structure corrigée pour correspondre au CSS
@@ -21,7 +24,7 @@ function createGlobalElements() {
         const popup = document.createElement('div');
         popup.id = 'ajax-popup';
         popup.className = 'popup';
-        popup.style.display = 'none'; // Respecte le CSS existant
+        popup.style.display = 'none';
         popup.innerHTML = `
             <div class="popup-content">
                 <span id="popup-message"></span>
@@ -30,21 +33,20 @@ function createGlobalElements() {
         `;
         document.body.appendChild(popup);
 
-        // Fermeture du popup
         popup.querySelector('.close-popup').addEventListener('click', closePopup);
     }
 
-    // Loader - Structure corrigée
+    // Loader global - Structure corrigée
     if (!document.getElementById('ajax-loader')) {
         const loader = document.createElement('div');
         loader.id = 'ajax-loader';
         loader.className = 'loader-overlay';
-        loader.style.display = 'none'; // Respecte le CSS existant
+        loader.style.display = 'none';
         loader.innerHTML = '<div class="loader"></div>';
         document.body.appendChild(loader);
     }
 
-    // Warning Card - Nouvelle card de confirmation
+    // Warning Card - Card de confirmation
     if (!document.getElementById('warning-card')) {
         const warningCard = document.createElement('div');
         warningCard.id = 'warning-card';
@@ -73,17 +75,15 @@ function showPopup(message, type = 'info') {
     const popup = document.getElementById('ajax-popup');
     if (!popup) return;
 
-    // Remise à zéro des classes puis ajout du type
     popup.className = `popup ${type}`;
     popup.querySelector('#popup-message').textContent = message;
-    popup.style.display = 'block'; // Utilise display au lieu de classList
+    popup.style.display = 'block';
 
-    // Auto-fermeture après 3 secondes avec animation
     setTimeout(() => {
         popup.style.animation = 'fade-out 0.5s ease-out';
         setTimeout(() => {
             popup.style.display = 'none';
-            popup.style.animation = ''; // Reset animation
+            popup.style.animation = '';
         }, 500);
     }, 3000);
 }
@@ -102,7 +102,7 @@ function closePopup() {
 function showLoader() {
     const loader = document.getElementById('ajax-loader');
     if (loader) {
-        loader.style.display = 'flex'; // Utilise flex comme dans le CSS
+        loader.style.display = 'flex';
     }
 }
 
@@ -114,84 +114,193 @@ function hideLoader() {
 }
 
 // -------------------------------------------------------------------
-// Fonctions pour la Warning Card
+// NOUVELLES FONCTIONS - Gestion des loaders spécifiques aux conteneurs
 // -------------------------------------------------------------------
-function showWarningCard(message, onConfirm) {
-    const warningCard = document.getElementById('warning-card');
-    const warningMessage = document.getElementById('warning-message');
-    const continueBtn = document.getElementById('warning-continue');
-    const cancelBtn = document.getElementById('warning-cancel');
+function showContainerLoader(containerId) {
+    const container = document.querySelector(containerId);
+    if (!container) return;
 
-    if (!warningCard || !warningMessage) return;
+    // Supprimer le loader existant s'il y en a un
+    const existingLoader = container.querySelector('.container-loader');
+    if (existingLoader) {
+        existingLoader.remove();
+    }
 
-    // Définir le message
-    warningMessage.textContent = message;
+    // Créer et ajouter le nouveau loader
+    const loader = document.createElement('div');
+    loader.className = 'container-loader';
+    loader.innerHTML = `
+        <div class="container-loader-overlay">
+            <div class="container-loader-spinner"></div>
+            <p>Chargement...</p>
+        </div>
+    `;
 
-    // Afficher la card
-    warningCard.style.display = 'flex';
-
-    // Gestionnaire pour le bouton Continuer
-    const handleContinue = () => {
-        hideWarningCard();
-        if (onConfirm) onConfirm();
-        cleanup();
-    };
-
-    // Gestionnaire pour le bouton Annuler
-    const handleCancel = () => {
-        hideWarningCard();
-        cleanup();
-    };
-
-    // Gestionnaire pour fermer en cliquant sur l'overlay
-    const handleOverlayClick = (e) => {
-        if (e.target === warningCard) {
-            handleCancel();
-        }
-    };
-
-    // Nettoyer les anciens event listeners
-    const cleanup = () => {
-        continueBtn.removeEventListener('click', handleContinue);
-        cancelBtn.removeEventListener('click', handleCancel);
-        warningCard.removeEventListener('click', handleOverlayClick);
-    };
-
-    // Ajouter les event listeners
-    continueBtn.addEventListener('click', handleContinue);
-    cancelBtn.addEventListener('click', handleCancel);
-    warningCard.addEventListener('click', handleOverlayClick);
+    container.style.position = 'relative';
+    container.appendChild(loader);
 }
 
-function hideWarningCard() {
-    const warningCard = document.getElementById('warning-card');
-    if (warningCard) {
-        warningCard.style.display = 'none';
+function hideContainerLoader(containerId) {
+    const container = document.querySelector(containerId);
+    if (!container) return;
+
+    const loader = container.querySelector('.container-loader');
+    if (loader) {
+        loader.remove();
     }
 }
 
 // -------------------------------------------------------------------
-// Fonctions modifiées/ajoutées
+// NOUVELLES FONCTIONS - Navigation AJAX
 // -------------------------------------------------------------------
-function bindAjaxForms() {
-    document.querySelectorAll('form.ajax-form').forEach(form => {
+function bindAjaxLinks() {
+    // Gestion des liens avec la classe nav-link-ajax
+    document.addEventListener('click', async function(e) {
+        const link = e.target.closest('.nav-link-ajax');
+        if (!link) return;
+
+        e.preventDefault();
+        await handleAjaxNavigation(link);
+    });
+}
+
+async function handleAjaxNavigation(link) {
+    const url = link.href;
+    const target = link.dataset.target || '#content-area';
+
+    if (!url || url === '#') return;
+
+    // Mettre à jour l'état actif du menu
+    updateActiveNavigation(link);
+
+    // Afficher le loader dans le conteneur cible
+    showContainerLoader(target);
+
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html, application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+
+        const contentType = response.headers.get('content-type');
+        let data;
+
+        if (contentType?.includes('application/json')) {
+            data = await response.json();
+        } else {
+            data = { html: await response.text() };
+        }
+
+        // Mettre à jour le contenu
+        await handleNavigationResponse(data, url, target);
+
+    } catch (error) {
+        console.error('Erreur de navigation AJAX:', error);
+        showPopup('Erreur lors du chargement de la page', 'error');
+    } finally {
+        hideContainerLoader(target);
+    }
+}
+
+async function handleNavigationResponse(data, url, target) {
+    const container = document.querySelector(target);
+
+    if (!container) {
+        showPopup('Conteneur cible introuvable', 'error');
+        return;
+    }
+
+    // Si on a du HTML
+    if (data.html) {
+        // Extraire le contenu si c'est une page complète
+        let content = data.html;
+
+        if (isFullPage(content)) {
+            // Extraire le contenu du main-content
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            const mainContent = tempDiv.querySelector('.main-content');
+            content = mainContent ? mainContent.outerHTML : content;
+        }
+
+        // Mettre à jour le contenu du conteneur
+        container.innerHTML = content;
+
+        // Mettre à jour l'URL sans recharger la page
+        if (url !== window.location.href) {
+            window.history.pushState({ url, target }, '', url);
+        }
+
+        // Rebinder les événements sur le nouveau contenu
+        rebindEventsInContainer(container);
+
+    }
+
+    // Traiter les messages JSON si présents
+    if (data.statut) {
+        const messageType = data.statut === 'succes' ? 'success' : data.statut;
+        showPopup(data.message || 'Action terminée', messageType);
+    }
+}
+
+function updateActiveNavigation(activeLink) {
+    // Retirer la classe active de tous les liens
+    document.querySelectorAll('.nav-link-ajax').forEach(link => {
+        link.classList.remove('active');
+    });
+
+    // Ajouter la classe active au lien cliqué
+    activeLink.classList.add('active');
+}
+
+function rebindEventsInContainer(container) {
+    // Rebinder les formulaires AJAX dans le nouveau contenu
+    container.querySelectorAll('form.ajax-form').forEach(form => {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
-
-            // Vérifier si le formulaire a un attribut warning
-            const warningMessage = form.dataset.warning || form.getAttribute('warning');
-            if (warningMessage && !form.dataset.warningConfirmed) {
-                // Afficher la card de warning
-                showWarningCard(warningMessage, () => {
-                    // Si l'utilisateur confirme, marquer comme confirmé et soumettre
-                    form.dataset.warningConfirmed = 'true';
-                    submitAjaxForm(form);
-                });
-                return;
-            }
-
             await submitAjaxForm(this);
         });
+    });
+
+    // Rebinder les liens AJAX dans le nouveau contenu
+    container.querySelectorAll('.nav-link-ajax').forEach(link => {
+        link.addEventListener('click', async function(e) {
+            e.preventDefault();
+            await handleAjaxNavigation(this);
+        });
+    });
+
+    // Rebinder les scripts spécifiques (comme personnel-administratif.js)
+    reloadContainerScripts(container);
+}
+
+function reloadContainerScripts(container) {
+    // Exécuter les scripts inline dans le nouveau contenu
+    container.querySelectorAll('script').forEach(script => {
+        if (script.textContent.trim()) {
+            try {
+                eval(script.textContent);
+            } catch (error) {
+                console.warn('Erreur lors de l\'exécution du script:', error);
+            }
+        }
+    });
+}
+
+// -------------------------------------------------------------------
+// Fonctions modifiées pour la compatibilité
+// -------------------------------------------------------------------
+function bindAjaxForms() {
+    document.addEventListener('submit', async function(e) {
+        if (!e.target.classList.contains('ajax-form')) return;
+        e.preventDefault();
+        await submitAjaxForm(e.target);
     });
 }
 
@@ -200,6 +309,19 @@ async function submitAjaxForm(form) {
     const method = form.method || 'POST';
     const formData = new FormData(form);
     const submitButton = form.querySelector('button[type="submit"]');
+    const target = form.dataset.target || null;
+
+    // Vérifier si le formulaire a un attribut warning
+    const warningMessage = form.dataset.warning || form.getAttribute('warning');
+    if (warningMessage && !form.dataset.warningConfirmed) {
+        // Afficher la card de warning
+        showWarningCard(warningMessage, () => {
+            // Si l'utilisateur confirme, marquer comme confirmé et soumettre
+            form.dataset.warningConfirmed = 'true';
+            submitAjaxForm(form);
+        });
+        return;
+    }
 
     // Animation du bouton de soumission
     if (submitButton) {
@@ -207,7 +329,12 @@ async function submitAjaxForm(form) {
         submitButton.disabled = true;
     }
 
-    showLoader();
+    // Afficher le loader approprié
+    if (target) {
+        showContainerLoader(target);
+    } else {
+        showLoader();
+    }
 
     try {
         const response = await fetch(action, {
@@ -225,12 +352,22 @@ async function submitAjaxForm(form) {
         showPopup('Erreur réseau', 'error');
         console.error('Erreur AJAX:', error);
     } finally {
-        hideLoader();
+        // Masquer le loader approprié
+        if (target) {
+            hideContainerLoader(target);
+        } else {
+            hideLoader();
+        }
 
         // Restauration du bouton
         if (submitButton) {
             submitButton.classList.remove('loading');
             submitButton.disabled = false;
+        }
+
+        // Supprimer la confirmation de warning après soumission
+        if (form.dataset.warningConfirmed) {
+            delete form.dataset.warningConfirmed;
         }
     }
 }
@@ -239,7 +376,6 @@ async function handleResponse(response, form) {
     const contentType = response.headers.get('content-type');
     let data;
 
-    // Détection du type de réponse
     if (contentType?.includes('application/json')) {
         data = await response.json();
     } else if (contentType?.includes('text/html')) {
@@ -248,37 +384,31 @@ async function handleResponse(response, form) {
         throw new Error('Type de réponse non supporté');
     }
 
-    // Traitement unifié
     if (data.redirect) {
-        window.location.href = data.redirect; // Redirection classique
+        window.location.href = data.redirect;
         return;
     }
 
-    // Si on a du HTML (vue), le traiter en premier
     if (data.html) {
         if (isFullPage(data.html)) {
-            replaceFullPage(data.html, form.action); // Vue complète
+            replaceFullPage(data.html, form.action);
         } else {
-            updateContent(data.html, form); // Fragment HTML
+            updateContent(data.html, form);
         }
     }
 
-    // Ensuite traiter les messages/statuts JSON (après la mise à jour de la vue)
     if (data.statut === 'succes' || data.statut === 'success') {
         showPopup(data.message || 'Opération réussie', 'success');
 
-        // Callback personnalisé
         const callback = form.dataset.callback;
         if (callback && window[callback]) {
             window[callback](data);
         }
 
-        // Réinitialisation du formulaire
         if (form.dataset.reset !== 'false') {
             form.reset();
         }
 
-        // Si une redirection est demandée (avec délai)
         if (data.redirect) {
             setTimeout(() => {
                 window.location.href = data.redirect;
@@ -289,12 +419,11 @@ async function handleResponse(response, form) {
         showPopup(data.message || 'Une erreur est survenue', 'error');
     }
     else if (data.statut === 'warning') {
-        showPopup(data.message);
+        showPopup(data.message || 'Avertissement', 'warning');
     }
     else if (data.statut === 'info') {
         showPopup(data.message || 'Information', 'info');
     }
-    // Si on a seulement du HTML sans statut, pas de popup supplémentaire
 }
 
 function isFullPage(html) {
@@ -302,29 +431,23 @@ function isFullPage(html) {
 }
 
 function replaceFullPage(html, url) {
-    // Extraire le contenu du <body>
     const bodyContent = html.split('<body>')[1]?.split('</body>')[0] || html;
     document.body.innerHTML = bodyContent;
 
-    // Mettre à jour l'URL
     if (url && url !== window.location.href) {
         window.history.pushState({}, '', url);
     }
 
-    // Recréer les éléments globaux après remplacement du body
     createGlobalElements();
-
-    // Rebind les événements
     bindAjaxForms();
-
-    // Ré-exécuter les scripts
+    bindAjaxLinks();
     reloadScripts();
 
     showPopup('Page mise à jour', 'success');
 }
 
 function updateContent(html, form) {
-    const target = form.dataset.target || '#main-container';
+    const target = form.dataset.target || '#content-area';
     const container = document.querySelector(target);
 
     if (container) {
@@ -334,14 +457,7 @@ function updateContent(html, form) {
             window.history.pushState({}, '', form.action);
         }
 
-        // Rebind les nouveaux formulaires AJAX dans le contenu mis à jour
-        container.querySelectorAll('form.ajax-form').forEach(newForm => {
-            newForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                await submitAjaxForm(this);
-            });
-        });
-
+        rebindEventsInContainer(container);
         showPopup('Contenu mis à jour', 'success');
     } else {
         showPopup('Conteneur cible introuvable', 'error');
@@ -361,37 +477,82 @@ function reloadScripts() {
     });
 }
 
-function handleSuccess(data, form) {
-    showPopup(data.message || 'Opération réussie', 'success');
-
-    // Callback personnalisé
-    const callback = form.dataset.callback;
-    if (callback && window[callback]) {
-        window[callback](data);
-    }
-
-    // Réinitialisation du formulaire
-    if (form.dataset.reset !== 'false') {
-        form.reset();
-    }
-}
-
 function bindHistoryEvents() {
-    window.addEventListener('popstate', async () => {
-        showLoader();
-        try {
-            const response = await fetch(window.location.href, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            });
-            const html = await response.text();
-            replaceFullPage(html, window.location.href);
-        } catch (error) {
-            console.error('Erreur de navigation:', error);
-            showPopup('Erreur de navigation', 'error');
-        } finally {
-            hideLoader();
+    window.addEventListener('popstate', async (e) => {
+        if (e.state && e.state.url) {
+            const target = e.state.target || '#content-area';
+            showContainerLoader(target);
+
+            try {
+                const response = await fetch(e.state.url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const html = await response.text();
+                await handleNavigationResponse({ html }, e.state.url, target);
+
+                // Mettre à jour le menu actif
+                const activeLink = document.querySelector(`[href="${e.state.url}"]`);
+                if (activeLink) {
+                    updateActiveNavigation(activeLink);
+                }
+
+            } catch (error) {
+                console.error('Erreur de navigation historique:', error);
+                showPopup('Erreur de navigation', 'error');
+            } finally {
+                hideContainerLoader(target);
+            }
         }
     });
+}
+
+// -------------------------------------------------------------------
+// Fonctions de convenance pour l'API publique
+// -------------------------------------------------------------------
+function showWarningCard(message, onConfirm) {
+    const warningCard = document.getElementById('warning-card');
+    const warningMessage = document.getElementById('warning-message');
+    const continueBtn = document.getElementById('warning-continue');
+    const cancelBtn = document.getElementById('warning-cancel');
+
+    if (!warningCard || !warningMessage) return;
+
+    warningMessage.textContent = message;
+    warningCard.style.display = 'flex';
+
+    const handleContinue = () => {
+        hideWarningCard();
+        if (onConfirm) onConfirm();
+        cleanup();
+    };
+
+    const handleCancel = () => {
+        hideWarningCard();
+        cleanup();
+    };
+
+    const handleOverlayClick = (e) => {
+        if (e.target === warningCard) {
+            handleCancel();
+        }
+    };
+
+    const cleanup = () => {
+        continueBtn.removeEventListener('click', handleContinue);
+        cancelBtn.removeEventListener('click', handleCancel);
+        warningCard.removeEventListener('click', handleOverlayClick);
+    };
+
+    continueBtn.addEventListener('click', handleContinue);
+    cancelBtn.addEventListener('click', handleCancel);
+    warningCard.addEventListener('click', handleOverlayClick);
+}
+
+function hideWarningCard() {
+    const warningCard = document.getElementById('warning-card');
+    if (warningCard) {
+        warningCard.style.display = 'none';
+    }
 }
 
 // -------------------------------------------------------------------
@@ -400,8 +561,15 @@ function bindHistoryEvents() {
 window.ajaxRequest = async function(url, options = {}) {
     const method = options.method || 'GET';
     const shouldShowLoader = options.showLoader !== false;
+    const target = options.target;
 
-    if (shouldShowLoader) showLoader();
+    if (shouldShowLoader) {
+        if (target) {
+            showContainerLoader(target);
+        } else {
+            showLoader();
+        }
+    }
 
     try {
         const response = await fetch(url, {
@@ -419,7 +587,6 @@ window.ajaxRequest = async function(url, options = {}) {
             ? await response.json()
             : await response.text();
 
-        // Gestion des réponses JSON avec statut
         if (typeof data === 'object' && data !== null) {
             if (data.statut === 'succes') {
                 if (options.success) options.success(data);
@@ -427,12 +594,6 @@ window.ajaxRequest = async function(url, options = {}) {
             } else if (data.statut === 'error') {
                 if (options.error) options.error(data);
                 else showPopup(data.message || 'Une erreur est survenue', 'error');
-            } else if (data.statut === 'warning') {
-                showPopup(data.message || 'Avertissement', 'warning');
-                if (options.success) options.success(data);
-            } else if (data.statut === 'info') {
-                showPopup(data.message || 'Information', 'info');
-                if (options.success) options.success(data);
             } else {
                 if (options.success) options.success(data);
             }
@@ -444,13 +605,22 @@ window.ajaxRequest = async function(url, options = {}) {
         if (options.error) options.error(error);
         else showPopup('Erreur serveur', 'error');
     } finally {
-        if (shouldShowLoader) hideLoader();
+        if (shouldShowLoader) {
+            if (target) {
+                hideContainerLoader(target);
+            } else {
+                hideLoader();
+            }
+        }
     }
 };
 
+// Export des fonctions pour l'API publique
 window.showPopup = showPopup;
 window.closePopup = closePopup;
 window.showLoader = showLoader;
 window.hideLoader = hideLoader;
+window.showContainerLoader = showContainerLoader;
+window.hideContainerLoader = hideContainerLoader;
 window.showWarningCard = showWarningCard;
 window.hideWarningCard = hideWarningCard;
