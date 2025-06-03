@@ -14,6 +14,8 @@
       "System\\Database\\": "src/Database/",
       "App\\": "app/",
       "App\\Controllers\\": "app/Controllers/",
+      "App\\Controllers\\Public\\": "app/Controllers/Public/",
+        "App\\Controllers\\Gestions\\\\": "app/Controllers/Gestions/",
       "App\\Models\\": "app/Models/",
       "App\\Dao\\": "app/Dao"
     }

@@ -6,7 +6,7 @@ class View
 {
     private string $view;
     private array $data;
-    private array $layouts = [];
+    private array|null $layouts = [];
 
     public function __construct(string $view, array $data = [])
     {

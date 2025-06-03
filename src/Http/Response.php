@@ -34,7 +34,7 @@ class Response
      *
      * @param string $view Nom de la vue
      * @param array $data Données pour la vue
-     * @param array $components Composants à inclure dans la vue
+     * @param array $layouts Composants à inclure dans la vue
      * @param array $json Données JSON pour les requêtes AJAX
      * @param int $status Code de statut HTTP
      * @param array $headers En-têtes HTTP
@@ -43,7 +43,7 @@ class Response
     public static function view(
         string $view,
         array $data = [],
-        array $components = [],
+        array $layouts = [],
         array $json = [],
         int $status = 200,
         array $headers = []
@@ -56,8 +56,8 @@ class Response
             $viewInstance = View::make($view, $data);
 
             // Ajouter les composants s'ils sont fournis
-            if (!empty($components)) {
-                $viewInstance->withComponents($components);
+            if (!empty($layouts)) {
+                $viewInstance->withlayouts($layouts);
             }
 
             // Si c'est une requête AJAX ET qu'on a des données JSON
@@ -84,7 +84,7 @@ class Response
             }
 
             // Sinon renvoyer une vue 404 avec le code 404
-            return new self(View::make('errors/404'), 404);
+            return new self(View::make('errors/404'), status: 404);
         }
     }
 

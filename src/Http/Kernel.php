@@ -23,7 +23,7 @@ class Kernel
 
         switch ($routeInfo[0]) {
             case \FastRoute\Dispatcher::NOT_FOUND:
-                return Response::view('errors/404', [], null, 404);
+                return Response::view('errors/404', status: 404);
 
             case \FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
                 return new Response("Méthode non autorisée", 405);

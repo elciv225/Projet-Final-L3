@@ -1,0 +1,1 @@
+<?php echo "Pour le côté client à faire plus tard"; ?>
