@@ -6,11 +6,12 @@ use System\Http\Response;
 
 class PersonnelAdministratifController
 {
-
-    public function index():Response
+    public function index(): Response
     {
-        // Logique pour afficher la liste du personnel administratif
-        return Response::view('gestion/personnel-administratif');
+        return Response::view('gestion/personnel-administratif', [
+            'title' => 'Gestion du Personnel Administratif',
+            'heading' => 'Liste du Personnel Administratif',
+            'content' => 'Ceci est la page de gestion du personnel administratif.'
+        ]);
     }
-
 }

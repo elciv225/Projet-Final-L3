@@ -15,7 +15,9 @@
 <main id="main-container">
     <!-- Menu Vertical dans menu.php -->
     <!-- Contenu Principal dans gestion/personnel-administratif.php  et les autres prochainnement .......-->
-    La page de base pour le dash admin est celle qui sera ici de base.
+    <main class="main-content">
+        <h1>La page de base pour le dash admin est celle qui sera ici de base.</h1>
+    </main>
 </main>
 </body>
 </html>

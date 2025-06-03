@@ -6,13 +6,13 @@ use System\Http\Response;
 
 class AdministrateurController
 {
-
-    public function index():Response
+    public function index(): Response
     {
-        return Response::view('administrateur', [
-            'title' => 'Administrateur',
-            'heading' => 'Bienvenue dans l\'espace administrateur',
-            'content' => 'Ceci est la page d\'administration de mon application.'
-        ],layouts: ['menu']);
+        return Response::view('espace-administrateur', [
+            'title' => 'Espace Administrateur',
+            'heading' => 'Bienvenue dans l\'Espace Administrateur',
+            'content' => 'Ceci est la page d\'accueil de l\'espace administrateur.'
+        ], ['menu']);
     }
+
 }

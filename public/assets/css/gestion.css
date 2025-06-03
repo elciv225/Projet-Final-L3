@@ -242,9 +242,8 @@
 }
 
 /* --- Styles pour les Listes Déroulantes (Select) --- */
-.form-group select.form-input {
-    appearance: none; /* Supprime l'apparence native du select */
-    -webkit-appearance: none;
+.form-group select.form-input { /* Supprime l'apparence native du select */
+    appearance: none;
     background-image: url('data:image/svg+xml;utf8,<svg fill="%23BDC3C7" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Flèche personnalisée SVG */
     background-repeat: no-repeat;
     background-position: right 12px center;
@@ -321,7 +320,7 @@
     transform: translateY(-50%) scale(1);
 }
 
-.radio-option label:hover::before {
+.radio-option label:hover {
     border-color: var(--primary-color); /* Bordure au survol */
 }
 
@@ -574,7 +573,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (width <= 768px) {
     .sidebar {
         width: 60px;
     }

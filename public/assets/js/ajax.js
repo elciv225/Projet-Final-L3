@@ -2,7 +2,6 @@
  * Système AJAX avancé - Support des vues complètes et fragments
  * - Gestion des réponses JSON et HTML
  * - Mise à jour du DOM et de l'URL
- * - Navigation AJAX avec liens
  * - Compatible avec l'ancien code et le CSS existant
  */
 
@@ -10,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialisation
     createGlobalElements();
     bindAjaxForms();
-    bindAjaxLinks();
     bindHistoryEvents();
 });
 
@@ -173,7 +171,7 @@ function hideWarningCard() {
 }
 
 // -------------------------------------------------------------------
-// Gestion des formulaires AJAX
+// Fonctions modifiées/ajoutées
 // -------------------------------------------------------------------
 function bindAjaxForms() {
     document.querySelectorAll('form.ajax-form').forEach(form => {
@@ -221,7 +219,7 @@ async function submitAjaxForm(form) {
             }
         });
 
-        await handleResponse(response, { element: form, url: action });
+        await handleResponse(response, form);
 
     } catch (error) {
         showPopup('Erreur réseau', 'error');
@@ -237,70 +235,7 @@ async function submitAjaxForm(form) {
     }
 }
 
-// -------------------------------------------------------------------
-// Gestion des liens AJAX
-// -------------------------------------------------------------------
-function bindAjaxLinks() {
-    document.querySelectorAll('a.nav-link-ajax, a.ajax-link').forEach(link => {
-        link.addEventListener('click', async function(e) {
-            e.preventDefault();
-
-            const url = this.href;
-            const target = this.dataset.target || '#main-container';
-
-            // Gestion de l'état actif du menu
-            updateActiveNavItem(this);
-
-            await loadAjaxContent(url, target, this);
-        });
-    });
-}
-
-async function loadAjaxContent(url, target, element) {
-    showLoader();
-
-    try {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json, text/html'
-            }
-        });
-
-        await handleResponse(response, { element, url, target });
-
-    } catch (error) {
-        showPopup('Erreur de chargement', 'error');
-        console.error('Erreur AJAX:', error);
-    } finally {
-        hideLoader();
-    }
-}
-
-function updateActiveNavItem(clickedLink) {
-    // Retirer la classe active de tous les liens de navigation
-    document.querySelectorAll('.nav-link-ajax, .ajax-link').forEach(link => {
-        link.classList.remove('active');
-        // Si le lien est dans un li, retirer aussi la classe du parent
-        const parentLi = link.closest('li');
-        if (parentLi) {
-            parentLi.classList.remove('active');
-        }
-    });
-
-    // Ajouter la classe active au lien cliqué
-    clickedLink.classList.add('active');
-    const parentLi = clickedLink.closest('li');
-    if (parentLi) {
-        parentLi.classList.add('active');
-    }
-}
-
-// -------------------------------------------------------------------
-// Gestion unifiée des réponses
-// -------------------------------------------------------------------
-async function handleResponse(response, context) {
+async function handleResponse(response, form) {
     const contentType = response.headers.get('content-type');
     let data;
 
@@ -322,28 +257,25 @@ async function handleResponse(response, context) {
     // Si on a du HTML (vue), le traiter en premier
     if (data.html) {
         if (isFullPage(data.html)) {
-            replaceFullPage(data.html, context.url); // Vue complète
+            replaceFullPage(data.html, form.action); // Vue complète
         } else {
-            updateContent(data.html, context); // Fragment HTML
+            updateContent(data.html, form); // Fragment HTML
         }
     }
 
     // Ensuite traiter les messages/statuts JSON (après la mise à jour de la vue)
     if (data.statut === 'succes' || data.statut === 'success') {
-        const message = data.message || (context.element?.tagName === 'FORM' ? 'Opération réussie' : 'Contenu chargé');
-        showPopup(message, 'success');
+        showPopup(data.message || 'Opération réussie', 'success');
 
-        // Callback personnalisé pour les formulaires
-        if (context.element?.tagName === 'FORM') {
-            const callback = context.element.dataset.callback;
-            if (callback && window[callback]) {
-                window[callback](data);
-            }
+        // Callback personnalisé
+        const callback = form.dataset.callback;
+        if (callback && window[callback]) {
+            window[callback](data);
+        }
 
-            // Réinitialisation du formulaire
-            if (context.element.dataset.reset !== 'false') {
-                context.element.reset();
-            }
+        // Réinitialisation du formulaire
+        if (form.dataset.reset !== 'false') {
+            form.reset();
         }
 
         // Si une redirection est demandée (avec délai)
@@ -362,7 +294,7 @@ async function handleResponse(response, context) {
     else if (data.statut === 'info') {
         showPopup(data.message || 'Information', 'info');
     }
-    // Si on a seulement du HTML sans statut, pas de popup supplémentaire pour les liens
+    // Si on a seulement du HTML sans statut, pas de popup supplémentaire
 }
 
 function isFullPage(html) {
@@ -384,25 +316,25 @@ function replaceFullPage(html, url) {
 
     // Rebind les événements
     bindAjaxForms();
-    bindAjaxLinks();
 
     // Ré-exécuter les scripts
     reloadScripts();
+
+    showPopup('Page mise à jour', 'success');
 }
 
-function updateContent(html, context) {
-    const target = context.target || context.element?.dataset?.target || '#main-container';
+function updateContent(html, form) {
+    const target = form.dataset.target || '#main-container';
     const container = document.querySelector(target);
 
     if (container) {
         container.innerHTML = html;
 
-        // Mettre à jour l'URL si c'est un lien de navigation
-        if (context.url && context.url !== window.location.href) {
-            window.history.pushState({}, '', context.url);
+        if (form.action !== window.location.href) {
+            window.history.pushState({}, '', form.action);
         }
 
-        // Rebind les nouveaux formulaires et liens AJAX dans le contenu mis à jour
+        // Rebind les nouveaux formulaires AJAX dans le contenu mis à jour
         container.querySelectorAll('form.ajax-form').forEach(newForm => {
             newForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
@@ -410,20 +342,7 @@ function updateContent(html, context) {
             });
         });
 
-        container.querySelectorAll('a.nav-link-ajax, a.ajax-link').forEach(newLink => {
-            newLink.addEventListener('click', async function(e) {
-                e.preventDefault();
-                const url = this.href;
-                const target = this.dataset.target || '#main-container';
-                updateActiveNavItem(this);
-                await loadAjaxContent(url, target, this);
-            });
-        });
-
-        // Message de succès seulement pour les formulaires
-        if (context.element?.tagName === 'FORM') {
-            showPopup('Contenu mis à jour', 'success');
-        }
+        showPopup('Contenu mis à jour', 'success');
     } else {
         showPopup('Conteneur cible introuvable', 'error');
     }
@@ -440,6 +359,21 @@ function reloadScripts() {
             oldScript.parentNode.replaceChild(newScript, oldScript);
         }
     });
+}
+
+function handleSuccess(data, form) {
+    showPopup(data.message || 'Opération réussie', 'success');
+
+    // Callback personnalisé
+    const callback = form.dataset.callback;
+    if (callback && window[callback]) {
+        window[callback](data);
+    }
+
+    // Réinitialisation du formulaire
+    if (form.dataset.reset !== 'false') {
+        form.reset();
+    }
 }
 
 function bindHistoryEvents() {
@@ -513,9 +447,6 @@ window.ajaxRequest = async function(url, options = {}) {
         if (shouldShowLoader) hideLoader();
     }
 };
-
-// Fonction utilitaire pour charger du contenu AJAX programmatiquement
-window.loadAjaxContent = loadAjaxContent;
 
 window.showPopup = showPopup;
 window.closePopup = closePopup;
