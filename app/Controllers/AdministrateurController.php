@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use Exception;
 use System\Http\Response;
 
 class AdministrateurController
@@ -25,6 +26,19 @@ class AdministrateurController
 
         // Sinon, retourner la page complète avec le menu intégré
         return Response::view('espace-administrateur', $data);
+    }
+
+    /**
+     * Récupère tous les modules disponibles pour le menu
+     * @return array
+     */
+    private function getAvailableModules(): array
+    {
+        if (!defined('MODULES_CONFIG')) {
+            return [];
+        }
+
+        return MODULES_CONFIG;
     }
 
     /**
@@ -64,7 +78,7 @@ class AdministrateurController
             $method = $moduleConfig['methodePrincipale']; // Utilisation de 'methodePrincipale'
 
             if (!method_exists($controller, $method)) {
-                return $this->moduleNotFound("La méthode '{$method}' n'existe pas dans le contrôleur {$moduleConfig['controleur']} pour le module '$moduleName'.");
+                return $this->moduleNotFound("La méthode '$method' n'existe pas dans le contrôleur {$moduleConfig['controleur']} pour le module '$moduleName'.");
             }
 
             // Appeler la méthode du contrôleur
@@ -88,10 +102,48 @@ class AdministrateurController
 
             return Response::view('espace-administrateur', $data);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log("Erreur dans gestionMenuModules: " . $e->getMessage());
             return $this->moduleNotFound("Erreur interne lors du chargement du module: " . $e->getMessage());
         }
+    }
+
+    /**
+     * Gestion du cas où un module n'est pas trouvé
+     * @param string $message
+     * @return Response
+     */
+    private function moduleNotFound(string $message = "Module non trouvé"): Response
+    {
+        if (Response::isAjaxRequest()) {
+            return Response::error($message);
+        }
+
+        $data = [
+            'title' => 'Module non trouvé',
+            'heading' => 'Erreur 404',
+            'content' => $message,
+            'modules' => $this->getAvailableModules()
+        ];
+
+        return Response::view('espace-administrateur', $data);
+    }
+
+    /**
+     * Récupère la configuration d'un module
+     * @param string $category
+     * @param string $moduleName
+     * @return array|null
+     */
+    private function getModuleConfig(string $category, string $moduleName): ?array
+    {
+        if (!defined('MODULES_CONFIG')) {
+            return null;
+        }
+
+        // Utilisation de la constante globale pour accéder à la configuration
+        $modules = MODULES_CONFIG;
+        return $modules[$category][$moduleName] ?? null;
     }
 
     /**
@@ -144,65 +196,10 @@ class AdministrateurController
                 return Response::redirect("/espace-administrateur/$category/$moduleName");
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log("Erreur lors du traitement du module '$moduleName' (traitement: '$traitementName'): " . $e->getMessage());
             return $this->moduleNotFound("Erreur lors de l'exécution du traitement '$traitementName': " . $e->getMessage());
         }
-    }
-
-
-    /**
-     * Récupère la configuration d'un module
-     * @param string $category
-     * @param string $moduleName
-     * @return array|null
-     */
-    private function getModuleConfig(string $category, string $moduleName): ?array
-    {
-        if (!defined('MODULES_CONFIG')) {
-            return null;
-        }
-
-        // Utilisation de la constante globale pour accéder à la configuration
-        $modules = MODULES_CONFIG;
-        return $modules[$category][$moduleName] ?? null;
-    }
-
-    /**
-     * Récupère tous les modules disponibles pour le menu
-     * @return array
-     */
-    private function getAvailableModules(): array
-    {
-        if (!defined('MODULES_CONFIG')) {
-            return [];
-        }
-
-        return MODULES_CONFIG;
-    }
-
-    /**
-     * Gestion du cas où un module n'est pas trouvé
-     * @param string $message
-     * @return Response
-     */
-    private function moduleNotFound(string $message = "Module non trouvé"): Response
-    {
-        if (Response::isAjaxRequest()) {
-            return Response::json([
-                'statut' => 'error',
-                'message' => $message
-            ], 404);
-        }
-
-        $data = [
-            'title' => 'Module non trouvé',
-            'heading' => 'Erreur 404',
-            'content' => $message,
-            'modules' => $this->getAvailableModules()
-        ];
-
-        return Response::view('espace-administrateur', $data);
     }
 
     /**

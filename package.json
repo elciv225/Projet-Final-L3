@@ -2,5 +2,8 @@
   "devDependencies": {
     "stylelint": "^16.19.1",
     "stylelint-config-standard": "^38.0.0"
+  },
+  "dependencies": {
+    "gsap": "^3.13.0"
   }
 }
