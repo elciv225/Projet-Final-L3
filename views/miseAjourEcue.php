@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -992,7 +991,7 @@
     <main class="main-content">
         <div class="page-header">
             <div class="header-left">
-                <h1>Enseignants</h1>
+                <h1>Etudiants</h1>
             </div>
         </div>
 
@@ -1004,16 +1003,16 @@
             <div class="section-content">
                 <div class="form-grid">
                     <div class="form-group">
-                        <input type="text" name="teacherNumber" class="form-input" placeholder=" " id="teacher-number">
-                        <label class="form-label" for="teacher-number">Numéro Matricule</label>
+                        <input type="text" name="studentNumber" class="form-input" placeholder=" " id="student-number">
+                        <label class="form-label" for="student-number">Numéro Carte d'Etudiant</label>
                     </div>
                     <div class="form-group">
-                        <input type="text" name="teacherLastname" class="form-input" placeholder=" " id="student-lastname">
-                        <label class="form-label" for="teacher-lastname">Nom</label>
+                        <input type="text" name="studentLastname" class="form-input" placeholder=" " id="student-lastname">
+                        <label class="form-label" for="student-lastname">Nom</label>
                     </div>
                     <div class="form-group">
-                        <input type="text" name="teacherFirstname" class="form-input" placeholder=" " id="teacher-firstname">
-                        <label class="form-label" for="teacher-firstname">Prénoms</label>
+                        <input type="text" name="studentFirstname" class="form-input" placeholder=" " id="student-firstname">
+                        <label class="form-label" for="student-firstname">Prénoms</label>
                     </div>
                     <div class="form-group">
                         <input type="date" name="dateBirth" class="form-input" placeholder=" " id="birth-date">
@@ -1048,26 +1047,18 @@
         <!-- Informations carriere -->
         <div class="form-section">
             <div class="section-header">
-                <h3 class="section-title">Information sur la carriere</h3>
+                <h3 class="section-title">Information Academique</h3>
             </div>
             <div class="section-content">
                 <div class="form-grid">
                     <div class="form-group">
-                        <input type="text" name="Grade" class="form-input" placeholder=" " id="grade">
-                        <label class="form-label" for="grade">Grade</label>
+                        <input type="text" name="niveauEtude" class="form-input" placeholder=" " id="niveauEtude">
+                        <label class="form-label" for="niveauEtude">Niveau d'Etude</label>
                     </div>
 
                     <div class="form-group">
-                        <input type="text" name="fonction" class="form-input" placeholder=" " id="fonction">
-                        <label class="form-label" for="fonction">Fonction</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="date" name="dategrade" class="form-input" placeholder=" " id="dategrade">
-                        <label class="form-label" for="dategrade">Date du Grade</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="date" name="datefonction" class="form-input" placeholder=" " id="datefonction">
-                        <label class="form-label" for="datefonction">Date de la Fonction</label>
+                        <input type="text" name="annee-academique" class="form-input" placeholder=" " id="annee-academique">
+                        <label class="form-label" for="annee-academique">Annee-Academique</label>
                     </div>
                     <div class="form-group">
                         <input type="text" name="contact" class="form-input" placeholder=" " id="contact">
@@ -1085,19 +1076,19 @@
         <!-- Orders Table -->
         <div class="table-container">
             <div class="table-header">
-                <h3 class="table-title">Liste des Enseignants</h3>
+                <h3 class="table-title">Liste des Etudiants</h3>
                 <div class="header-actions">
                     <div class="search-container">
                         <span class="search-icon">🔍</span>
-                        <input type="text" name="search" class="search-input" placeholder="Rechercher par ...">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Rechercher par ...">
                     </div>
+
 
                 </div>
                 <div class="header-actions">
                     <button id="btnExportPDF" class="btn btn-secondary">🕐 Exporter en PDF</button>
                     <button id="btnExportExcel" class="btn btn-secondary">📤 Exporter sur Excel</button>
                     <button id="btnPrint" class="btn btn-secondary">📊 Imprimer</button>
-
                     <button class="btn btn-primary" id="btnSupprimerSelection">Supprimer</button>
                 </div>
             </div>
@@ -1116,13 +1107,13 @@
                 <thead>
                 <tr>
                     <th><input type="checkbox" class="checkbox"></th>
-                    <th>Numero Matricule</th>
+                    <th>Numero Carte d'Etudiant</th>
                     <th>Nom</th>
                     <th>Prenom</th>
                     <th>Date de naissance</th>
                     <th>Email</th>
-                    <th>Grade</th>
-                    <th>Fonction</th>
+                    <th>Niveau d'Etude</th>
+                    <th>Annee-Academique</th>
                     <th>Contact</th>
                     <th>Actions</th>
                 </tr>
@@ -1150,24 +1141,23 @@
     </main>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
     let rowToEdit = null;
 
     document.getElementById('btnValider').addEventListener('click', function () {
-        const matricule = document.getElementById('teacher-number').value.trim();
-        const nom = document.getElementById('teacher-lastname').value.trim();
-        const prenom = document.getElementById('teacher-firstname').value.trim();
+        const numerocarte = document.getElementById('student-number').value.trim();
+        const nom = document.getElementById('student-lastname').value.trim();
+        const prenom = document.getElementById('student-firstname').value.trim();
         const dateNaissance = document.getElementById('birth-date').value;
         const email = document.getElementById('email').value.trim();
-        const grade = document.getElementById('grade').value.trim();
-        const fonction = document.getElementById('fonction').value;
+        const niveauEtude = document.getElementById('niveauEtude').value.trim();
+        const anneeAcademique = document.getElementById('annee-academique').value;
         const contact = document.getElementById('contact').value;
 
         // === Vérifications ===
 
-        if (!matricule || !nom || !prenom || !dateNaissance || !email || !grade || !fonction || !contact) {
+        if (!numerocarte || !nom || !prenom || !dateNaissance || !email || !niveauEtude || !anneeAcademique || !contact) {
             alert("Veuillez remplir tous les champs !");
             return;
         }
@@ -1199,9 +1189,9 @@
         if (!rowToEdit) {
             const lignes = document.querySelectorAll('.table tbody tr');
             for (let ligne of lignes) {
-                const cellulematricule = ligne.children[1]?.textContent;
-                if (cellulematricule === matricule) {
-                    alert("Ce matricule de carte existe déjà !");
+                const cellulenumerocarte = ligne.children[1]?.textContent;
+                if (cellulenumerocarte === numerocarte) {
+                    alert("Ce numero de carte existe déjà !");
                     return;
                 }
             }
@@ -1209,13 +1199,13 @@
 
         if (rowToEdit) {
             // Modification
-            rowToEdit.cells[1].textContent = matricule;
+            rowToEdit.cells[1].textContent = numerocarte;
             rowToEdit.cells[2].textContent = nom;
             rowToEdit.cells[3].textContent = prenom;
             rowToEdit.cells[4].textContent = dateNaissance;
             rowToEdit.cells[5].textContent = email;
-            rowToEdit.cells[6].textContent = grade;
-            rowToEdit.cells[7].textContent = fonction;
+            rowToEdit.cells[6].textContent = niveauEtude;
+            rowToEdit.cells[7].textContent = anneeAcademique;
             rowToEdit.cells[8].textContent = contact;
 
             rowToEdit = null;
@@ -1227,13 +1217,13 @@
 
             newRow.innerHTML = `
             <td><input type="checkbox" class="checkbox"></td>
-            <td>${matricule}</td>
+            <td>${numerocarte}</td>
             <td>${nom}</td>
             <td>${prenom}</td>
             <td>${dateNaissance}</td>
             <td>${email}</td>
-            <td>${grade}</td>
-            <td>${fonction}</td>
+            <td>${niveauEtude}</td>
+            <td>${anneeAcademique}</td>
             <td>${contact}</td>
             <td>
                 <div class="table-actions">
@@ -1264,13 +1254,13 @@
             const row = e.target.closest('tr');
             rowToEdit = row;
 
-            document.getElementById('teacher-number').value = row.cells[1].textContent;
-            document.getElementById('teacher-lastname').value = row.cells[2].textContent;
-            document.getElementById('teacher-firstname').value = row.cells[3].textContent;
+            document.getElementById('student-number').value = row.cells[1].textContent;
+            document.getElementById('student-lastname').value = row.cells[2].textContent;
+            document.getElementById('student-firstname').value = row.cells[3].textContent;
             document.getElementById('birth-date').value = row.cells[4].textContent;
             document.getElementById('email').value = row.cells[5].textContent;
-            document.getElementById('grade').value = row.cells[6].textContent;
-            document.getElementById('fonction').value = row.cells[7].textContent;
+            document.getElementById('niveauEtude').value = row.cells[6].textContent;
+            document.getElementById('annee-academique').value = row.cells[7].textContent;
             document.getElementById('contact').value = row.cells[8].textContent;
 
             document.getElementById('btnValider').textContent = 'Mettre à jour';
@@ -1293,52 +1283,24 @@
         }
     });
 
-// EXPORTER EN PDF
-document.getElementById('btn btn-secondary').addEventListener('click', function () {
-import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js').then(jsPDFModule => {
-const { jsPDF } = jsPDFModule;
-const doc = new jsPDF();
-const table = document.querySelector('.table');
+    //Barre de recherche
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('.table tbody tr');
 
-let y = 10;
-doc.setFontSize(12);
-doc.text('Liste du personnel', 10, y);
-y += 10;
-
-const rows = table.querySelectorAll('tr');
-rows.forEach((row, rowIndex) => {
-let x = 10;
-row.querySelectorAll('th, td').forEach(cell => {
-doc.text(cell.textContent.trim(), x, y);
-x += 30;
-});
-y += 10;
-});
-
-doc.save('personnel.pdf');
-});
-});
-
-    // EXPORTER EN EXCEL
-    document.getElementById('btn btn-secondary').addEventListener('click', function () {
-        const table = document.querySelector('.table');
-        const wb = XLSX.utils.table_to_book(table, { sheet: "Personnel" });
-        XLSX.writeFile(wb, "personnel.xlsx");
+        rows.forEach(row => {
+            const rowText = row.textContent.toLowerCase();
+            if (rowText.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
     });
 
-    // IMPRIMER
-    document.getElementById('btn btn-secondary').addEventListener('click', function () {
-        const printContent = document.querySelector('.table').outerHTML;
-        const win = window.open('', '', 'height=700,width=900');
-        win.document.write('<html><head><title>Impression</title>');
-        win.document.write('<style>table {width: 100%; border-collapse: collapse;} td, th {border: 1px solid #000; padding: 5px;}</style>');
-        win.document.write('</head><body >');
-        win.document.write(printContent);
-        win.document.write('</body></html>');
-        win.document.close();
-        win.print();
-    });
+
 </script>
+
 
 <!-- Bibliothèque pour Excel -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -1402,8 +1364,6 @@ doc.save('personnel.pdf');
         newWindow.print();
     });
 </script>
-
-
 
 </body>
 </html>

@@ -1081,14 +1081,15 @@
                 <div class="header-actions">
                     <div class="search-container">
                         <span class="search-icon">🔍</span>
-                        <input type="text" name="search" class="search-input" placeholder="Rechercher par ...">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Rechercher par ...">
                     </div>
+
 
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-secondary">🕐 Exporter en PDF</button>
-                    <button class="btn btn-secondary">📤 Exporter sur Excel</button>
-                    <button class="btn btn-secondary">📊 Imprimer</button>
+                    <button id="btnExportPDF" class="btn btn-secondary">🕐 Exporter en PDF</button>
+                    <button id="btnExportExcel" class="btn btn-secondary">📤 Exporter sur Excel</button>
+                    <button id="btnPrint" class="btn btn-secondary">📊 Imprimer</button>
                     <button class="btn btn-primary" id="btnSupprimerSelection">Supprimer</button>
                 </div>
             </div>
@@ -1282,9 +1283,88 @@
             });
         }
     });
+
+    //Barre de recherche
+        document.getElementById('searchInput').addEventListener('keyup', function () {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('.table tbody tr');
+
+        rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(searchTerm)) {
+        row.style.display = '';
+    } else {
+        row.style.display = 'none';
+    }
+    });
+    });
+
+
 </script>
 
 
+<!-- Bibliothèque pour Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- Bibliothèque pour PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+    // 🕐 Exporter en PDF
+    document.getElementById("btnExportPDF").addEventListener("click", async function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const table = document.querySelector(".table");
+        const rows = table.querySelectorAll("tr");
+
+        let y = 10;
+        doc.setFontSize(12);
+        doc.text("Liste du personnel", 10, y);
+        y += 10;
+
+        rows.forEach(row => {
+            let x = 10;
+            row.querySelectorAll("th, td").forEach(cell => {
+                const text = cell.innerText || cell.textContent;
+                doc.text(text.trim(), x, y);
+                x += 30; // Espace entre les colonnes
+            });
+            y += 10;
+        });
+
+        doc.save("personnel.pdf");
+    });
+
+    // 📤 Exporter sur Excel
+    document.getElementById("btnExportExcel").addEventListener("click", function () {
+        const table = document.querySelector(".table");
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Personnel" });
+        XLSX.writeFile(wb, "personnel.xlsx");
+    });
+
+    // 📊 Imprimer
+    document.getElementById("btnPrint").addEventListener("click", function () {
+        const tableHTML = document.querySelector(".table").outerHTML;
+        const newWindow = window.open("", "", "width=900,height=700");
+        newWindow.document.write(`
+            <html>
+            <head>
+                <title>Impression</title>
+                <style>
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+                </style>
+            </head>
+            <body>
+                <h2>Liste du personnel</h2>
+                ${tableHTML}
+            </body>
+            </html>
+        `);
+        newWindow.document.close();
+        newWindow.print();
+    });
+</script>
 
 </body>
 </html>
