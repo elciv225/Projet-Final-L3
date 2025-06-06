@@ -1,63 +1,96 @@
-version: '3.8'
-
 services:
   # Application PHP avec Apache
   app:
     build:
       context: .
-      dockerfile: Dockerfile.prod
-    container_name: php_app_prod
-    # Volumes: Code is copied into the image by Dockerfile.prod
-    # Add specific persistent volumes if needed, e.g. for uploads:
+      dockerfile: Dockerfile
+    container_name: php_app_local
     volumes:
-      - ./public:/var/www/html
+      - ./:/var/www/html # Monte le répertoire courant pour les modifications en temps réel
     ports:
-      - "8000:80" # May need adjustment in a real production setup (e.g., if behind a reverse proxy)
+      - "8081:80" # Accessible sur http://localhost:8081
     environment:
-      APP_ENV: prod
-      APP_DEBUG: false
+      # Variables d'environnement spécifiques au développement local
+      APP_ENV: local
+      APP_DEBUG: true
+      XDEBUG_MODE: develop,debug
+      XDEBUG_CONFIG: "client_host=host.docker.internal client_port=9003"
+      # Configuration email pour MailHog
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      MAIL_USERNAME: null
+      MAIL_PASSWORD: null
+      MAIL_ENCRYPTION: null
     depends_on:
       - db
-      - redis # Redis is used in production
+      - mailhog
     networks:
-      - app_network_prod
+      - app_network
 
   # Base de données MySQL
   db:
     image: mysql:8.0
-    container_name: mysql_db_prod
-    # ports: # Not typically exposed externally in production
-    # - "3306:3306"
+    container_name: mysql_db_local
+    ports:
+      - "3306:3306" # Port MySQL accessible depuis l'hôte
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: local_db
+      MYSQL_USER: dev_user
+      MYSQL_PASSWORD: dev_password
+      MYSQL_ROOT_PASSWORD: root_password
     volumes:
-      - db_data_prod:/var/lib/mysql # Persistance des données
+      - db_data_local:/var/lib/mysql # Persistance des données
       - ./sql/init:/docker-entrypoint-initdb.d # Scripts d'initialisation SQL (optionnel)
     networks:
-      - app_network_prod
+      - app_network
 
-  # Redis pour le cache
+  # PhpMyAdmin pour gérer la base de données via interface web
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin_local
+    ports:
+      - "8082:80" # Accessible sur http://localhost:8082
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root_password
+      MYSQL_ROOT_PASSWORD: root_password
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  # Redis pour le cache (optionnel mais recommandé)
   redis:
     image: redis:alpine
-    container_name: redis_prod
-    # ports: # Not typically exposed externally in production
-    # - "6379:6379"
+    container_name: redis_local
+    ports:
+      - "6379:6379"
     volumes:
-      - redis_data_prod:/data
+      - redis_data_local:/data
     networks:
-      - app_network_prod
+      - app_network
+
+  # Mailhog pour capturer et visualiser les emails en développement
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mailhog_local
+    ports:
+      - "1025:1025" # Port SMTP
+      - "8083:8025" # Interface web accessible sur http://localhost:8083
+    networks:
+      - app_network
 
 # Volumes pour la persistance des données
 volumes:
-  db_data_prod:
+  db_data_local:
     driver: local
-  redis_data_prod:
+  redis_data_local:
     driver: local
 
 # Réseau pour permettre la communication entre containers
 networks:
-  app_network_prod:
+  app_network:
     driver: bridge
