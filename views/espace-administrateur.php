@@ -11,7 +11,7 @@
 </head>
 <body>
 <div id="main-container" class="main-container">
-    <!-- Menu Vertical -->
+    <!-- Menu Vertical Dynamique -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="logo">Projet XXX</div>
@@ -30,69 +30,30 @@
                             <span>Tableau de bord</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="/espace-administrateur/gestion/personnel-administratif"
-                           class="nav-link-ajax <?= (isset($currentSection) && $currentSection === 'personnel-administratif') ? 'active' : '' ?>"
-                           data-target="#content-area">
-                            <span class="nav-icon">👨‍💼</span>
-                            <span>Personnel Administratif</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/espace-administrateur/gestion/enseignants"
-                           class="nav-link-ajax <?= (isset($currentSection) && $currentSection === 'enseignants') ? 'active' : '' ?>"
-                           data-target="#content-area">
-                            <span class="nav-icon">👨‍🏫</span>
-                            <span>Enseignants</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/espace-administrateur/gestion/etudiants"
-                           class="nav-link-ajax <?= (isset($currentSection) && $currentSection === 'etudiants') ? 'active' : '' ?>"
-                           data-target="#content-area">
-                            <span class="nav-icon">👨‍🎓</span>
-                            <span>Étudiants</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link-ajax">
-                            <span class="nav-icon">📊</span>
-                            <span>Rapports</span>
-                            <span class="nav-badge">3</span>
-                        </a>
-                    </li>
                 </ul>
             </div>
 
-            <div class="nav-section">
-                <div class="nav-section-title">Configuration</div>
-                <ul class="nav-list">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span class="nav-icon">🔗</span>
-                            <span>Intégrations</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span class="nav-icon">💳</span>
-                            <span>Paiements</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span class="nav-icon">⚙️</span>
-                            <span>Paramètres</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <span class="nav-icon">🔒</span>
-                            <span>Sécurité</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <?php if (!empty($modules)): ?>
+                <?php foreach ($modules as $categoryName => $categoryModules): ?>
+                    <div class="nav-section">
+                        <div class="nav-section-title"><?= ucfirst($categoryName) ?></div>
+                        <ul class="nav-list">
+                            <?php foreach ($categoryModules as $moduleName => $moduleConfig): ?>
+                                <li class="nav-item">
+                                    <a href="/espace-administrateur/<?= $categoryName ?>/<?= $moduleName ?>"
+                                       class="nav-link-ajax <?= (isset($currentSection) && $currentSection === $moduleName && isset($currentCategory) && $currentCategory === $categoryName) ? 'active' : '' ?>"
+                                       data-target="#content-area"
+                                       data-module="<?= $moduleName ?>"
+                                       data-category="<?= $categoryName ?>">
+                                        <span class="nav-icon"><?= $moduleConfig['icone'] ?></span>
+                                        <span><?= $moduleConfig['label'] ?></span>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
 
             <div class="nav-section">
                 <div class="nav-section-title">États</div>
@@ -138,15 +99,15 @@
     </aside>
 
     <!-- Zone de contenu principal - Mise à jour dynamiquement -->
-    <div id="content-area" >
-        <?php if (isset($sectionContent)): ?>
-            <!-- Affichage d'une section spécifique lors du rechargement -->
+    <div id="content-area">
+        <?php if (isset($moduleContent)): ?>
+            <!-- Contenu d'un module spécifique -->
             <?php
-            $viewPath = BASE_PATH . '/views/' . $sectionContent . '.php';
-            if (file_exists($viewPath)) {
-                include $viewPath;
+            if ($moduleContent instanceof \System\Http\Response) {
+                // Si c'est une Response, on doit l'afficher
+                $moduleContent->send();
             } else {
-                echo '<main class="main-content"><h1>Section non trouvée</h1></main>';
+                echo $moduleContent;
             }
             ?>
         <?php elseif (isset($heading)): ?>
@@ -198,6 +159,16 @@
                 showPopup('Menu utilisateur - À implémenter', 'info');
             });
         }
+
+        // Gestion des données de module pour le debugging
+        window.adminModules = <?= json_encode($modules ?? []) ?>;
+
+        // Fonction utilitaire pour accéder aux modules
+        window.getModuleInfo = function(category, moduleName) {
+            return window.adminModules[category] && window.adminModules[category][moduleName]
+                ? window.adminModules[category][moduleName]
+                : null;
+        };
     });
 
     // Fonction pour recharger une section spécifique
@@ -208,12 +179,40 @@
         }
     }
 
+    // Fonction pour recharger un module spécifique
+    function reloadModule(category, moduleName) {
+        const moduleUrl = `/espace-administrateur/${category}/${moduleName}`;
+        reloadSection(moduleUrl);
+    }
+
     // Fonction utilitaire pour mettre à jour les badges de notification
     function updateNotificationBadge(selector, count) {
         const badge = document.querySelector(selector);
         if (badge) {
             badge.textContent = count;
             badge.style.display = count > 0 ? 'inline' : 'none';
+        }
+    }
+
+    // Fonction pour ajouter dynamiquement un module au menu (pour les modules chargés à la volée)
+    function addModuleToMenu(category, moduleName, moduleConfig) {
+        const categorySection = document.querySelector(`[data-category="${category}"]`)?.closest('.nav-section');
+
+        if (categorySection) {
+            const navList = categorySection.querySelector('.nav-list');
+            const newItem = document.createElement('li');
+            newItem.className = 'nav-item';
+            newItem.innerHTML = `
+                <a href="/espace-administrateur/${category}/${moduleName}"
+                   class="nav-link-ajax"
+                   data-target="#content-area"
+                   data-module="${moduleName}"
+                   data-category="${category}">
+                    <span class="nav-icon">${moduleConfig.icon}</span>
+                    <span>${moduleConfig.label}</span>
+                </a>
+            `;
+            navList.appendChild(newItem);
         }
     }
 </script>

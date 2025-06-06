@@ -141,3 +141,4 @@ document.getElementById('btnSupprimerSelection').addEventListener('click', funct
         });
     }
 });
+
