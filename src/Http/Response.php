@@ -19,15 +19,6 @@ class Response
         }
     }
 
-    public function send(): void
-    {
-        if ($this->content instanceof View) {
-            echo $this->content->render();
-        } else {
-            echo $this->content;
-        }
-    }
-
     /**
      * Retourne une vue HTML ou du JSON selon le contexte
      * Utilise les paramètres nommés PHP 8+ pour plus de clarté
@@ -42,15 +33,13 @@ class Response
      */
     public static function view(
         string $view,
-        array $data = [],
-        array $layouts = [],
-        array $json = [],
-        int $status = 200,
-        array $headers = []
-    ): self {
-        // Détecter si c'est une requête AJAX
-        $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+        array  $data = [],
+        array  $layouts = [],
+        array  $json = [],
+        int    $status = 200,
+        array  $headers = []
+    ): self
+    {
 
         try {
             $viewInstance = View::make($view, $data);
@@ -61,7 +50,7 @@ class Response
             }
 
             // Si c'est une requête AJAX ET qu'on a des données JSON
-            if ($isAjax && !empty($json)) {
+            if (self::isAjaxRequest() && !empty($json)) {
                 // Retourner JSON avec le HTML de la vue inclus
                 $htmlContent = $viewInstance->render();
                 $jsonResponse = array_merge($json, ['html' => $htmlContent]);
@@ -76,7 +65,7 @@ class Response
             error_log($e->getMessage());
 
             // Si c'est AJAX et qu'on a une erreur, retourner JSON
-            if ($isAjax) {
+            if (self::isAjaxRequest()) {
                 return self::json([
                     'statut' => 'error',
                     'message' => 'Erreur lors du chargement de la vue'
@@ -133,5 +122,20 @@ class Response
     {
         $headers = ['Location' => $url];
         return new self('', $status, $headers);
+    }
+
+    public static function isAjaxRequest(): bool
+    {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    }
+
+    public function send(): void
+    {
+        if ($this->content instanceof View) {
+            echo $this->content->render();
+        } else {
+            echo $this->content;
+        }
     }
 }

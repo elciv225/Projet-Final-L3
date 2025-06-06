@@ -7,7 +7,7 @@
  * - Compatible avec l'ancien code et le CSS existant
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Initialisation
     createGlobalElements();
     bindAjaxForms();
@@ -155,7 +155,7 @@ function hideContainerLoader(containerId) {
 // -------------------------------------------------------------------
 function bindAjaxLinks() {
     // Gestion des liens avec la classe nav-link-ajax
-    document.addEventListener('click', async function(e) {
+    document.addEventListener('click', async function (e) {
         const link = e.target.closest('.nav-link-ajax');
         if (!link) return;
 
@@ -194,7 +194,7 @@ async function handleAjaxNavigation(link) {
         if (contentType?.includes('application/json')) {
             data = await response.json();
         } else {
-            data = { html: await response.text() };
+            data = {html: await response.text()};
         }
 
         // Mettre à jour le contenu
@@ -234,7 +234,7 @@ async function handleNavigationResponse(data, url, target) {
 
         // Mettre à jour l'URL sans recharger la page
         if (url !== window.location.href) {
-            window.history.pushState({ url, target }, '', url);
+            window.history.pushState({url, target}, '', url);
         }
 
         // Rebinder les événements sur le nouveau contenu
@@ -262,7 +262,7 @@ function updateActiveNavigation(activeLink) {
 function rebindEventsInContainer(container) {
     // Rebinder les formulaires AJAX dans le nouveau contenu
     container.querySelectorAll('form.ajax-form').forEach(form => {
-        form.addEventListener('submit', async function(e) {
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
             await submitAjaxForm(this);
         });
@@ -270,7 +270,7 @@ function rebindEventsInContainer(container) {
 
     // Rebinder les liens AJAX dans le nouveau contenu
     container.querySelectorAll('.nav-link-ajax').forEach(link => {
-        link.addEventListener('click', async function(e) {
+        link.addEventListener('click', async function (e) {
             e.preventDefault();
             await handleAjaxNavigation(this);
         });
@@ -297,7 +297,7 @@ function reloadContainerScripts(container) {
 // Fonctions modifiées pour la compatibilité
 // -------------------------------------------------------------------
 function bindAjaxForms() {
-    document.addEventListener('submit', async function(e) {
+    document.addEventListener('submit', async function (e) {
         if (!e.target.classList.contains('ajax-form')) return;
         e.preventDefault();
         await submitAjaxForm(e.target);
@@ -379,7 +379,7 @@ async function handleResponse(response, form) {
     if (contentType?.includes('application/json')) {
         data = await response.json();
     } else if (contentType?.includes('text/html')) {
-        data = { html: await response.text() };
+        data = {html: await response.text()};
     } else {
         throw new Error('Type de réponse non supporté');
     }
@@ -414,14 +414,11 @@ async function handleResponse(response, form) {
                 window.location.href = data.redirect;
             }, data.redirectDelay || 2000);
         }
-    }
-    else if (data.statut === 'error') {
+    } else if (data.statut === 'error') {
         showPopup(data.message || 'Une erreur est survenue', 'error');
-    }
-    else if (data.statut === 'warning') {
+    } else if (data.statut === 'warning') {
         showPopup(data.message || 'Avertissement', 'warning');
-    }
-    else if (data.statut === 'info') {
+    } else if (data.statut === 'info') {
         showPopup(data.message || 'Information', 'info');
     }
 }
@@ -485,10 +482,10 @@ function bindHistoryEvents() {
 
             try {
                 const response = await fetch(e.state.url, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    headers: {'X-Requested-With': 'XMLHttpRequest'}
                 });
                 const html = await response.text();
-                await handleNavigationResponse({ html }, e.state.url, target);
+                await handleNavigationResponse({html}, e.state.url, target);
 
                 // Mettre à jour le menu actif
                 const activeLink = document.querySelector(`[href="${e.state.url}"]`);
@@ -558,7 +555,7 @@ function hideWarningCard() {
 // -------------------------------------------------------------------
 // API publique (pour rétrocompatibilité)
 // -------------------------------------------------------------------
-window.ajaxRequest = async function(url, options = {}) {
+window.ajaxRequest = async function (url, options = {}) {
     const method = options.method || 'GET';
     const shouldShowLoader = options.showLoader !== false;
     const target = options.target;
@@ -577,7 +574,7 @@ window.ajaxRequest = async function(url, options = {}) {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json, text/html',
-                ...(method !== 'GET' && { 'Content-Type': 'application/json' })
+                ...(method !== 'GET' && {'Content-Type': 'application/json'})
             },
             body: method === 'GET' ? null : JSON.stringify(options.data)
         });

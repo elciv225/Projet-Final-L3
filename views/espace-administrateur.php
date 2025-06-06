@@ -151,72 +151,7 @@
             ?>
         <?php elseif (isset($heading)): ?>
             <!-- Contenu par défaut du dashboard -->
-            <main class="main-content">
-                <div class="page-header">
-                    <div class="header-left">
-                        <h1><?= $heading ?></h1>
-                        <p class="header-subtitle">Vue d'ensemble de l'espace administrateur</p>
-                    </div>
-                </div>
-
-                <!-- Statistiques rapides -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Total Étudiants</span>
-                            <span class="stat-icon blue"></span>
-                        </div>
-                        <div class="stat-value">1,247</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Enseignants</span>
-                            <span class="stat-icon green"></span>
-                        </div>
-                        <div class="stat-value">89</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Personnel Admin</span>
-                            <span class="stat-icon orange"></span>
-                        </div>
-                        <div class="stat-value">24</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Cours Actifs</span>
-                            <span class="stat-icon red"></span>
-                        </div>
-                        <div class="stat-value">156</div>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <div class="section-header">
-                        <h3 class="section-title">Accès Rapides</h3>
-                    </div>
-                    <div class="section-content">
-                        <p><?= $content ?? 'Sélectionnez une section dans le menu pour commencer.' ?></p>
-                        <div class="form-grid" style="margin-top: 20px;">
-                            <a href="/espace-administrateur/gestion/personnel-administratif"
-                               class="nav-link-ajax btn btn-primary" data-target="#content-area">
-                                <span>👨‍💼</span>
-                                Gérer le Personnel
-                            </a>
-                            <a href="/espace-administrateur/gestion/enseignants" class="nav-link-ajax btn btn-secondary"
-                               data-target="#content-area">
-                                <span>👨‍🏫</span>
-                                Gérer les Enseignants
-                            </a>
-                            <a href="/espace-administrateur/gestion/etudiants" class="nav-link-ajax btn btn-secondary"
-                               data-target="#content-area">
-                                <span>👨‍🎓</span>
-                                Gérer les Étudiants
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </main>
+            <?php include BASE_PATH . '/views/admin/main-content.php'; ?>
         <?php else: ?>
             <!-- Fallback si aucun contenu n'est défini -->
             <main class="main-content">

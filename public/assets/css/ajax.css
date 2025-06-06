@@ -169,6 +169,7 @@
         transform: scale(0.9);
         opacity: 0;
     }
+
     to {
         transform: scale(1);
         opacity: 1;
@@ -202,25 +203,21 @@
 }
 
 /* ========================================= */
+
 /* NOUVEAU: Loaders spécifiques aux conteneurs */
+
 /* ========================================= */
 
 .container-loader {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     z-index: 100;
     pointer-events: none;
 }
 
 .container-loader-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: rgb(255 255 255 / 80%);
     backdrop-filter: blur(2px);
     display: flex;
@@ -268,7 +265,9 @@
 }
 
 /* ========================================= */
+
 /* Styles existants (améliorés) */
+
 /* ========================================= */
 
 /* Animations améliorées */
@@ -277,6 +276,7 @@
         transform: translateX(100%) scale(0.9);
         opacity: 0;
     }
+
     to {
         transform: translateX(0) scale(1);
         opacity: 1;
@@ -288,6 +288,7 @@
         transform: translateX(0) scale(1);
         opacity: 1;
     }
+
     to {
         transform: translateX(100%) scale(0.9);
         opacity: 0;
@@ -298,6 +299,7 @@
     0%, 100% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.02);
     }
@@ -480,7 +482,9 @@
 }
 
 /* ========================================= */
+
 /* États de navigation pour les liens AJAX */
+
 /* ========================================= */
 
 .nav-link-ajax {
@@ -508,7 +512,9 @@
 }
 
 /* ========================================= */
+
 /* Responsive design */
+
 /* ========================================= */
 
 @media (width <= 480px) {
