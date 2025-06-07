@@ -1,6 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    gsap.registerPlugin(ScrollTrigger, SplitText, ScrollSmoother);
+    // --- 0. INITIALISATION DES PLUGINS ET DU CURSEUR ---
+    gsap.registerPlugin(ScrollTrigger, SplitText, ScrollSmoother, ScrambleTextPlugin);
+
+    // Initialise le curseur seulement sur les appareils non-tactiles
+    if (window.matchMedia("(pointer: fine)").matches) {
+        const cursor = document.createElement('div');
+        cursor.className = 'custom-cursor';
+        document.body.appendChild(cursor);
+
+        window.addEventListener('mousemove', e => {
+            gsap.to(cursor, { duration: 0.3, x: e.clientX, y: e.clientY, ease: 'power2.out' });
+        });
+
+        const hoverElements = document.querySelectorAll('a, button');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => gsap.to(cursor, { scale: 2.5, duration: 0.3 }));
+            el.addEventListener('mouseleave', () => gsap.to(cursor, { scale: 1, duration: 0.3 }));
+        });
+    }
 
     // --- 1. SCROLL SMOOTHER ---
     const smoother = ScrollSmoother.create({
@@ -17,99 +35,102 @@ document.addEventListener("DOMContentLoaded", () => {
         onLeaveBack: () => document.querySelector('.main-nav').classList.remove('scrolled'),
     });
 
-    // --- 4. ANIMATION SCROLLYTELLING POUR LA PROCÉDURE ---
-    ScrollTrigger.matchMedia({
-        "(min-width: 993px)": function () {
-            // Version desktop - pin visual
-            ScrollTrigger.create({
-                trigger: ".procedure-wrapper",
-                pin: ".procedure-visual",
-                start: "top 120px",
-                end: "bottom bottom-=120px"
-            });
+    // --- 3. ANIMATION D'INTRODUCTION HERO (AVEC SPLITTEXT 3D) ---
+    document.fonts.ready.then(() => {
+        const heroTitle = document.getElementById('hero-title');
+        const heroVideo = document.getElementById('hero-video');
 
-            gsap.utils.toArray('.step').forEach((step, i) => {
-                gsap.timeline({
-                    scrollTrigger: {
-                        trigger: step,
-                        start: "top center",
-                        end: "bottom center",
-                        toggleClass: {targets: step, className: "is-active"},
-                        scrub: 0.5
-                    }
-                });
-            });
-        },
-        "(max-width: 992px)": function () {
-            // Version mobile - animation simple et efficace
-            gsap.utils.toArray('.step').forEach((step, index) => {
-                // Animation d'entrée
-                gsap.fromTo(step,
-                    {
-                        opacity: 0.3,
-                        y: 30
-                    },
-                    {
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.8,
-                        ease: "power2.out",
-                        scrollTrigger: {
-                            trigger: step,
-                            start: "top 80%",
-                            end: "top 20%",
-                            toggleActions: "play none none reverse",
-                            onEnter: () => {
-                                // Retirer la classe active de tous les steps
-                                gsap.utils.toArray('.step').forEach(s => s.classList.remove('is-active'));
-                                // Ajouter la classe active au step courant
-                                step.classList.add('is-active');
-                            },
-                            onLeave: () => {
-                                step.classList.remove('is-active');
-                            },
-                            onEnterBack: () => {
-                                // Retirer la classe active de tous les steps
-                                gsap.utils.toArray('.step').forEach(s => s.classList.remove('is-active'));
-                                // Ajouter la classe active au step courant
-                                step.classList.add('is-active');
-                            },
-                            onLeaveBack: () => {
-                                step.classList.remove('is-active');
-                            }
-                        }
-                    }
-                );
-            });
+        if (heroTitle) {
+            const split = new SplitText(heroTitle, { type: "chars" });
+            gsap.set([".hero-subtitle", ".hero-actions"], { autoAlpha: 0, y: 30 });
 
-            // S'assurer que le premier step est actif au chargement sur mobile
-            const firstStep = document.querySelector('.step');
-            if (firstStep) {
-                firstStep.classList.add('is-active');
-            }
+            const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+            tl.from(heroVideo, { scale: 1.1, duration: 4, ease: 'power2.inOut' }, 0)
+                .from(".hero-overlay", { autoAlpha: 0, duration: 1.5 }, 0)
+                .from(split.chars, {
+                    duration: 0.8,
+                    opacity: 0,
+                    scale: 0.5,
+                    y: 60,
+                    rotationX: -180, // L'effet 3D que vous aviez apprécié
+                    transformOrigin: "50% 50%",
+                    ease: "back.out",
+                    stagger: 0.04
+                }, 0.5)
+                .to(".hero-subtitle", { autoAlpha: 1, y: 0, duration: 0.8 }, "-=0.8")
+                .to(".hero-actions", { autoAlpha: 1, y: 0, duration: 0.8 }, "-=0.7");
         }
     });
 
-    // --- 5. ANIMATION DES COMPTEURS (STATS) ---
-    gsap.utils.toArray('.stat-number').forEach(stat => {
-        const target = parseInt(stat.dataset.target);
-        gsap.from(stat, {
-            textContent: 0,
-            duration: 2,
-            ease: 'power1.inOut',
-            snap: {textContent: 1},
-            scrollTrigger: {
-                trigger: stat,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
+    // --- 4. ANIMATIONS COHÉRENTES AU DÉFILEMENT ---
+    // Fonction unique pour une animation d'apparition propre
+    function animateOnScroll(elements, staggerVal = 0) {
+        gsap.from(elements, {
+            autoAlpha: 0, y: 50, duration: 1, ease: 'power3.out',
+            stagger: staggerVal,
+            scrollTrigger: { trigger: elements, start: 'top 85%', toggleActions: 'play none none reverse' }
+        });
+    }
+
+    // Animation des titres de section avec ScrambleText
+    gsap.utils.toArray('.section-intro .title').forEach(title => {
+        gsap.from(title, {
+            duration: 1.5,
+            scrambleText: { text: "████████ ████████", chars: "lowerCase", revealDelay: 0.5, speed: 0.3 },
+            scrollTrigger: { trigger: title, start: 'top 90%', toggleActions: 'play none none none' }
+        });
+    });
+
+    // Animation des autres éléments
+    animateOnScroll(gsap.utils.toArray([".section-intro .label", ".main-footer"]));
+    animateOnScroll(gsap.utils.toArray(".step"), 0.1);
+    animateOnScroll(gsap.utils.toArray(".stat-item"), 0.1);
+
+    // --- 5. ANIMATION PROCÉDURE (LOGIQUE STABLE ET CORRIGÉE) ---
+    const steps = gsap.utils.toArray('.step');
+    const images = gsap.utils.toArray('.procedure-image');
+
+    steps.forEach((step, i) => {
+        step.setAttribute('data-step-number', `0${i + 1}`);
+    });
+
+    ScrollTrigger.matchMedia({
+        "(min-width: 993px)": function() {
+            ScrollTrigger.create({ trigger: ".procedure-wrapper", pin: ".procedure-visual", start: "top 120px", end: "bottom bottom" });
+        }
+    });
+
+    // Boucle unique pour gérer le "scrollytelling" de manière synchronisée
+    steps.forEach((step, i) => {
+        ScrollTrigger.create({
+            trigger: step,
+            start: "top center",
+            end: "bottom center",
+            toggleActions: "play reverse play reverse", // Activation/désactivation nette
+            toggleClass: { targets: step, className: "is-active" },
+            onEnter: () => {
+                images.forEach(img => img.classList.remove('active'));
+                if (images[i]) images[i].classList.add('active');
             },
-            onUpdate: function () {
-                this.targets()[0].innerHTML = Math.ceil(this.targets()[0].textContent) + '%';
+            onEnterBack: () => {
+                images.forEach(img => img.classList.remove('active'));
+                if (images[i]) images[i].classList.add('active');
             }
         });
     });
 
-    // --- 6. MENU MOBILE ---
+    // --- 6. ANIMATION DES COMPTEURS (STATS) ---
+    gsap.utils.toArray('.stat-number').forEach(stat => {
+        const target = stat.dataset.target + "%";
+        gsap.from(stat, {
+            textContent: "0%", duration: 2.5, ease: "power2.out",
+            scrambleText: { text: target, chars: "0123456789%", speed: 0.5 },
+            scrollTrigger: { trigger: stat, start: 'top 85%', toggleActions: 'play none none none' }
+        });
+    });
+
+    // --- 7. MENU MOBILE ---
     const menuToggle = document.getElementById('menu-toggle');
     const navActions = document.getElementById('nav-actions');
     if (menuToggle && navActions) {
@@ -123,47 +144,4 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
-    // --- 3. ANIMATION D'INTRODUCTION AVEC SPLITTEXT ---
-    document.fonts.ready.then(() => {
-        const heroTitle = document.getElementById('hero-title');
-        if (heroTitle) {
-            let split = new SplitText(heroTitle, {type: "chars"});
-            // Cacher initialement les éléments qui vont être animés
-            gsap.set([".hero-subtitle", ".hero-content .btn"], {opacity: 0, y: 30});
-            gsap.set(".hero-content .btn", {scale: 0.8});
-
-            const tl = gsap.timeline({defaults: {ease: 'power4.out'}});
-
-            tl.from(".main-nav", {y: -30, opacity: 0, duration: 1})
-                .from(split.chars, {
-                    duration: 0.8,
-                    opacity: 0,
-                    scale: 0.5,
-                    y: 60,
-                    rotationX: -180,
-                    transformOrigin: "50% 50%",
-                    ease: "back.out",
-                    stagger: 0.04
-                }, 0.5)
-                .to(".hero-subtitle", {
-                    y: 0,
-                    opacity: 1,
-                    duration: 0.5,
-                }, "-=0.8")
-                .to(".hero-content .btn", {
-                    y: 0,
-                    opacity: 1,
-                    scale: 1,
-                    duration: 0.2,
-                    ease: "back.out(1.7)",
-                    delay: -0.8
-                })
-                .from("#hero-video", {clipPath: 'inset(50% 50% 50% 50%)', duration: 1.5}, "<");
-        } else {
-            console.warn("L'élément #hero-title n'a pas été trouvé pour SplitText.");
-        }
-    }).catch(err => {
-        console.error("Erreur lors du chargement des polices :", err);
-    });
 });
