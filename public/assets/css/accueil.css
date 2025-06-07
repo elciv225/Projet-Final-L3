@@ -1,73 +1,76 @@
-/*
-  ===============================================================
-  IMPORTS ET VARIABLES CSS (ROOT)
-  ===============================================================
-*/
 @import url("https://use.typekit.net/gys0gor.css");
 
 :root {
     color-scheme: light dark;
-
     --primary-color: #1A5E63;
     --secondary-color: #FFC857;
     --background-primary: #F9FAFA;
     --background-secondary: #F7F9FA;
+    --background-input: #ECF0F1;
     --text-primary: #050E10;
     --text-secondary: #0A1B20;
-    --border-light: #E0E6E8;
-    --border-medium: #BDC3C7;
+    --text-disabled: #BDC3C7;
+    --button-primary: #1A5E63;
+    --button-primary-hover: #15484B;
+    --button-secondary: #FFC857;
+    --button-secondary-hover: #FCCF6C;
+    --button-disabled: #E0E6E8;
+    --success: rgb(102 187 106 / 55%);
+    --warning: rgb(255 193 7 / 55%);
+    --error: rgb(239 83 80 / 55%);
+    --info: rgb(100 181 246 / 55%);
+    --border-light: #87999A;
+    --border-medium: #6B7B7C;
+    --border-dark: #162122;
+    --gradient-hover: linear-gradient(to bottom, rgb(240 240 240 / 80%), rgb(220 220 220 / 90%));
     --overlay: rgb(44 62 80 / 10%);
+    --shadow: rgb(0 0 0 / 5%) 0px 1px 2px 0px;
+    --shadow-sm: 0 1px 3px rgb(0 0 0 / 10%);
     --shadow-md: 0 4px 6px rgb(0 0 0 / 10%);
     --shadow-lg: 0 10px 15px rgb(0 0 0 / 10%);
-    --step-background: rgb(247 249 250 / 80%);
+    --input-border: #1A5E63;
+    --input-focus: rgb(26 94 99 / 20%);
+    --link-color: #2A8F96;
+    --link-hover: #1A5E63;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
+        --primary-color: #1A5E63;
+        --secondary-color: #FFC857;
         --background-primary: #1B1B1B;
         --background-secondary: #202020;
+        --background-input: #2D2D2D;
         --text-primary: #EAEAEA;
         --text-secondary: #CFCFCF;
+        --text-disabled: #7F8C8D;
+        --button-primary: #1A5E63;
+        --button-primary-hover: #15484B;
+        --button-secondary: #FFC857;
+        --button-secondary-hover: #F3BA44;
+        --button-disabled: #4F5B5C;
+        --success: rgb(39 174 96 / 40%);
+        --warning: rgb(243 156 18 / 40%);
+        --error: rgb(231 76 60 / 40%);
+        --info: rgb(52 152 219 / 40%);
         --border-light: #2C3E50;
         --border-medium: #34495E;
+        --border-dark: #1A252F;
+        --gradient-hover: linear-gradient(to bottom, rgb(30 30 30 / 80%), rgb(15 15 15 / 90%));
         --overlay: rgb(0 0 0 / 50%);
+        --shadow: rgb(0 0 0 / 10%) 0px 1px 2px 0px;
+        --shadow-sm: 0 1px 3px rgb(0 0 0 / 30%);
         --shadow-md: 0 4px 6px rgb(0 0 0 / 30%);
         --shadow-lg: 0 10px 15px rgb(0 0 0 / 30%);
-        --step-background: rgb(32 32 32 / 75%);
+        --input-border: #1A5E63;
+        --input-focus: rgb(26 94 99 / 20%);
+        --link-color: #1A5E63;
+        --link-hover: #15484B;
     }
 }
 
-/*
-  ===============================================================
-  CURSEUR PERSONNALISÉ (DÉSACTIVÉ SUR MOBILE)
-  ===============================================================
-*/
-.custom-cursor {
-    display: none; /* Caché par défaut */
-}
 
-/* S'affiche seulement sur les appareils avec un pointeur fin (souris) */
-@media (pointer: fine) {
-    .custom-cursor {
-        display: block;
-        width: 20px;
-        height: 20px;
-        border: 2px solid var(--primary-color);
-        border-radius: 50%;
-        position: fixed;
-        left: 0;
-        top: 0;
-        pointer-events: none;
-        z-index: 9999;
-        mix-blend-mode: difference;
-    }
-}
-
-/*
-  ===============================================================
-  STYLES GLOBAUX & TYPOGRAPHIE
-  ===============================================================
-*/
+/* STYLES GLOBAUX */
 * {
     padding: 0;
     margin: 0;
@@ -102,11 +105,12 @@ img, video {
     border-radius: 12px;
 }
 
-.title, .hero-title {
-    font-variation-settings: "wght" 800;
-    letter-spacing: -0.02em;
+.serif-title {
+    font-family: 'Merriweather', serif;
+    font-weight: 900;
 }
 
+/* Gardons Merriweather pour les titres, car elle est chargée dans l'import précédent */
 .section-intro {
     text-align: center;
     max-width: 650px;
@@ -127,61 +131,7 @@ img, video {
     line-height: 1.2;
 }
 
-/*
-  ===============================================================
-  BOUTONS & NAVIGATION
-  ===============================================================
-*/
-.btn {
-    padding: 12px 28px;
-    text-decoration: none;
-    border-radius: 50px;
-    font-weight: 600;
-    display: inline-block;
-    transition: all 0.3s ease;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-}
-
-.btn-primary {
-    background-color: var(--primary-color);
-    color: #EAEAEA;
-    box-shadow: var(--shadow-md);
-}
-
-.btn-primary:hover {
-    transform: translateY(-3px);
-    background-color: #15484B;
-    box-shadow: var(--shadow-lg);
-}
-
-.btn-secondary {
-    background-color: transparent;
-    color: var(--text-primary);
-    border: 2px solid var(--border-medium);
-    box-shadow: none;
-}
-
-.btn-secondary:hover {
-    background-color: var(--overlay);
-    border-color: var(--text-primary);
-    color: var(--text-primary);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-}
-
-@media (prefers-color-scheme: dark) {
-    .btn-secondary {
-        color: #EAEAEA;
-        border-color: #34495E;
-    }
-
-    .btn-secondary:hover {
-        border-color: #EAEAEA;
-    }
-}
-
+/* HEADER */
 .main-nav {
     position: fixed;
     top: 0;
@@ -193,7 +143,7 @@ img, video {
 }
 
 .main-nav.scrolled {
-    background: rgb(249 250 250 / 85%);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-light);
     padding: 15px 0;
@@ -201,7 +151,8 @@ img, video {
 
 @media (prefers-color-scheme: dark) {
     .main-nav.scrolled {
-        background: rgb(27 27 27 / 80%);
+        background: rgba(27, 27, 27, 0.8);
+        border-bottom: 1px solid var(--border-light);
     }
 }
 
@@ -245,255 +196,180 @@ img, video {
     color: var(--text-secondary);
     font-weight: 600;
     transition: color 0.3s ease;
-    position: relative;
-    padding: 5px 0;
-}
-
-.nav-actions a:not(.btn)::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--primary-color);
-    transition: width 0.3s ease;
-}
-
-.nav-actions a:not(.btn):hover::after {
-    width: 100%;
 }
 
 .nav-actions a:not(.btn):hover {
     color: var(--text-primary);
 }
 
+.btn {
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--button-primary);
+    color: var(--background-primary);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    background-color: var(--button-primary-hover);
+    box-shadow: var(--shadow-lg);
+}
+
 .menu-toggle {
     display: none;
 }
 
-/*
-  ===============================================================
-  HERO SECTION
-  ===============================================================
-*/
+/* HERO SECTION */
 .hero-section {
-    position: relative;
-    height: 100vh;
-    min-height: 600px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding-top: 150px;
+    padding-bottom: 120px;
+    background-color: var(--background-primary);
     overflow: hidden;
-    color: white;
 }
 
-.hero-background-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-.hero-background-video video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(5 14 16 / 60%);
-    z-index: 2;
-}
-
-.hero-content-container {
-    position: relative;
-    z-index: 3;
-    text-align: center;
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 50px;
 }
 
 .hero-content .label {
-    color: var(--secondary-color);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary-color);
+    margin-bottom: 20px;
 }
 
 .hero-title {
-    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-size: clamp(3rem, 6vw, 5rem);
     line-height: 1.1;
     margin-bottom: 25px;
-    text-shadow: 0 2px 15px rgb(0 0 0 / 30%);
+    perspective: 800px;
+    color: var(--text-primary);
 }
 
+.hero-title .char {
+    display: inline-block;
+}
+
+/* Nécessaire pour SplitText */
 .hero-subtitle {
-    font-size: clamp(1.1rem, 2.5vw, 1.3rem);
-    max-width: 600px;
-    margin: 0 auto;
-    color: rgb(255 255 255 / 90%);
+    font-size: 1.2rem;
+    max-width: 500px;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
 }
 
-.hero-actions {
+.hero-visual {
+    position: relative;
     display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 40px;
     justify-content: center;
+    align-items: center;
 }
 
-.hero-section .btn-secondary {
-    color: white;
-    border-color: rgb(255 255 255 / 50%);
+.hero-visual-bg-shape {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--secondary-color);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    z-index: 0;
+    opacity: 0.3;
 }
 
-.hero-section .btn-secondary:hover {
-    background-color: rgb(255 255 255 / 10%);
-    border-color: white;
+#hero-video {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
 }
 
-/*
-  ===============================================================
-  SECTION PROCÉDURE (STYLE FINAL CORRIGÉ)
-  ===============================================================
-*/
+/* PROCEDURE SECTION (SCROLLYTELLING) */
 section {
     padding: 120px 0;
 }
 
 .procedure-section {
     background-color: var(--background-secondary);
-    overflow: hidden;
+    padding-bottom: 120px;
 }
 
 .procedure-wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 5rem;
+    gap: 80px;
     align-items: flex-start;
-    margin-top: 4rem;
 }
 
 .procedure-visual {
     position: sticky;
     top: 120px;
-    height: calc(100vh - 240px);
-    min-height: 500px;
+    height: 60vh;
+    will-change: transform;
 }
 
-.procedure-visual-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: var(--shadow-lg);
-}
-
-.procedure-image {
-    position: absolute;
-    top: 0;
-    left: 0;
+.procedure-visual img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0;
-    transform: scale(1.05);
-    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
-}
-
-.procedure-image.active {
-    opacity: 1;
-    transform: scale(1);
-    transition: opacity 0.6s ease-in-out, transform 10s linear;
 }
 
 .procedure-steps {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-    position: relative;
-}
-
-.procedure-steps::before {
-    content: '';
-    position: absolute;
-    left: 17px;
-    top: 2.5rem;
-    height: 100%;
-    width: 2px;
-    background-color: var(--border-light);
-    z-index: 0;
+    padding-top: 20px;
 }
 
 .step {
-    position: relative;
-    padding-left: 50px;
-    margin-bottom: 12vh;
+    padding: 20px 0;
+    margin-bottom: 8vh;
     opacity: 0.35;
     transition: opacity 0.4s ease;
-}
-
-.step:last-child {
-    margin-bottom: 0;
+    border-bottom: 1px solid var(--border-light);
 }
 
 .step.is-active {
     opacity: 1;
 }
 
-.step::before {
-    content: attr(data-step-number);
-    font-size: 0.8rem;
+.step-number {
+    font-size: 1rem;
     font-weight: 700;
     color: var(--text-secondary);
-    position: absolute;
-    left: 0;
-    top: 0.8rem;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background-color: var(--background-secondary);
-    border: 2px solid var(--border-light);
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    z-index: 1;
-}
-
-.step.is-active::before {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-    color: white;
-    transform: scale(1.1);
-}
-
-.step .step-number {
-    display: none;
+    margin-bottom: 15px;
 }
 
 .step h3 {
     font-size: 2rem;
-    margin-bottom: 10px;
-    font-variation-settings: "wght" 800;
+    margin-bottom: 15px;
+    font-weight: 700;
     color: var(--text-primary);
-    line-height: 1.2;
 }
 
 .step p {
     color: var(--text-secondary);
-    font-size: 1.05rem;
-    max-width: 90%;
+    font-size: 1.1rem;
 }
 
-/*
-  ===============================================================
-  SECTION STATISTIQUES & FOOTER
-  ===============================================================
-*/
+.step:last-child {
+    border-bottom: none;
+}
+
+/* STATS SECTION */
 .stats-section {
     background-color: var(--background-primary);
 }
@@ -506,21 +382,18 @@ section {
 }
 
 .stat-item {
-    padding: 20px;
-    border-radius: 12px;
-    transition: transform 0.3s ease, background-color 0.3s ease;
+    transition: transform 0.3s ease;
 }
 
 .stat-item:hover {
     transform: translateY(-10px);
-    background-color: var(--background-secondary);
 }
 
 .stat-item .stat-number {
     font-size: clamp(4rem, 8vw, 6rem);
+    font-weight: 700;
     line-height: 1;
     color: var(--primary-color);
-    font-variation-settings: "wght" 700;
 }
 
 .stat-item .stat-label {
@@ -530,78 +403,32 @@ section {
     margin-top: 10px;
 }
 
-.main-footer {
-    background-color: var(--background-secondary);
-    border-top: 1px solid var(--border-light);
-    padding: 40px 0;
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-@media (prefers-color-scheme: dark) {
-    .main-footer {
-        background-color: #121212;
-    }
-}
-
-/*
-  ===============================================================
-  RESPONSIVE
-  ===============================================================
-*/
-@media (width <= 992px) {
+/* RESPONSIVE */
+@media (max-width: 992px) {
     .container {
         padding: 0 30px;
     }
 
-    .procedure-wrapper {
+    .hero-grid, .procedure-wrapper {
         grid-template-columns: 1fr;
-        gap: 2rem;
-        margin-top: 2rem;
+    }
+
+    .hero-content {
+        order: 2;
+        margin-top: 40px;
+        text-align: center;
+    }
+
+    .hero-subtitle {
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .procedure-visual {
-        position: sticky;
-        top: 80px;
-        height: 45vh;
-        z-index: 0;
-    }
-
-    .procedure-steps {
-        background-color: transparent;
         position: relative;
-        z-index: 1;
-        padding-top: 0;
-    }
-
-    .procedure-steps::before {
-        display: none;
-    }
-
-    .step, .procedure-section .section-intro {
-        background: var(--step-background);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgb(255 255 255 / 10%);
-        border-radius: 16px;
-        padding: 25px;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow-md);
-
-    }
-
-    .step::before {
-        display: none;
-    }
-
-    .procedure-section .section-intro {
-        margin-bottom: 2rem;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .step, .procedure-section .section-intro {
-            border-color: rgb(255 255 255 / 5%);
-        }
+        top: 0;
+        margin-bottom: 40px;
+        height: 300px;
     }
 
     .stats-grid {
@@ -610,7 +437,15 @@ section {
     }
 }
 
-@media (width <= 768px) {
+@media (max-width: 768px) {
+    .nav-actions a:not(.btn) {
+        display: none;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+    }
+
     section {
         padding: 80px 0;
     }
@@ -626,11 +461,6 @@ section {
     .menu-toggle svg {
         width: 30px;
         height: 30px;
-        color: white;
-        transition: color 0.3s ease;
-    }
-
-    .main-nav.scrolled .menu-toggle svg {
         color: var(--text-primary);
     }
 
@@ -638,18 +468,15 @@ section {
         position: fixed;
         top: 0;
         right: 0;
-        height: 100%;
+        height: 100vh;
         background-color: var(--background-primary);
         flex-direction: column;
         justify-content: center;
-        align-items: center;
         gap: 40px;
         width: 80%;
-        max-width: 320px;
-        box-shadow: -10px 0 30px rgb(0 0 0 / 10%);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
         transform: translateX(100%);
-        transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-        display: flex;
+        transition: transform 0.4s ease;
     }
 
     .nav-actions.is-active {
@@ -659,9 +486,5 @@ section {
     .nav-actions a:not(.btn) {
         display: block;
         font-size: 1.5rem;
-    }
-
-    .nav-actions .btn {
-        font-size: 1.2rem;
     }
 }
