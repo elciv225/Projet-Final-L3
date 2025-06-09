@@ -18,12 +18,11 @@
                     <span class="logo-icon">U</span>
                     <span>University</span>
                 </a>
-                <button class="menu-toggle" id="menu-toggle" aria-label="Ouvrir le menu">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                         stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
-                    </svg>
+                <!-- Structure du bouton modifiée pour l'animation -->
+                <button class="menu-toggle" id="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
                 </button>
                 <div class="nav-actions" id="nav-actions">
                     <a href="#procedure">Procédure</a>
@@ -35,54 +34,55 @@
 
         <main>
             <section class="hero-section">
+                <div class="video-overlay"></div>
                 <div class="container">
                     <div class="hero-grid">
                         <div class="hero-content">
                             <p class="label">Portail de Soutenance</p>
                             <h1 class="hero-title serif-title" id="hero-title">Projet ✖️✖️✖️️</h1>
-                            <p class="hero-subtitle">La plateforme officielle pour le dépôt de votre mémoire et de vos
-                                documents de soutenance.</p>
-                            <a href="#" class="btn btn-primary">Soumettre mon dossier</a>
-                        </div>
-
-                        <div class="hero-visual">
-                            <video playsinline autoplay muted loop poster="" id="hero-video" data-speed="1.1">
-                                <source src="" type="video/mp4">
-                            </video>
+                            <p class="hero-subtitle">La plateforme officielle pour le dépôt de votre mémoire et de vos documents de soutenance.</p>
+                            <a href="#" class="btn btn-primary hero-actions">Soumettre mon dossier</a>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section id="procedure" class="procedure-section">
+            <section id="procedure" class="procedure-section-timeline">
                 <div class="container">
-                    <div class="procedure-wrapper">
-                        <div class="procedure-visual">
-                            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop"
-                                 alt="Étudiants concentrés sur un ordinateur portable">
-                        </div>
-                        <div class="procedure-steps">
-                            <div class="section-intro" style="text-align: left; margin-bottom: 30px;">
-                                <p class="label">Procédure</p>
-                                <h2 class="serif-title title">Un Processus Simplifié</h2>
-                            </div>
-                            <div class="step">
+                    <div class="section-intro">
+                        <p class="label">Procédure</p>
+                        <h2 class="serif-title title">Un Processus Simplifié</h2>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
                                 <div class="step-number">01</div>
                                 <h3>Préparation</h3>
-                                <p>Vérifiez votre éligibilité et préparez tous les documents requis au format PDF. C'est
-                                    l'étape la plus importante.</p>
+                                <p>Vérifiez votre éligibilité et préparez tous les documents requis au format PDF. C'est l'étape la plus importante.</p>
                             </div>
-                            <div class="step">
+                            <div class="timeline-visual">
+                                <img src="https://images.pexels.com/photos/313563/sand-pattern-wave-texture-313563.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Étudiants préparant des documents dans une bibliothèque.">
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
                                 <div class="step-number">02</div>
                                 <h3>Soumission</h3>
-                                <p>Remplissez le formulaire de soumission en ligne avec précision et téléversez vos
-                                    documents.</p>
+                                <p>Remplissez le formulaire de soumission en ligne avec précision et téléversez vos documents.</p>
                             </div>
-                            <div class="step">
+                            <div class="timeline-visual">
+                                <img src="https://images.pexels.com/photos/313563/sand-pattern-wave-texture-313563.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Personne soumettant un dossier en ligne sur un ordinateur.">
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-content">
                                 <div class="step-number">03</div>
                                 <h3>Validation</h3>
-                                <p>Recevez un email de confirmation une fois votre dossier validé par
-                                    l'administration.</p>
+                                <p>Recevez un email de confirmation une fois votre dossier validé par l'administration.</p>
+                            </div>
+                            <div class="timeline-visual">
+                                <img src="https://images.pexels.com/photos/313563/sand-pattern-wave-texture-313563.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Célébration d'une réussite ou d'une validation.">
                             </div>
                         </div>
                     </div>
@@ -91,8 +91,10 @@
 
             <section id="stats" class="stats-section">
                 <div class="container">
-                    <div class="section-intro"><p class="label">En chiffres</p>
-                        <h2 class="serif-title title">Notre Engagement, Votre Réussite</h2></div>
+                    <div class="section-intro">
+                        <p class="label">En chiffres</p>
+                        <h2 class="serif-title title">Notre Engagement, Votre Réussite</h2>
+                    </div>
                     <div class="stats-grid">
                         <div class="stat-item">
                             <div class="stat-number" data-target="95">0</div>
@@ -110,6 +112,32 @@
                 </div>
             </section>
         </main>
+
+        <footer class="main-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-brand">
+                        <a href="#" class="nav-brand">
+                            <span class="logo-icon">U</span>
+                            <span>University</span>
+                        </a>
+                        <p>La réussite de nos étudiants est notre priorité.</p>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Navigation</h4>
+                        <ul>
+                            <li><a href="#procedure">Procédure</a></li>
+                            <li><a href="#stats">Statistiques</a></li>
+                            <li><a href="#">Mentions Légales</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 U University. Tous droits réservés.</p>
+                </div>
+            </div>
+        </footer>
+
     </div>
 </div>
 

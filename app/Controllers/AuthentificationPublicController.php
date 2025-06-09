@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use System\Http\Response;
 
-class AuthentificationController extends Controller
+class AuthentificationPublicController extends Controller
 {
     public function __construct()
     {
@@ -48,7 +48,7 @@ class AuthentificationController extends Controller
             return $erreur; // Retourne l'erreur si IP invalide
         }
         // Passer à l'étape suivante
-        return Response::view('authentification', data: [
+        return Response::view('public/authentification', data: [
             'ip' => $identifiantPermanent,
             'etape' => 'envoi_email',
             'txtButton' => 'Envoyer le code'
@@ -136,7 +136,7 @@ class AuthentificationController extends Controller
     public
     function index(): Response
     {
-        return Response::view('authentification', [
+        return Response::view('public/authentification', [
             'etape' => 'verification',
             'txtButton' => 'Vérifier le statut'
         ]);

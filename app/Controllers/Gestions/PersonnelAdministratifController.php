@@ -18,12 +18,4 @@ class PersonnelAdministratifController
         return Response::view('gestion/personnel-administratif', $data);
     }
 
-    /**
-     * Détecte si la requête est une requête AJAX
-     */
-    private function isAjaxRequest(): bool
-    {
-        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-    }
 }

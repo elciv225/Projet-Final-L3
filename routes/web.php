@@ -1,7 +1,7 @@
 <?php
 
 use App\Controllers\AdministrateurController;
-use App\Controllers\AuthentificationController;
+use App\Controllers\AuthentificationPublicController;
 use App\Controllers\Gestions\EnseignantsController;
 use App\Controllers\Gestions\EtudiantsController;
 use App\Controllers\Gestions\PersonnelAdministratifController;
@@ -94,7 +94,7 @@ if (!defined('MODULES_CONFIG')) {
 $routes = [
     /* === Routes des pages publiques === */
     ['GET', '/', [AccueilController::class, 'index']],
-    ['GET', '/authentification', [AuthentificationController::class, 'index']],
+    ['GET', '/authentification', [AuthentificationPublicController::class, 'index']],
 
     /* === Routes de l'espace administrateur === */
     ['GET', '/espace-administrateur', [AdministrateurController::class, 'index']],
@@ -138,7 +138,7 @@ foreach ($configurationModules as $categorie => $modulesParCategorie) {
 // Ajouter les routes de traitement des formulaires (authentification, par exemple)
 $routes = array_merge($routes, [
     /* === Routes des traitements (formulaires) === */
-    ['POST', '/authentification', [AuthentificationController::class, 'authentification']],
+    ['POST', '/authentification', [AuthentificationPublicController::class, 'authentification']],
 ]);
 
 

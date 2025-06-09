@@ -110,13 +110,14 @@ Le système de routage de l'application est géré par la bibliothèque `nikic/f
 Une route simple est définie par un tableau contenant la méthode HTTP, le chemin (URI), et le couple contrôleur/méthode à exécuter.
 
 **Exemple de route simple :**
+
 ```php
 // Dans routes/web.php
 return [
     // ... autres routes
     ['GET', '/', [App\Controllers\Public\AccueilController::class, 'index']],
-    ['GET', '/authentification', [App\Controllers\AuthentificationController::class, 'index']],
-    ['POST', '/authentification', [App\Controllers\AuthentificationController::class, 'authentification']],
+    ['GET', '/authentification', [App\Controllers\AuthentificationPublicController::class, 'index']],
+    ['POST', '/authentification', [App\Controllers\AuthentificationPublicController::class, 'authentification']],
     // ...
 ];
 ```
