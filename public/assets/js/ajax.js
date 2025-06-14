@@ -211,6 +211,7 @@ async function handleAjaxNavigation(link) {
 async function handleNavigationResponse(data, url, target) {
     const container = document.querySelector(target);
 
+
     if (!container) {
         showPopup('Conteneur cible introuvable', 'error');
         return;

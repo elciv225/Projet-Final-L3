@@ -58,7 +58,9 @@ section {
 }
 
 /* ---------------------------------- */
+
 /* NAVIGATION             */
+
 /* ---------------------------------- */
 .main-nav {
     position: fixed;
@@ -180,7 +182,9 @@ section {
 }
 
 /* ---------------------------------- */
+
 /* SECTION D'ACCUEIL         */
+
 /* ---------------------------------- */
 .hero-section {
     padding-top: 150px;
@@ -249,7 +253,9 @@ section {
 
 
 /* ---------------------------------- */
-/* SECTION PROCÉDURE (TIMELINE)*/
+
+/* SECTION PROCÉDURE (TIMELINE) */
+
 /* ---------------------------------- */
 .procedure-section-timeline {
     background-color: var(--background-secondary);
@@ -361,7 +367,9 @@ section {
 
 
 /* ---------------------------------- */
+
 /* SECTION STATISTIQUES        */
+
 /* ---------------------------------- */
 .stats-section {
     background-color: var(--background-primary);
@@ -394,7 +402,7 @@ section {
     font-weight: 700;
     line-height: 1;
     color: var(--primary-color);
-    font-family: 'Merriweather', serif;
+    font-family: Merriweather, serif;
 }
 
 .stat-item .stat-label {
@@ -405,7 +413,9 @@ section {
 }
 
 /* ---------------------------------- */
+
 /* FOOTER                     */
+
 /* ---------------------------------- */
 .main-footer {
     background-color: var(--background-secondary);
@@ -443,12 +453,6 @@ section {
     margin-bottom: 10px;
 }
 
-.footer-links a {
-    text-decoration: none;
-    color: var(--text-secondary);
-    transition: color 0.3s ease;
-}
-
 .footer-links a:hover {
     color: var(--primary-color);
 }
@@ -461,7 +465,9 @@ section {
 }
 
 /* ---------------------------------- */
+
 /* RESPONSIVE DESIGN        */
+
 /* ---------------------------------- */
 @media (width <= 992px) {
     .container {
@@ -601,12 +607,12 @@ section {
     }
 
     .menu-toggle.is-active .hamburger-inner::before {
-        transform: rotate(90deg) translate(-10px, 0px);
+        transform: rotate(90deg) translate(-10px, 0);
         opacity: 0;
     }
 
     .menu-toggle.is-active .hamburger-inner::after {
-        transform: rotate(-90deg) translate(0px, 0px);
+        transform: rotate(-90deg) translate(0, 0);
         bottom: 0;
     }
 

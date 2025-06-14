@@ -3,13 +3,29 @@
 namespace App\Controllers;
 
 use System\Http\Response;
+use System\Mail\Mail;
 
 class AuthentificationPublicController extends Controller
 {
+
+    private $mail;
+    /**
+     * Configuration de l'email pour l'envoi de code de vérification
+     */
+    private $mailConfig = [
+        'host' => 'localhost',     // MailHog host
+        'port' => 1025,           // MailHog port
+        'from_email' => 'noreply@monapp.com',
+        'from_name' => 'Projet XXX'
+    ];
+
     public function __construct()
     {
         parent::__construct();
+        $this->mail  = Mail::make($this->mailConfig);
     }
+
+
 
     /**
      * Point d'entrée principal - traite toutes les étapes d'authentification
@@ -47,6 +63,8 @@ class AuthentificationPublicController extends Controller
         if ($erreur !== null) {
             return $erreur; // Retourne l'erreur si IP invalide
         }
+
+        $_SESSION['utilisateur']['ip'] = $identifiantPermanent; // Stocker l'IP en session
         // Passer à l'étape suivante
         return Response::view('public/authentification', data: [
             'ip' => $identifiantPermanent,
@@ -81,22 +99,33 @@ class AuthentificationPublicController extends Controller
      */
     private function envoyerCodeEmail(): Response
     {
-        // Récupérer l'email saisi
         $emailUtilisateur = $this->request->getPostParams('email');
+        // Génération d'un code de vérification
+        $_SESSION['code_verification'] = $this->genererCodeVerification();
+        // envoyer le code de vérification par email
+        try {
+            $this->mail->to($emailUtilisateur, $_SESSION['utilisateur']['ip'])
+                ->subject('Code de vérification')
+                ->view('emails/verification_code', [
+                    'verificationCode' => $_SESSION['code_verification'],
+                    'expirationTime' => date('H:i:s', strtotime('+10 minutes')),
+                ])
+                ->send();
+            dd($this->mail);
+        } catch (\Exception $e) {
+            $this->error("Erreur lors de l'envoi de l'email : " . $e->getMessage());
+        }
+        $_SESSION['utilisateur']['email'] = $emailUtilisateur; // Stocker l'email en session
+        return Response::view('public/authentification', data: [
+            'ip' => $_SESSION['utilisateur']['ip'],
+            'email' => $emailUtilisateur,
+            'etape' => 'verification_code',
+            'txtButton' => 'Vérifier le code'
+        ], json: [
+            'statut' => 'succes',
+            'message' => "Un code de vérification a été envoyé à l'adresse : $emailUtilisateur"
+        ]);
 
-        return $this->info("A faire : Envoyer un email à $emailUtilisateur avec le code de vérification");
-    }
-
-    /**
-     * ÉTAPE 3 : Vérifier le code saisi par l'utilisateur
-     */
-    private function verifierCode(): Response
-    {
-        // Code saisi par l'utilisateur
-        $codeSaisiParUtilisateur = $this->request->getPostParams('code');
-        // Générer un code de vérification (pour l'exemple, on utilise un code fixe)
-        $codeVerification = $this->genererCodeVerification(); // Nope on doit conserver le code envoyé par email
-        return $this->info("A faire : Vérifier le code saisi ($codeSaisiParUtilisateur) avec le code envoyé ($codeVerification)");
     }
 
     /**
@@ -105,6 +134,53 @@ class AuthentificationPublicController extends Controller
     private function genererCodeVerification(): string
     {
         return (string)rand(100000, 999999);
+    }
+
+    /**
+     * ÉTAPE 3 : Vérifier le code saisi par l'utilisateur
+     * @throws \Exception
+     */
+    private function verifierCode(): Response
+    {
+        // Code saisi par l'utilisateur
+        $codeSaisiParUtilisateur = $this->request->getPostParams('code');
+        // Récupérer le code de vérification envoyé par email
+        $codeVerification = $_SESSION['code_verification'] ?? null;
+
+        $erreur = $this->verifierCodeSaisi($codeSaisiParUtilisateur);
+        if ($erreur !== null) {
+            return $erreur; // Retourne l'erreur si le code saisi est invalide
+        }
+        // Vérifier que le code saisi correspond au code envoyé
+
+        if ($codeSaisiParUtilisateur !== $codeVerification) {
+            return $this->error("Le code de vérification saisi ne correspond pas au code envoyé");
+        }
+
+        return Response::view('public/authentification', data: [
+            'ip' => $_SESSION['utilisateur']['ip'],
+            'email' => $_SESSION['utilisateur']['email'],
+            'etape' => 'enregistrement',
+            'txtButton' => 'Créer le compte'
+        ], json: [
+            'statut' => 'succes',
+            'message' => "Code de vérification validé avec succès"
+        ]);
+    }
+
+    /**
+     * Vérifier le code de vérification saisi par l'utilisateur
+     */
+    private function verifierCodeSaisi(string $codeSaisi): Response|null
+    {
+        // Vérifier que le code ne contient que des chiffres
+        if (!preg_match('/^\d{6}$/', $codeSaisi)) {
+            return $this->error("Le code de vérification doit être un nombre à 6 chiffres");
+        }
+        if ($codeSaisi === '') {
+            return $this->error("Le code de vérification ne peut pas être vide");
+        }
+        return null;
     }
 
     /*****************************************************************

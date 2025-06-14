@@ -17,7 +17,10 @@ class ComposerStaticInitef1a323a99cf1b52b6480266a3d85ba8
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
+            'System\\View\\' => 12,
+            'System\\Security\\' => 16,
             'System\\Http\\' => 12,
+            'System\\Database\\' => 16,
             'System\\' => 7,
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
@@ -27,6 +30,7 @@ class ComposerStaticInitef1a323a99cf1b52b6480266a3d85ba8
         'P' => 
         array (
             'PhpOption\\' => 10,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'G' => 
         array (
@@ -42,14 +46,31 @@ class ComposerStaticInitef1a323a99cf1b52b6480266a3d85ba8
         ),
         'A' => 
         array (
+            'App\\Models\\' => 11,
+            'App\\Dao\\' => 8,
+            'App\\Controllers\\Public\\' => 23,
+            'App\\Controllers\\Gestions\\\\' => 26,
+            'App\\Controllers\\' => 16,
             'App\\' => 4,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'System\\View\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/View',
+        ),
+        'System\\Security\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/Security',
+        ),
         'System\\Http\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/Http',
+        ),
+        'System\\Database\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/Database',
         ),
         'System\\' => 
         array (
@@ -75,6 +96,10 @@ class ComposerStaticInitef1a323a99cf1b52b6480266a3d85ba8
         array (
             0 => __DIR__ . '/..' . '/phpoption/phpoption/src/PhpOption',
         ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
         'GrahamCampbell\\ResultType\\' => 
         array (
             0 => __DIR__ . '/..' . '/graham-campbell/result-type/src',
@@ -86,6 +111,26 @@ class ComposerStaticInitef1a323a99cf1b52b6480266a3d85ba8
         'Dotenv\\' => 
         array (
             0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
+        ),
+        'App\\Models\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/app/Models',
+        ),
+        'App\\Dao\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/app/Dao',
+        ),
+        'App\\Controllers\\Public\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/app/Controllers/Public',
+        ),
+        'App\\Controllers\\Gestions\\\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/app/Controllers/Gestions',
+        ),
+        'App\\Controllers\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/app/Controllers',
         ),
         'App\\' => 
         array (
