@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
 // -------------------------------------------------------------------
 function createGlobalElements() {
     // Popup - Structure corrigée pour correspondre au CSS
+    const documentBody = document.querySelector("#content-area .main-content") || document.querySelector("#content-area");
+
     if (!document.getElementById('ajax-popup')) {
         const popup = document.createElement('div');
         popup.id = 'ajax-popup';
@@ -31,7 +33,7 @@ function createGlobalElements() {
                 <button class="close-popup">&times;</button>
             </div>
         `;
-        document.body.appendChild(popup);
+        documentBody.appendChild(popup);
 
         popup.querySelector('.close-popup').addEventListener('click', closePopup);
     }
@@ -43,7 +45,7 @@ function createGlobalElements() {
         loader.className = 'loader-overlay';
         loader.style.display = 'none';
         loader.innerHTML = '<div class="loader"></div>';
-        document.body.appendChild(loader);
+        documentBody.appendChild(loader);
     }
 
     // Warning Card - Card de confirmation
@@ -67,7 +69,7 @@ function createGlobalElements() {
                 </div>
             </div>
         `;
-        document.body.appendChild(warningCard);
+        documentBody.appendChild(warningCard);
     }
 }
 

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/assets/css/menu.css">
     <link rel="stylesheet" href="/assets/css/gestion.css">
     <link rel="stylesheet" href="/assets/css/ajax.css">
-    <title><?= $title ?? 'Espace Administrateur' ?></title>
+    <title><?= $title ?? 'Espace Commission' ?></title>
 </head>
 <body>
 <div id="main-container" class="main-container">
@@ -40,7 +40,7 @@
                         <ul class="nav-list">
                             <?php foreach ($categoryModules as $moduleName => $moduleConfig): ?>
                                 <li class="nav-item">
-                                    <a href="/espace-administrateur/<?= $categoryName ?>/<?= $moduleName ?>"
+                                    <a href="/espace-commission/<?= $categoryName ?>/<?= $moduleName ?>"
                                        class="nav-link-ajax <?= (isset($currentSection) && $currentSection === $moduleName && isset($currentCategory) && $currentCategory === $categoryName) ? 'active' : '' ?>"
                                        data-target="#content-area"
                                        data-module="<?= $moduleName ?>"
@@ -60,7 +60,7 @@
             <div class="user-info">
                 <div class="user-avatar">KL</div>
                 <div class="user-details">
-                    <div class="username">KOUAKOU Laurent</div>
+                    <div class="username">Mr Wah</div>
                     <div class="user-role">Administrateur</div>
                 </div>
                 <div class="user-menu">⋯</div>
@@ -82,7 +82,7 @@
             ?>
         <?php elseif (isset($heading)): ?>
             <!-- Contenu par défaut du dashboard -->
-            <?php include BASE_PATH . '/views/admin/main-content.php'; ?>
+            <?php include BASE_PATH . '/views/commission/main-content.php'; ?>
         <?php else: ?>
             <!-- Fallback si aucun contenu n'est défini -->
             <main class="main-content">
@@ -151,7 +151,7 @@
 
     // Fonction pour recharger un module spécifique
     function reloadModule(category, moduleName) {
-        const moduleUrl = `/espace-administrateur/${category}/${moduleName}`;
+        const moduleUrl = `/espace-commission/${category}/${moduleName}`;
         reloadSection(moduleUrl);
     }
 
@@ -173,7 +173,7 @@
             const newItem = document.createElement('li');
             newItem.className = 'nav-item';
             newItem.innerHTML = `
-                <a href="/espace-administrateur/${category}/${moduleName}"
+                <a href="/espace-commission/${category}/${moduleName}"
                    class="nav-link-ajax"
                    data-target="#content-area"
                    data-module="${moduleName}"

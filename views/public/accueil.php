@@ -41,7 +41,7 @@
                             <p class="label">Portail de Soutenance</p>
                             <h1 class="hero-title serif-title" id="hero-title">Projet ✖️✖️✖️️</h1>
                             <p class="hero-subtitle">La plateforme officielle pour le dépôt de votre mémoire et de vos documents de soutenance.</p>
-                            <a href="#" class="btn btn-primary hero-actions">Soumettre mon dossier</a>
+                            <a href="/soumission-rapport" class="btn btn-primary hero-actions">Soumettre mon dossier</a>
                         </div>
                     </div>
                 </div>

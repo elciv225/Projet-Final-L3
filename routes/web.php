@@ -6,6 +6,7 @@ use App\Controllers\Gestions\EnseignantsController;
 use App\Controllers\Gestions\EtudiantsController;
 use App\Controllers\Gestions\PersonnelAdministratifController;
 use App\Controllers\Public\AccueilController;
+use App\Controllers\Public\SoumissionRapportController;
 
 /**
  * Configuration des modules disponibles dans l'application.
@@ -95,6 +96,7 @@ $routes = [
     /* === Routes des pages publiques === */
     ['GET', '/', [AccueilController::class, 'index']],
     ['GET', '/authentification', [AuthentificationPublicController::class, 'index']],
+    ['GET', '/soumission-rapport', [SoumissionRapportController::class, 'index']],
 
     /* === Routes de l'espace administrateur === */
     ['GET', '/espace-administrateur', [AdministrateurController::class, 'index']],
@@ -118,7 +120,7 @@ foreach ($configurationModules as $categorie => $modulesParCategorie) {
             foreach ($configurationModule['traitements'] as $nomTraitement => $configTraitement) {
                 $routes[] = [
                     $configTraitement['methodeHttp'],
-                    "/espace-administrateur/$categorie/$nomModule/$nomTraitement",
+                    "/espace-administrateur/$categorie/$nomModule/$nomTraitement/",
                     [AdministrateurController::class, 'gererTraitementModule']
                 ];
 
