@@ -28,13 +28,13 @@ class Mail
     private function getDefaultConfig(): array
     {
         return [
-            'host' => 'localhost',
+            'host' => 'mailhog', // Nom du service Docker pour MailHog
             'port' => 1025,
             'username' => '',
             'password' => '',
             'encryption' => '', // Pas de chiffrement pour MailHog
-            'from_email' => 'noreply@localhost',
-            'from_name' => 'Application'
+            'from_email' => 'noreply@example.com',
+            'from_name' => 'projet XXX (Test)',
         ];
     }
 

@@ -8,23 +8,25 @@ use System\Mail\Mail;
 class AuthentificationPublicController extends Controller
 {
 
-    private $mail;
+    private Mail $mail;
     /**
      * Configuration de l'email pour l'envoi de code de vérification
      */
     private $mailConfig = [
-        'host' => 'localhost',     // MailHog host
-        'port' => 1025,           // MailHog port
-        'from_email' => 'noreply@monapp.com',
-        'from_name' => 'Projet XXX'
+        'host' => 'mailhog',        // Service Docker
+        'port' => 1025,             // Port SMTP MailHog
+        'username' => '',
+        'password' => '',
+        'encryption' => '',
+        'from_email' => 'noreply@example.com',
+        'from_name' => 'Projet XXX (Test)'
     ];
 
     public function __construct()
     {
         parent::__construct();
-        $this->mail  = Mail::make($this->mailConfig);
+        $this->mail = Mail::make($this->mailConfig);
     }
-
 
 
     /**
@@ -111,7 +113,6 @@ class AuthentificationPublicController extends Controller
                     'expirationTime' => date('H:i:s', strtotime('+10 minutes')),
                 ])
                 ->send();
-            dd($this->mail);
         } catch (\Exception $e) {
             $this->error("Erreur lors de l'envoi de l'email : " . $e->getMessage());
         }

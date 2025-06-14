@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialisation
     createGlobalElements();
     bindAjaxForms();
-    bindAjaxLinks(); // Nouvelle fonction pour les liens
+    bindAjaxLinks();
     bindHistoryEvents();
 });
 
@@ -120,13 +120,11 @@ function showContainerLoader(containerId) {
     const container = document.querySelector(containerId);
     if (!container) return;
 
-    // Supprimer le loader existant s'il y en a un
     const existingLoader = container.querySelector('.container-loader');
     if (existingLoader) {
         existingLoader.remove();
     }
 
-    // Créer et ajouter le nouveau loader
     const loader = document.createElement('div');
     loader.className = 'container-loader';
     loader.innerHTML = `
@@ -154,7 +152,6 @@ function hideContainerLoader(containerId) {
 // NOUVELLES FONCTIONS - Navigation AJAX
 // -------------------------------------------------------------------
 function bindAjaxLinks() {
-    // Gestion des liens avec la classe nav-link-ajax
     document.addEventListener('click', async function (e) {
         const link = e.target.closest('.nav-link-ajax');
         if (!link) return;
@@ -170,10 +167,7 @@ async function handleAjaxNavigation(link) {
 
     if (!url || url === '#') return;
 
-    // Mettre à jour l'état actif du menu
     updateActiveNavigation(link);
-
-    // Afficher le loader dans le conteneur cible
     showContainerLoader(target);
 
     try {
@@ -197,7 +191,6 @@ async function handleAjaxNavigation(link) {
             data = {html: await response.text()};
         }
 
-        // Mettre à jour le contenu
         await handleNavigationResponse(data, url, target);
 
     } catch (error) {
@@ -211,39 +204,30 @@ async function handleAjaxNavigation(link) {
 async function handleNavigationResponse(data, url, target) {
     const container = document.querySelector(target);
 
-
     if (!container) {
         showPopup('Conteneur cible introuvable', 'error');
         return;
     }
 
-    // Si on a du HTML
     if (data.html) {
-        // Extraire le contenu si c'est une page complète
         let content = data.html;
 
         if (isFullPage(content)) {
-            // Extraire le contenu du main-content
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content;
             const mainContent = tempDiv.querySelector('.main-content');
             content = mainContent ? mainContent.outerHTML : content;
         }
 
-        // Mettre à jour le contenu du conteneur
         container.innerHTML = content;
 
-        // Mettre à jour l'URL sans recharger la page
         if (url !== window.location.href) {
             window.history.pushState({url, target}, '', url);
         }
 
-        // Rebinder les événements sur le nouveau contenu
         rebindEventsInContainer(container);
-
     }
 
-    // Traiter les messages JSON si présents
     if (data.statut) {
         const messageType = data.statut === 'succes' ? 'success' : data.statut;
         showPopup(data.message || 'Action terminée', messageType);
@@ -251,17 +235,13 @@ async function handleNavigationResponse(data, url, target) {
 }
 
 function updateActiveNavigation(activeLink) {
-    // Retirer la classe active de tous les liens
     document.querySelectorAll('.nav-link-ajax').forEach(link => {
         link.classList.remove('active');
     });
-
-    // Ajouter la classe active au lien cliqué
     activeLink.classList.add('active');
 }
 
 function rebindEventsInContainer(container) {
-    // Rebinder les formulaires AJAX dans le nouveau contenu
     container.querySelectorAll('form.ajax-form').forEach(form => {
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -269,7 +249,6 @@ function rebindEventsInContainer(container) {
         });
     });
 
-    // Rebinder les liens AJAX dans le nouveau contenu
     container.querySelectorAll('.nav-link-ajax').forEach(link => {
         link.addEventListener('click', async function (e) {
             e.preventDefault();
@@ -277,12 +256,10 @@ function rebindEventsInContainer(container) {
         });
     });
 
-    // Rebinder les scripts spécifiques (comme personnel-administratif.js)
     reloadContainerScripts(container);
 }
 
 function reloadContainerScripts(container) {
-    // Exécuter les scripts inline dans le nouveau contenu
     container.querySelectorAll('script').forEach(script => {
         if (script.textContent.trim()) {
             try {
@@ -312,25 +289,24 @@ async function submitAjaxForm(form) {
     const submitButton = form.querySelector('button[type="submit"]');
     const target = form.dataset.target || null;
 
-    // Vérifier si le formulaire a un attribut warning
     const warningMessage = form.dataset.warning || form.getAttribute('warning');
     if (warningMessage && !form.dataset.warningConfirmed) {
-        // Afficher la card de warning
         showWarningCard(warningMessage, () => {
-            // Si l'utilisateur confirme, marquer comme confirmé et soumettre
             form.dataset.warningConfirmed = 'true';
             submitAjaxForm(form);
         });
         return;
     }
 
-    // Animation du bouton de soumission
+    // --- C'EST LA MAGIE, ELIEL ! ---
+    // 1. DÈS la soumission, on désactive le bouton.
+    // L'utilisateur ne peut physiquement plus cliquer une deuxième fois.
     if (submitButton) {
         submitButton.classList.add('loading');
         submitButton.disabled = true;
     }
+    // --- FIN DE LA MAGIE ---
 
-    // Afficher le loader approprié
     if (target) {
         showContainerLoader(target);
     } else {
@@ -346,27 +322,26 @@ async function submitAjaxForm(form) {
                 'Accept': 'application/json, text/html'
             }
         });
-
         await handleResponse(response, form);
-
     } catch (error) {
         showPopup('Erreur réseau', 'error');
         console.error('Erreur AJAX:', error);
     } finally {
-        // Masquer le loader approprié
         if (target) {
             hideContainerLoader(target);
         } else {
             hideLoader();
         }
 
-        // Restauration du bouton
+        // --- ET ON RECOMMENCE ---
+        // 2. UNE FOIS la requête terminée (succès ou échec), on réactive le bouton.
+        // L'utilisateur peut à nouveau soumettre le formulaire si nécessaire.
         if (submitButton) {
             submitButton.classList.remove('loading');
             submitButton.disabled = false;
         }
+        // --- FIN ---
 
-        // Supprimer la confirmation de warning après soumission
         if (form.dataset.warningConfirmed) {
             delete form.dataset.warningConfirmed;
         }
@@ -488,7 +463,6 @@ function bindHistoryEvents() {
                 const html = await response.text();
                 await handleNavigationResponse({html}, e.state.url, target);
 
-                // Mettre à jour le menu actif
                 const activeLink = document.querySelector(`[href="${e.state.url}"]`);
                 if (activeLink) {
                     updateActiveNavigation(activeLink);
