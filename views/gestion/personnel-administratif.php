@@ -111,7 +111,7 @@
             </div>
         </div>
 
-        <div style="padding: 0 24px; border-bottom: 1px solid #E5E7EB;">
+        <div style="padding: 0 24px; border-bottom: 1px var(--border-medium) ;">
             <div class="table-tabs">
                 <div class="tab active">Tout selectioner</div>
                 <div class="tab"></div>

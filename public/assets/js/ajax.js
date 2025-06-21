@@ -115,40 +115,6 @@ function hideLoader() {
     }
 }
 
-// -------------------------------------------------------------------
-// NOUVELLES FONCTIONS - Gestion des loaders spécifiques aux conteneurs
-// -------------------------------------------------------------------
-function showContainerLoader(containerId) {
-    const container = document.querySelector(containerId);
-    if (!container) return;
-
-    const existingLoader = container.querySelector('.container-loader');
-    if (existingLoader) {
-        existingLoader.remove();
-    }
-
-    const loader = document.createElement('div');
-    loader.className = 'container-loader';
-    loader.innerHTML = `
-        <div class="container-loader-overlay">
-            <div class="container-loader-spinner"></div>
-            <p>Chargement...</p>
-        </div>
-    `;
-
-    container.style.position = 'relative';
-    container.appendChild(loader);
-}
-
-function hideContainerLoader(containerId) {
-    const container = document.querySelector(containerId);
-    if (!container) return;
-
-    const loader = container.querySelector('.container-loader');
-    if (loader) {
-        loader.remove();
-    }
-}
 
 // -------------------------------------------------------------------
 // NOUVELLES FONCTIONS - Navigation AJAX
@@ -170,7 +136,7 @@ async function handleAjaxNavigation(link) {
     if (!url || url === '#') return;
 
     updateActiveNavigation(link);
-    showContainerLoader(target);
+    showLoader();
 
     try {
         const response = await fetch(url, {
@@ -199,7 +165,7 @@ async function handleAjaxNavigation(link) {
         console.error('Erreur de navigation AJAX:', error);
         showPopup('Erreur lors du chargement de la page', 'error');
     } finally {
-        hideContainerLoader(target);
+        hideLoader();
     }
 }
 
@@ -299,9 +265,6 @@ async function submitAjaxForm(form) {
         });
         return;
     }
-
-    // --- C'EST LA MAGIE, ELIEL ! ---
-    // 1. DÈS la soumission, on désactive le bouton.
     // L'utilisateur ne peut physiquement plus cliquer une deuxième fois.
     if (submitButton) {
         submitButton.classList.add('loading');
@@ -310,8 +273,6 @@ async function submitAjaxForm(form) {
     // --- FIN DE LA MAGIE ---
 
     if (target) {
-        showContainerLoader(target);
-    } else {
         showLoader();
     }
 
@@ -330,7 +291,7 @@ async function submitAjaxForm(form) {
         console.error('Erreur AJAX:', error);
     } finally {
         if (target) {
-            hideContainerLoader(target);
+            hideLoader();
         } else {
             hideLoader();
         }
@@ -456,7 +417,7 @@ function bindHistoryEvents() {
     window.addEventListener('popstate', async (e) => {
         if (e.state && e.state.url) {
             const target = e.state.target || '#content-area';
-            showContainerLoader(target);
+            showLoader();
 
             try {
                 const response = await fetch(e.state.url, {
@@ -474,7 +435,7 @@ function bindHistoryEvents() {
                 console.error('Erreur de navigation historique:', error);
                 showPopup('Erreur de navigation', 'error');
             } finally {
-                hideContainerLoader(target);
+                hideLoader();
             }
         }
     });
@@ -539,7 +500,7 @@ window.ajaxRequest = async function (url, options = {}) {
 
     if (shouldShowLoader) {
         if (target) {
-            showContainerLoader(target);
+            showLoader();
         } else {
             showLoader();
         }
@@ -581,7 +542,7 @@ window.ajaxRequest = async function (url, options = {}) {
     } finally {
         if (shouldShowLoader) {
             if (target) {
-                hideContainerLoader(target);
+                hideLoader();
             } else {
                 hideLoader();
             }
@@ -594,7 +555,5 @@ window.showPopup = showPopup;
 window.closePopup = closePopup;
 window.showLoader = showLoader;
 window.hideLoader = hideLoader;
-window.showContainerLoader = showContainerLoader;
-window.hideContainerLoader = hideContainerLoader;
 window.showWarningCard = showWarningCard;
 window.hideWarningCard = hideWarningCard;
