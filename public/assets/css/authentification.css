@@ -76,6 +76,7 @@ body#content-area {
     color: var(--text-secondary);
     text-decoration: none;
 }
+
 .back-link:hover {
     color: var(--link-hover);
 }
@@ -148,6 +149,7 @@ body#content-area {
     background-color: var(--button-primary);
     color: white;
 }
+
 .btn.btn-primary:hover {
     background-color: var(--button-primary-hover);
 }
@@ -157,35 +159,116 @@ body#content-area {
     display: none;
 }
 
-.sidebar-header .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); }
-.etapes-nav { margin-top: 60px; width: 100%;}
-.etapes-nav ol { list-style: none; position: relative; padding-left: 0; }
-.etapes-nav ol::before { content: ''; position: absolute; left: 16px; top: 16px; bottom: 16px; width: 2px; background-color: var(--background-secondary); transform: translateX(-50%);}
-.etape-item { display: flex; align-items: flex-start; position: relative; margin-bottom: 30px; }
-.etape-marker { width: 32px; height: 32px; border-radius: 50%; background-color: var(--background-primary); border: 2px solid var(--border-medium); display: flex; justify-content: center; align-items: center; margin-right: 20px; z-index: 2; transition: all 0.3s ease; flex-shrink: 0;}
-.etape-details { display: flex; flex-direction: column; }
-.etape-number { font-size: 0.8rem; color: var(--text-disabled); }
-.etape-title { font-size: 1rem; font-weight: 600; color: var(--text-secondary); }
-.etape-item.in-progress .etape-marker { border-color: var(--primary-color); }
-.etape-item.in-progress .etape-title { color: var(--text-primary); }
-.etape-item.complete .etape-marker { background-color: var(--primary-color); border-color: var(--primary-color); }
-.etape-item.complete .etape-title { color: var(--text-primary); }
-.sidebar-footer { font-size: 0.9rem; }
-.sidebar-footer a { color: var(--link-color); text-decoration: none; font-weight: 600; }
-.sidebar-footer a:hover { color: var(--link-hover); }
+.sidebar-header .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.etapes-nav {
+    margin-top: 60px;
+    width: 100%;
+}
+
+.etapes-nav ol {
+    list-style: none;
+    position: relative;
+    padding-left: 0;
+}
+
+.etapes-nav ol::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    bottom: 16px;
+    width: 2px;
+    background-color: var(--background-secondary);
+    transform: translateX(-50%);
+}
+
+.etape-item {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.etape-marker {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--background-primary);
+    border: 2px solid var(--border-medium);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 20px;
+    z-index: 2;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.etape-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.etape-number {
+    font-size: 0.8rem;
+    color: var(--text-disabled);
+}
+
+.etape-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.etape-item.in-progress .etape-marker {
+    border-color: var(--primary-color);
+}
+
+.etape-item.in-progress .etape-title {
+    color: var(--text-primary);
+}
+
+.etape-item.complete .etape-marker {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.etape-item.complete .etape-title {
+    color: var(--text-primary);
+}
+
+.sidebar-footer {
+    font-size: 0.9rem;
+}
+
+.sidebar-footer a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.sidebar-footer a:hover {
+    color: var(--link-hover);
+}
 
 /*
 ==================================================================
 --- SECTION RESPONSIVE --- STYLES POUR TABLETTE ET MOBILE ---
 ==================================================================
 */
-@media (max-width: 1023px) {
+@media (width <= 1023px) {
     .auth-container {
         max-width: none;
         min-height: 100vh;
         max-height: none;
         border-radius: 0;
         box-shadow: none;
+
         /* La direction flex n'est plus nécessaire ici car les enfants se positionnent différemment */
     }
 
@@ -234,6 +317,7 @@ body#content-area {
         display: block;
         position: fixed;
         inset: 0;
+
         /* CORRECTION : On retire la couleur de fond sombre pour voir le flou */
         background-color: transparent;
         z-index: 999;
@@ -241,6 +325,7 @@ body#content-area {
         pointer-events: none;
         transition: opacity 0.4s ease;
     }
+
     .modal-overlay.is-open {
         opacity: 1;
         pointer-events: auto;
@@ -270,10 +355,16 @@ body#content-area {
         border-radius: 20px;
         cursor: pointer;
     }
+
     .form-etape-counter:hover {
         background-color: var(--background-input);
     }
 
-    .etapes-nav { margin-top: 20px; }
-    .sidebar-footer { margin-top: 20px; }
+    .etapes-nav {
+        margin-top: 20px;
+    }
+
+    .sidebar-footer {
+        margin-top: 20px;
+    }
 }

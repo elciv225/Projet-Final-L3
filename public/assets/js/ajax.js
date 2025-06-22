@@ -7,20 +7,26 @@
  * - Compatible avec l'ancien code et le CSS existant
  */
 
+// CORRECTION : On crée un registre global pour les fonctions à ré-attacher.
+// Chaque page pourra ajouter sa propre fonction d'initialisation ici.
+window.ajaxRebinders = window.ajaxRebinders || [];
+
 document.addEventListener('DOMContentLoaded', function () {
     // Initialisation
     createGlobalElements();
     bindAjaxForms();
     bindAjaxLinks();
     bindHistoryEvents();
+
+    // CORRECTION : On exécute toutes les fonctions d'initialisation au premier chargement.
+    executeRebinders();
 });
 
 // -------------------------------------------------------------------
 // Fonctions existantes (conservées)
 // -------------------------------------------------------------------
 function createGlobalElements() {
-    // Popup - Structure corrigée pour correspondre au CSS
-    const documentBody = document.querySelector("#content-area .main-content") || document.querySelector("#content-area");
+    const documentBody = document.querySelector("#content-area .main-content") || document.querySelector("#content-area") || document.body;
 
     if (!document.getElementById('ajax-popup')) {
         const popup = document.createElement('div');
@@ -38,7 +44,6 @@ function createGlobalElements() {
         popup.querySelector('.close-popup').addEventListener('click', closePopup);
     }
 
-    // Loader global - Structure corrigée
     if (!document.getElementById('ajax-loader')) {
         const loader = document.createElement('div');
         loader.id = 'ajax-loader';
@@ -48,7 +53,6 @@ function createGlobalElements() {
         documentBody.appendChild(loader);
     }
 
-    // Warning Card - Card de confirmation
     if (!document.getElementById('warning-card')) {
         const warningCard = document.createElement('div');
         warningCard.id = 'warning-card';
@@ -183,7 +187,7 @@ async function handleNavigationResponse(data, url, target) {
         if (isFullPage(content)) {
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content;
-            const mainContent = tempDiv.querySelector('.main-content');
+            const mainContent = tempDiv.querySelector('.main-content-wrapper') || tempDiv.querySelector('.main-content');
             content = mainContent ? mainContent.outerHTML : content;
         }
 
@@ -209,6 +213,23 @@ function updateActiveNavigation(activeLink) {
     activeLink.classList.add('active');
 }
 
+/**
+ * CORRECTION : Nouvelle fonction centrale pour exécuter tous les "rebinders"
+ */
+function executeRebinders() {
+    if (window.ajaxRebinders && Array.isArray(window.ajaxRebinders)) {
+        window.ajaxRebinders.forEach(callback => {
+            if (typeof callback === 'function') {
+                try {
+                    callback();
+                } catch (e) {
+                    console.error("Erreur lors de l'exécution d'un rebinder AJAX:", e);
+                }
+            }
+        });
+    }
+}
+
 function rebindEventsInContainer(container) {
     container.querySelectorAll('form.ajax-form').forEach(form => {
         form.addEventListener('submit', async function (e) {
@@ -224,6 +245,9 @@ function rebindEventsInContainer(container) {
         });
     });
 
+    // CORRECTION : On appelle la fonction centrale.
+    executeRebinders();
+
     reloadContainerScripts(container);
 }
 
@@ -231,7 +255,8 @@ function reloadContainerScripts(container) {
     container.querySelectorAll('script').forEach(script => {
         if (script.textContent.trim()) {
             try {
-                eval(script.textContent);
+                // Utiliser new Function() est plus sûr que eval()
+                new Function(script.textContent)();
             } catch (error) {
                 console.warn('Erreur lors de l\'exécution du script:', error);
             }
@@ -265,12 +290,11 @@ async function submitAjaxForm(form) {
         });
         return;
     }
-    // L'utilisateur ne peut physiquement plus cliquer une deuxième fois.
+
     if (submitButton) {
         submitButton.classList.add('loading');
         submitButton.disabled = true;
     }
-    // --- FIN DE LA MAGIE ---
 
     if (target) {
         showLoader();
@@ -296,14 +320,10 @@ async function submitAjaxForm(form) {
             hideLoader();
         }
 
-        // --- ET ON RECOMMENCE ---
-        // 2. UNE FOIS la requête terminée (succès ou échec), on réactive le bouton.
-        // L'utilisateur peut à nouveau soumettre le formulaire si nécessaire.
         if (submitButton) {
             submitButton.classList.remove('loading');
             submitButton.disabled = false;
         }
-        // --- FIN ---
 
         if (form.dataset.warningConfirmed) {
             delete form.dataset.warningConfirmed;
@@ -338,16 +358,13 @@ async function handleResponse(response, form) {
 
     if (data.statut === 'succes' || data.statut === 'success') {
         showPopup(data.message || 'Opération réussie', 'success');
-
         const callback = form.dataset.callback;
         if (callback && window[callback]) {
             window[callback](data);
         }
-
         if (form.dataset.reset !== 'false') {
             form.reset();
         }
-
         if (data.redirect) {
             setTimeout(() => {
                 window.location.href = data.redirect;
@@ -377,8 +394,11 @@ function replaceFullPage(html, url) {
     createGlobalElements();
     bindAjaxForms();
     bindAjaxLinks();
-    reloadScripts();
 
+    // CORRECTION : On appelle la fonction centrale.
+    executeRebinders();
+
+    reloadScripts();
     showPopup('Page mise à jour', 'success');
 }
 
@@ -388,11 +408,9 @@ function updateContent(html, form) {
 
     if (container) {
         container.innerHTML = html;
-
         if (form.action !== window.location.href) {
             window.history.pushState({}, '', form.action);
         }
-
         rebindEventsInContainer(container);
         showPopup('Contenu mis à jour', 'success');
     } else {
@@ -418,19 +436,16 @@ function bindHistoryEvents() {
         if (e.state && e.state.url) {
             const target = e.state.target || '#content-area';
             showLoader();
-
             try {
                 const response = await fetch(e.state.url, {
                     headers: {'X-Requested-With': 'XMLHttpRequest'}
                 });
                 const html = await response.text();
                 await handleNavigationResponse({html}, e.state.url, target);
-
                 const activeLink = document.querySelector(`[href="${e.state.url}"]`);
                 if (activeLink) {
                     updateActiveNavigation(activeLink);
                 }
-
             } catch (error) {
                 console.error('Erreur de navigation historique:', error);
                 showPopup('Erreur de navigation', 'error');
