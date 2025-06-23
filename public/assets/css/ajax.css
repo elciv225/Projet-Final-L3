@@ -1,5 +1,7 @@
 /* ========================================= */
+
 /* Styles pour les popups et notifications   */
+
 /* ========================================= */
 
 .popup {
@@ -126,7 +128,9 @@
 
 
 /* ========================================= */
+
 /* Styles pour la carte d'avertissement      */
+
 /* ========================================= */
 
 .warning-overlay {
@@ -245,7 +249,9 @@
 
 
 /* ========================================= */
+
 /* Styles pour les loaders                   */
+
 /* ========================================= */
 
 /* Loader global pour les formulaires (l'ancien) */
@@ -287,6 +293,7 @@
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
@@ -320,7 +327,9 @@
 }
 
 /* ========================================= */
+
 /* États de navigation pour les liens AJAX   */
+
 /* ========================================= */
 
 .nav-link-ajax {
@@ -349,12 +358,15 @@
 
 
 /* ========================================= */
+
 /* Animations générales                      */
+
 /* ========================================= */
 @keyframes fade-in {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -402,6 +414,7 @@
         opacity: 0;
         transform: translateY(15px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -414,7 +427,9 @@
 
 
 /* ========================================= */
+
 /* Responsive design                         */
+
 /* ========================================= */
 
 @media (width <= 480px) {
