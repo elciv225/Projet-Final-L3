@@ -26,8 +26,8 @@
             --warning: rgb(255 193 7 / 55%);
             --error: rgb(239 83 80 / 55%);
             --info: rgb(100 181 246 / 55%);
-            --border-light: #87999A;
-            --border-medium: #6B7B7C;
+            --border-light: #e1e1e1;
+            --border-medium: #c7c7c7;
             --shadow: rgb(0 0 0 / 5%) 0px 1px 2px 0px;
             --shadow-sm: 0 1px 3px rgb(0 0 0 / 10%);
             --shadow-md: 0 4px 6px rgb(0 0 0 / 10%);
@@ -41,8 +41,8 @@
             :root {
                 --primary-color: #1A5E63;
                 --secondary-color: #FFC857;
-                --background-primary: #1B1B1B;
-                --background-secondary: #202020;
+                --background-primary: #121212;
+                --background-secondary: #1E1E1E;
                 --background-input: #2D2D2D;
                 --text-primary: #EAEAEA;
                 --text-secondary: #CFCFCF;
@@ -66,24 +66,7 @@
             }
         }
 
-        /* --- AJOUT POUR L'INTERACTIVITÉ --- */
-        @keyframes pulse-glow {
-            0% {
-                border-color: var(--primary-color);
-                box-shadow: 0 0 3px rgba(26, 94, 99, 0.1);
-            }
-            50% {
-                border-color: var(--secondary-color);
-                box-shadow: 0 0 15px rgba(255, 200, 87, 0.4);
-            }
-            100% {
-                border-color: var(--primary-color);
-                box-shadow: 0 0 3px rgba(26, 94, 99, 0.1);
-            }
-        }
-
-        /* --- FIN DE L'AJOUT --- */
-
+        /* --- STYLES GÉNÉRAUX --- */
         * {
             padding: 0;
             margin: 0;
@@ -93,140 +76,153 @@
         }
 
         body {
-            background: var(--background-secondary);
+            background-color: var(--background-secondary);
             color: var(--text-primary);
             line-height: 1.6;
             margin: 0;
-            padding: 20px 0;
+            padding: 20px;
         }
 
         .email-container {
-            max-width: 600px;
-            margin: 0 auto;
+            max-width: 580px;
+            margin: 20px auto;
             background: var(--background-primary);
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            border-top: 5px solid var(--primary-color);
         }
 
         .email-header {
-            background: var(--primary-color);
-            color: white;
-            padding: 3rem 2rem;
-            text-align: center;
+            padding: 2.5rem 2.5rem 1rem;
         }
 
         .email-header h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-variation-settings: "wght" 700;
-            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
         }
 
         .email-header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            font-variation-settings: "wght" 400;
+            font-size: 1rem;
+            color: var(--text-secondary);
         }
 
         .email-body {
-            padding: 3rem 2rem;
-            text-align: center;
-        }
-
-        .greeting {
-            font-size: 1.5rem;
-            font-variation-settings: "wght" 600;
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
+            padding: 1.5rem 2.5rem;
         }
 
         .message {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--text-secondary);
-            margin-bottom: 3rem;
-            line-height: 1.6;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-bottom: 2rem;
+            line-height: 1.7;
         }
 
         .verification-section {
-            margin: 3rem 0;
-            padding: 3rem 2rem;
-            background: var(--background-secondary);
+            padding: 2.5rem 1.5rem;
+            background-color: var(--background-secondary);
             border-radius: 12px;
-            border: 2px solid var(--primary-color);
-            /* --- MODIFICATION POUR L'INTERACTIVITÉ --- */
-            animation: pulse-glow 3.5s infinite ease-in-out;
+            text-align: center;
+            border: 1px solid var(--border-light);
         }
 
         .verification-label {
             color: var(--text-secondary);
             font-variation-settings: "wght" 500;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 1rem;
+            display: block;
         }
 
         .verification-code {
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-variation-settings: "wght" 800;
             color: var(--primary-color);
-            letter-spacing: 0.5rem;
+            letter-spacing: 0.75rem;
             margin: 1rem 0;
             line-height: 1;
-        }
-
-        .verification-code .digit {
-            color: var(--secondary-color);
+            padding-left: 0.75rem; /* Compenser le letter-spacing */
         }
 
         .expiration-info {
             color: var(--text-secondary);
-            font-size: 1rem;
+            font-size: 0.95rem;
             margin-top: 1.5rem;
         }
 
         .expiration-time {
-            color: var(--primary-color);
-            font-variation-settings: "wght" 600;
-        }
-
-        .security-notice {
-            background: var(--warning);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-            border-left: 4px solid var(--secondary-color);
-        }
-
-        .security-notice h3 {
             color: var(--text-primary);
             font-variation-settings: "wght" 600;
+        }
+
+        /* --- NOUVEAUX STYLES POUR LE MINUTEUR --- */
+        .timer-info {
+            display: inline-flex; /* Pour que le conteneur s'adapte au contenu */
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--background-input);
+            border-radius: 20px; /* Bords arrondis pour un look moderne */
+            border: 1px solid var(--border-light);
+        }
+        .timer-info .icon {
             font-size: 1.1rem;
-            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+        .timer-info strong {
+            font-variation-settings: "wght" 600;
+            color: var(--text-primary);
+        }
+        /* --- FIN DES NOUVEAUX STYLES --- */
+
+        .security-notice {
+            margin-top: 2.5rem;
+            padding: 1rem 0;
+            text-align: left;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .security-notice .icon {
+            font-size: 1.2rem;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+            color: var(--secondary-color);
         }
 
         .security-notice p {
             color: var(--text-secondary);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
 
         .email-footer {
-            background: var(--background-input);
-            padding: 2rem;
+            border-top: 1px solid var(--border-light);
+            padding: 1.5rem 2.5rem;
             text-align: center;
         }
 
         .footer-text {
             color: var(--text-disabled);
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
         }
 
         .footer-links {
-            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .footer-link {
@@ -234,8 +230,6 @@
             text-decoration: none;
             font-size: 0.85rem;
             font-variation-settings: "wght" 500;
-            margin: 0 1rem;
-            /* --- MODIFICATION POUR L'INTERACTIVITÉ --- */
             transition: color 0.3s ease;
         }
 
@@ -245,60 +239,27 @@
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             body {
-                padding: 10px 0;
+                padding: 10px;
             }
-
             .email-container {
-                margin: 0 10px;
-                border-radius: 8px;
+                margin: 10px auto;
+                border-radius: 12px;
             }
-
             .email-header {
-                padding: 2rem 1.5rem;
+                padding: 2rem 1.5rem 0.5rem;
             }
-
-            .email-header h1 {
-                font-size: 2rem;
+            .email-body {
+                padding: 1.5rem;
             }
-
-            .email-body,
             .email-footer {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem;
             }
-
-            .verification-code {
-                font-size: 3rem;
-                letter-spacing: 0.3rem;
-            }
-
-            .greeting {
-                font-size: 1.3rem;
-            }
-
-            .message {
-                font-size: 1rem;
-                margin-bottom: 2rem;
-            }
-
-            .verification-section {
-                padding: 2rem 1.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .email-header h1 {
-                font-size: 1.8rem;
-            }
-
             .verification-code {
                 font-size: 2.5rem;
-                letter-spacing: 0.2rem;
-            }
-
-            .greeting {
-                font-size: 1.2rem;
+                letter-spacing: 0.5rem;
+                padding-left: 0.5rem;
             }
         }
     </style>
@@ -307,56 +268,55 @@
 <div class="email-container">
     <!-- Header -->
     <div class="email-header">
-        <h1>Code de vérification</h1>
-        <p>Sécurisez votre compte</p>
+        <h1>Votre code de sécurité</h1>
+        <p>Utilisez ce code pour finaliser votre action.</p>
     </div>
 
     <!-- Body -->
     <div class="email-body">
-        <div class="greeting">
-            Bonjour !
-        </div>
-
         <div class="message">
-            Voici votre code de vérification pour finaliser la création de votre compte.
-            Ce code est valide pendant 10 minutes.
+            Bonjour, <br>
+            Pour garantir la sécurité de votre compte, veuillez utiliser le code ci-dessous.
         </div>
 
         <!-- Code de vérification -->
         <div class="verification-section">
-            <div class="verification-label">
-                Votre code de vérification
-            </div>
+            <span class="verification-label">
+                Code de Vérification
+            </span>
             <div class="verification-code">
-                <?= htmlspecialchars($verificationCode ?? "Erreur") ?>
+                <?= htmlspecialchars($verificationCode ?? "123-456") ?>
             </div>
             <div class="expiration-info">
-                Expire à <span class="expiration-time"><?= htmlspecialchars($expirationTime) ?></span>
+                Valide jusqu'à <span class="expiration-time"><?= htmlspecialchars($expirationTime ?? "14:58") ?></span>
+            </div>
+            <!-- MINUTEUR AJOUTÉ ICI -->
+            <div class="timer-info">
+                <span class="icon">⏱️</span> Ce code expire dans <strong>10 minutes</strong>.
             </div>
         </div>
 
         <!-- Security notice -->
         <div class="security-notice">
-            <h3>🔒 Sécurité</h3>
-            <p>
-                Ne partagez jamais ce code. Si vous n'êtes pas à l'origine de cette demande,
-                ignorez cet email.
-            </p>
+            <span class="icon">🔒</span>
+            <div>
+                <p>
+                    <strong>Ne partagez jamais ce code.</strong> Notre équipe ne vous le demandera jamais.
+                    Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email en toute sécurité.
+                </p>
+            </div>
         </div>
     </div>
 
     <!-- Footer -->
     <div class="email-footer">
         <div class="footer-text">
-            Cet email a été envoyé automatiquement
-        </div>
-        <div class="footer-text">
             © <?= date('Y') ?> Projet XXX - Tous droits réservés
         </div>
         <div class="footer-links">
             <a href="#" class="footer-link">Aide</a>
             <a href="#" class="footer-link">Confidentialité</a>
-            <a href="#" class="footer-link">Contact</a>
+            <a href="#" class="footer-link">Se désinscrire</a>
         </div>
     </div>
 </div>
