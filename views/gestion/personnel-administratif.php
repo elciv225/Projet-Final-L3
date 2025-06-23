@@ -157,3 +157,4 @@
         </div>
     </div>
 </main>
+<script src="/assets/js/personnel-administratif.js" defer></script>

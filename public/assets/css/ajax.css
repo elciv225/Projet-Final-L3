@@ -1,4 +1,7 @@
-/* Popup améliorée utilisant les variables CSS du thème */
+/* ========================================= */
+/* Styles pour les popups et notifications   */
+/* ========================================= */
+
 .popup {
     display: none;
     position: fixed;
@@ -10,12 +13,14 @@
     font-weight: 500;
     font-size: 14px;
     z-index: 1000;
-    animation: fade-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),slide-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     backdrop-filter: blur(10px);
     border: 1px solid rgb(255 255 255 / 10%);
     min-width: 280px;
     max-width: 400px;
     font-family: mulish-variable, sans-serif;
+    opacity: 0;
+    transform: translateX(20px) scale(0.95);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .popup.success {
@@ -42,7 +47,88 @@
     color: var(--text-primary);
 }
 
-/* Warning Card - Card de confirmation */
+/* Contenu de la popup */
+.popup-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+#popup-message {
+    flex: 1;
+    line-height: 1.4;
+    letter-spacing: 0.025em;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Bouton de fermeture amélioré */
+.close-popup {
+    background: rgb(255 255 255 / 15%);
+    border: 1px solid rgb(255 255 255 / 20%);
+    border-radius: 6px;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.close-popup:hover {
+    background: rgb(255 255 255 / 25%);
+    border-color: rgb(255 255 255 / 30%);
+    transform: scale(1.1);
+}
+
+.close-popup:active {
+    transform: scale(0.95);
+}
+
+/* Animation d'entrée différée pour plusieurs popups */
+.popup:nth-of-type(2) {
+    animation-delay: 0.1s;
+    top: 80px;
+}
+
+.popup:nth-of-type(3) {
+    animation-delay: 0.2s;
+    top: 140px;
+}
+
+.popup::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgb(255 255 255 / 10%),
+            transparent
+    );
+    transition: left 0.6s ease;
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+.popup:hover::after {
+    left: 50%;
+}
+
+
+/* ========================================= */
+/* Styles pour la carte d'avertissement      */
+/* ========================================= */
+
 .warning-overlay {
     display: none;
     position: fixed;
@@ -157,127 +243,12 @@
     transform: translateY(0);
 }
 
-/* Animations pour la warning card */
-@keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes scale-in {
-    from {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-/* Responsive pour la warning card */
-@media (width <= 480px) {
-    .warning-card {
-        min-width: 90%;
-        max-width: 90%;
-        margin: 20px;
-    }
-
-    .warning-header {
-        padding: 16px 20px 12px;
-    }
-
-    .warning-content {
-        padding: 20px;
-    }
-
-    .warning-actions {
-        padding: 12px 20px 20px;
-        flex-direction: column;
-    }
-
-    .warning-actions button {
-        width: 100%;
-    }
-}
 
 /* ========================================= */
-
-/* Styles existants (améliorés) */
-
+/* Styles pour les loaders                   */
 /* ========================================= */
 
-/* Animations améliorées */
-@keyframes slide-in {
-    from {
-        transform: translateX(100%) scale(0.9);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateX(0) scale(1);
-        opacity: 1;
-    }
-}
-
-@keyframes fade-out {
-    from {
-        transform: translateX(0) scale(1);
-        opacity: 1;
-    }
-
-    to {
-        transform: translateX(100%) scale(0.9);
-        opacity: 0;
-    }
-}
-
-
-/* Contenu de la popup */
-.popup-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
-
-#popup-message {
-    flex: 1;
-    line-height: 1.4;
-    letter-spacing: 0.025em;
-    color: var(--text-primary);
-    font-weight: 600;
-}
-
-/* Bouton de fermeture amélioré */
-.close-popup {
-    background: rgb(255 255 255 / 15%);
-    border: 1px solid rgb(255 255 255 / 20%);
-    border-radius: 6px;
-    color: var(--text-primary);
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 16px;
-    width: 26px;
-    height: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-}
-
-.close-popup:hover {
-    background: rgb(255 255 255 / 25%);
-    border-color: rgb(255 255 255 / 30%);
-    transform: scale(1.1);
-}
-
-.close-popup:active {
-    transform: scale(0.95);
-}
-
-/* Loader global amélioré */
+/* Loader global pour les formulaires (l'ancien) */
 .loader-overlay {
     display: none;
     position: fixed;
@@ -302,12 +273,26 @@
     box-shadow: 0 4px 20px rgb(26 94 99 / 30%);
 }
 
-@keyframes loader-spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+/** Loader pour les menus de navigation et les liens AJAX */
+#ajax-progress-bar {
+    width: 0;
+    height: 100%;
+    margin-left: 240px;
+    background-color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+    transition: width 0.3s ease, opacity 0.3s ease;
 }
 
-/* Amélioration des boutons de formulaire AJAX */
+@keyframes loader-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Amélioration des boutons de formulaire en cours de chargement */
 .ajax-form button[type="submit"] {
     position: relative;
     transition: all 0.3s ease;
@@ -335,9 +320,7 @@
 }
 
 /* ========================================= */
-
-/* États de navigation pour les liens AJAX */
-
+/* États de navigation pour les liens AJAX   */
 /* ========================================= */
 
 .nav-link-ajax {
@@ -364,10 +347,74 @@
     animation: loader-spin 0.8s infinite linear;
 }
 
+
 /* ========================================= */
+/* Animations générales                      */
+/* ========================================= */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
 
-/* Responsive design */
+@keyframes scale-in {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
 
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-in {
+    from {
+        transform: translateX(100%) scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    from {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(100%) scale(0.9);
+        opacity: 0;
+    }
+}
+
+/* NOUVEAU: Animation pour l'entrée du contenu de la page */
+@keyframes content-enter {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.content-entering {
+    animation: content-enter 0.5s ease-out;
+}
+
+
+/* ========================================= */
+/* Responsive design                         */
 /* ========================================= */
 
 @media (width <= 480px) {
@@ -388,46 +435,26 @@
         font-size: 13px;
     }
 
-    .container-loader-spinner {
-        width: 32px;
-        height: 32px;
-        border-width: 2px;
+    .warning-card {
+        min-width: 90%;
+        max-width: 90%;
+        margin: 20px;
     }
 
-    .container-loader-overlay p {
-        font-size: 13px;
+    .warning-header {
+        padding: 16px 20px 12px;
     }
-}
 
-/* Animation d'entrée différée pour plusieurs popups */
-.popup:nth-of-type(2) {
-    animation-delay: 0.1s;
-    top: 80px;
-}
+    .warning-content {
+        padding: 20px;
+    }
 
-.popup:nth-of-type(3) {
-    animation-delay: 0.2s;
-    top: 140px;
-}
+    .warning-actions {
+        padding: 12px 20px 20px;
+        flex-direction: column;
+    }
 
-.popup::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(
-            90deg,
-            transparent,
-            rgb(255 255 255 / 10%),
-            transparent
-    );
-    transition: left 0.6s ease;
-    border-radius: 12px;
-    pointer-events: none;
-}
-
-.popup:hover::after {
-    left: 50%;
+    .warning-actions button {
+        width: 100%;
+    }
 }

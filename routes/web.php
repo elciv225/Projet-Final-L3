@@ -97,6 +97,7 @@ $routes = [
     ['GET', '/', [AccueilController::class, 'index']],
     ['GET', '/authentification', [AuthentificationPublicController::class, 'index']],
     ['GET', '/soumission-rapport', [SoumissionRapportController::class, 'index']],
+    ['GET', '/test-animations', [AccueilController::class, 'testAnimations']],
 
     /* === Routes de l'espace administrateur === */
     ['GET', '/espace-administrateur', [AdministrateurController::class, 'index']],

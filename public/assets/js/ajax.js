@@ -7,8 +7,6 @@
  * - Compatible avec l'ancien code et le CSS existant
  */
 
-// CORRECTION : On crée un registre global pour les fonctions à ré-attacher.
-// Chaque page pourra ajouter sa propre fonction d'initialisation ici.
 window.ajaxRebinders = window.ajaxRebinders || [];
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -17,14 +15,13 @@ document.addEventListener('DOMContentLoaded', function () {
     bindAjaxForms();
     bindAjaxLinks();
     bindHistoryEvents();
-
-    // CORRECTION : On exécute toutes les fonctions d'initialisation au premier chargement.
     executeRebinders();
 });
 
 // -------------------------------------------------------------------
-// Fonctions existantes (conservées)
+// Fonctions de base (Popups, Loader, etc.)
 // -------------------------------------------------------------------
+
 function createGlobalElements() {
     const documentBody = document.querySelector("#content-area .main-content") || document.querySelector("#content-area") || document.body;
 
@@ -40,7 +37,6 @@ function createGlobalElements() {
             </div>
         `;
         documentBody.appendChild(popup);
-
         popup.querySelector('.close-popup').addEventListener('click', closePopup);
     }
 
@@ -75,7 +71,41 @@ function createGlobalElements() {
         `;
         documentBody.appendChild(warningCard);
     }
+
+    // --- NOUVEAU LOADER DE NAVIGATION (BARRE DE PROGRESSION) ---
+    if (!document.getElementById('ajax-progress-loader')) {
+        const progressLoader = document.createElement('div');
+        progressLoader.id = 'ajax-progress-loader';
+        Object.assign(progressLoader.style, {
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '4px',
+            backgroundColor: 'transparent',
+            zIndex: '9999',
+            display: 'none',
+            pointerEvents: 'none'
+        });
+
+        progressLoader.innerHTML = `<div id="ajax-progress-bar"></div>`;
+        document.body.appendChild(progressLoader);
+    }
+
+    // --- STYLE POUR L'EFFET DE FLOU ---
+    if (!document.getElementById('ajax-blur-style')) {
+        const style = document.createElement('style');
+        style.id = 'ajax-blur-style';
+        style.textContent = `
+            .ajax-content-loading {
+                filter: blur(4px);
+                transition: filter 0.3s ease-in-out;
+            }
+        `;
+        document.head.appendChild(style);
+    }
 }
+
 
 function showPopup(message, type = 'info') {
     const popup = document.getElementById('ajax-popup');
@@ -83,15 +113,29 @@ function showPopup(message, type = 'info') {
 
     popup.className = `popup ${type}`;
     popup.querySelector('#popup-message').textContent = message;
+
     popup.style.display = 'block';
 
-    setTimeout(() => {
-        popup.style.animation = 'fade-out 0.5s ease-out';
-        setTimeout(() => {
+    gsap.to(popup, {
+        duration: 0.5,
+        opacity: 1,
+        x: 0,
+        scale: 1,
+        ease: 'power3.out'
+    });
+
+    gsap.to(popup, {
+        delay: 3,
+        duration: 0.6,
+        opacity: 0,
+        x: '100%',
+        scale: 0.9,
+        ease: 'power2.in',
+        onComplete: () => {
             popup.style.display = 'none';
-            popup.style.animation = '';
-        }, 500);
-    }, 3000);
+            gsap.set(popup, {opacity: 0, x: '20px', scale: 0.95});
+        }
+    });
 }
 
 function closePopup() {
@@ -105,29 +149,84 @@ function closePopup() {
     }
 }
 
-function showLoader() {
-    const loader = document.getElementById('ajax-loader');
-    if (loader) {
-        loader.style.display = 'flex';
+
+/**
+ * Affiche un loader.
+ * @param {string|null} targetSelector - Le sélecteur du conteneur où afficher le loader. Si null, affiche le loader global.
+ */
+function showLoader(targetSelector = null) {
+    if (targetSelector) {
+        const container = document.querySelector(targetSelector);
+        if (!container) {
+            console.error(`Loader target '${targetSelector}' not found. Falling back to global loader.`);
+            showLoader(); // Fallback au loader global si la cible n'existe pas
+            return;
+        }
+
+        if (getComputedStyle(container).position === 'static') {
+            container.style.position = 'relative';
+        }
+
+        const loaderOverlay = document.createElement('div');
+        loaderOverlay.className = 'container-loader-overlay';
+        loaderOverlay.innerHTML = '<div class="container-loader-spinner"></div>';
+        container.appendChild(loaderOverlay);
+
+    } else {
+        const globalLoader = document.getElementById('ajax-loader');
+        if (globalLoader) globalLoader.style.display = 'flex';
     }
 }
 
-function hideLoader() {
-    const loader = document.getElementById('ajax-loader');
-    if (loader) {
-        loader.style.display = 'none';
+/**
+ * Cache un loader.
+ * @param {string|null} targetSelector - Le sélecteur du conteneur. Si null, cache le loader global.
+ */
+function hideLoader(targetSelector = null) {
+    if (targetSelector) {
+        const container = document.querySelector(targetSelector);
+        if (container) {
+            const loaderOverlay = container.querySelector('.container-loader-overlay');
+            if (loaderOverlay) {
+                loaderOverlay.remove();
+            }
+        }
+    } else {
+        const globalLoader = document.getElementById('ajax-loader');
+        if (globalLoader) globalLoader.style.display = 'none';
     }
 }
 
 
+function hideProgressLoader(blurredElement) {
+    const progressLoader = document.getElementById('ajax-progress-loader');
+    const progressBar = document.getElementById('ajax-progress-bar');
+
+    if (progressLoader && progressBar) {
+        gsap.to(progressLoader, {
+            opacity: 0,
+            duration: 0.4,
+            ease: 'power2.in',
+            onComplete: () => {
+                progressLoader.style.display = 'none';
+                progressLoader.style.opacity = '1';
+                progressBar.style.width = '0%';
+            }
+        });
+    }
+    if (blurredElement) {
+        blurredElement.classList.remove('ajax-content-loading');
+    }
+}
+
 // -------------------------------------------------------------------
-// NOUVELLES FONCTIONS - Navigation AJAX
+// Gestion de la navigation et des mises à jour de contenu
 // -------------------------------------------------------------------
+
 function bindAjaxLinks() {
     document.addEventListener('click', async function (e) {
         const link = e.target.closest('.nav-link-ajax');
         if (!link) return;
-
         e.preventDefault();
         await handleAjaxNavigation(link);
     });
@@ -140,7 +239,21 @@ async function handleAjaxNavigation(link) {
     if (!url || url === '#') return;
 
     updateActiveNavigation(link);
-    showLoader();
+
+    const progressLoader = document.getElementById('ajax-progress-loader');
+    const progressBar = document.getElementById('ajax-progress-bar');
+    const contentWrapper = document.querySelector('.main-content') || document.querySelector('.main-content-wrapper') || document.querySelector(target) || document.body;
+
+    if (progressLoader && progressBar && contentWrapper) {
+        contentWrapper.classList.add('ajax-content-loading');
+        progressLoader.style.display = 'block';
+        gsap.set(progressBar, {width: '0%', opacity: 1});
+        gsap.to(progressBar, {
+            width: '85%',
+            duration: 2,
+            ease: 'power3.out'
+        });
+    }
 
     try {
         const response = await fetch(url, {
@@ -155,26 +268,30 @@ async function handleAjaxNavigation(link) {
         }
 
         const contentType = response.headers.get('content-type');
-        let data;
+        let data = contentType?.includes('application/json') ? await response.json() : {html: await response.text()};
 
-        if (contentType?.includes('application/json')) {
-            data = await response.json();
-        } else {
-            data = {html: await response.text()};
-        }
-
-        await handleNavigationResponse(data, url, target);
+        await handleNavigationResponse(data, url, target, contentWrapper);
 
     } catch (error) {
         console.error('Erreur de navigation AJAX:', error);
         showPopup('Erreur lors du chargement de la page', 'error');
-    } finally {
-        hideLoader();
+        hideProgressLoader(contentWrapper);
     }
 }
 
-async function handleNavigationResponse(data, url, target) {
+async function handleNavigationResponse(data, url, target, blurredElement) {
     const container = document.querySelector(target);
+    const progressBar = document.getElementById('ajax-progress-bar');
+
+    if (progressBar) {
+        await gsap.to(progressBar, {
+            width: '100%',
+            duration: 0.3,
+            ease: 'power2.in'
+        }).then();
+    }
+
+    hideProgressLoader(blurredElement);
 
     if (!container) {
         showPopup('Conteneur cible introuvable', 'error');
@@ -187,17 +304,23 @@ async function handleNavigationResponse(data, url, target) {
         if (isFullPage(content)) {
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content;
-            const mainContent = tempDiv.querySelector('.main-content-wrapper') || tempDiv.querySelector('.main-content');
-            content = mainContent ? mainContent.outerHTML : content;
+            const mainContent = tempDiv.querySelector('.main-content') || tempDiv.querySelector('.main-content-wrapper') || tempDiv.querySelector(target);
+            content = mainContent ? mainContent.innerHTML : content;
         }
 
         container.innerHTML = content;
+
+        container.classList.add('content-entering');
 
         if (url !== window.location.href) {
             window.history.pushState({url, target}, '', url);
         }
 
         rebindEventsInContainer(container);
+
+        setTimeout(() => {
+            container.classList.remove('content-entering');
+        }, 500);
     }
 
     if (data.statut) {
@@ -206,16 +329,16 @@ async function handleNavigationResponse(data, url, target) {
     }
 }
 
+
 function updateActiveNavigation(activeLink) {
     document.querySelectorAll('.nav-link-ajax').forEach(link => {
         link.classList.remove('active');
     });
-    activeLink.classList.add('active');
+    if (activeLink) {
+        activeLink.classList.add('active');
+    }
 }
 
-/**
- * CORRECTION : Nouvelle fonction centrale pour exécuter tous les "rebinders"
- */
 function executeRebinders() {
     if (window.ajaxRebinders && Array.isArray(window.ajaxRebinders)) {
         window.ajaxRebinders.forEach(callback => {
@@ -231,31 +354,14 @@ function executeRebinders() {
 }
 
 function rebindEventsInContainer(container) {
-    container.querySelectorAll('form.ajax-form').forEach(form => {
-        form.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            await submitAjaxForm(this);
-        });
-    });
-
-    container.querySelectorAll('.nav-link-ajax').forEach(link => {
-        link.addEventListener('click', async function (e) {
-            e.preventDefault();
-            await handleAjaxNavigation(this);
-        });
-    });
-
-    // CORRECTION : On appelle la fonction centrale.
     executeRebinders();
-
     reloadContainerScripts(container);
 }
 
 function reloadContainerScripts(container) {
     container.querySelectorAll('script').forEach(script => {
-        if (script.textContent.trim()) {
+        if (script.textContent.trim() && !script.src) {
             try {
-                // Utiliser new Function() est plus sûr que eval()
                 new Function(script.textContent)();
             } catch (error) {
                 console.warn('Erreur lors de l\'exécution du script:', error);
@@ -265,31 +371,28 @@ function reloadContainerScripts(container) {
 }
 
 // -------------------------------------------------------------------
-// Fonctions modifiées pour la compatibilité
+// Gestion de la soumission de formulaire
 // -------------------------------------------------------------------
+
 function bindAjaxForms() {
-    document.addEventListener('submit', async function (e) {
-        if (!e.target.classList.contains('ajax-form')) return;
+    document.addEventListener('submit', function (e) {
+        const form = e.target;
+        if (!form.classList.contains('ajax-form')) return;
         e.preventDefault();
-        await submitAjaxForm(e.target);
+        submitAjaxForm(form);
     });
 }
 
-async function submitAjaxForm(form) {
-    const action = form.action || window.location.href;
-    const method = form.method || 'POST';
-    const formData = new FormData(form);
-    const submitButton = form.querySelector('button[type="submit"]');
-    const target = form.dataset.target || null;
+let isSubmitting = false;
 
-    const warningMessage = form.dataset.warning || form.getAttribute('warning');
-    if (warningMessage && !form.dataset.warningConfirmed) {
-        showWarningCard(warningMessage, () => {
-            form.dataset.warningConfirmed = 'true';
-            submitAjaxForm(form);
-        });
+async function submitAjaxForm(form) {
+    if (isSubmitting) {
         return;
     }
+
+    isSubmitting = true;
+    const submitButton = form.querySelector('button[type="submit"]');
+    const target = form.dataset.target;
 
     if (submitButton) {
         submitButton.classList.add('loading');
@@ -297,87 +400,80 @@ async function submitAjaxForm(form) {
     }
 
     if (target) {
+        showLoader(target);
+    } else if (target === 'global'){
         showLoader();
     }
 
     try {
-        const response = await fetch(action, {
-            method,
-            body: formData,
+        const response = await fetch(form.action || window.location.href, {
+            method: form.method || 'POST',
+            body: new FormData(form),
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json, text/html'
             }
         });
-        await handleResponse(response, form);
+        await handleFormResponse(response, form);
     } catch (error) {
         showPopup('Erreur réseau', 'error');
         console.error('Erreur AJAX:', error);
     } finally {
-        if (target) {
-            hideLoader();
-        } else {
-            hideLoader();
-        }
-
+        isSubmitting = false;
         if (submitButton) {
             submitButton.classList.remove('loading');
             submitButton.disabled = false;
         }
-
-        if (form.dataset.warningConfirmed) {
-            delete form.dataset.warningConfirmed;
-        }
+        hideLoader(target);
+        hideLoader();
     }
 }
 
-async function handleResponse(response, form) {
+async function handleFormResponse(response, form) {
     const contentType = response.headers.get('content-type');
     let data;
 
-    if (contentType?.includes('application/json')) {
-        data = await response.json();
-    } else if (contentType?.includes('text/html')) {
-        data = {html: await response.text()};
-    } else {
-        throw new Error('Type de réponse non supporté');
-    }
-
-    if (data.redirect) {
-        window.location.href = data.redirect;
+    if (!response.ok) {
+        showPopup(`Erreur serveur (${response.status})`, 'error');
         return;
     }
 
-    if (data.html) {
-        if (isFullPage(data.html)) {
-            replaceFullPage(data.html, form.action);
-        } else {
-            updateContent(data.html, form);
-        }
+    if (contentType?.includes('application/json')) {
+        data = await response.json();
+    } else {
+        data = {html: await response.text()};
     }
 
-    if (data.statut === 'succes' || data.statut === 'success') {
-        showPopup(data.message || 'Opération réussie', 'success');
-        const callback = form.dataset.callback;
-        if (callback && window[callback]) {
-            window[callback](data);
+    if (data.statut) {
+        const messageType = data.statut === 'succes' || data.statut === 'success' ? 'success' : data.statut;
+        showPopup(data.message || 'Opération réussie', messageType);
+    }
+
+    if (data.html) {
+        const targetSelector = form.dataset.target || ".form-content";
+        const targetContainer = document.querySelector(targetSelector);
+
+        if (targetContainer) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = data.html;
+            const newContentSource = tempDiv.querySelector(targetSelector);
+
+            if (newContentSource) {
+                targetContainer.innerHTML = newContentSource.innerHTML;
+                rebindEventsInContainer(targetContainer);
+            } else {
+                targetContainer.innerHTML = data.html;
+                rebindEventsInContainer(targetContainer);
+            }
+        } else {
+            console.error(`Le conteneur cible '${targetSelector}' n'a pas été trouvé.`);
         }
-        if (form.dataset.reset !== 'false') {
-            form.reset();
-        }
-        if (data.redirect) {
-            setTimeout(() => {
-                window.location.href = data.redirect;
-            }, data.redirectDelay || 2000);
-        }
-    } else if (data.statut === 'error') {
-        showPopup(data.message || 'Une erreur est survenue', 'error');
-    } else if (data.statut === 'warning') {
-        showPopup(data.message || 'Avertissement', 'warning');
-    } else if (data.statut === 'info') {
-        showPopup(data.message || 'Information', 'info');
     }
 }
+
+// -------------------------------------------------------------------
+// Fonctions utilitaires
+// -------------------------------------------------------------------
 
 function isFullPage(html) {
     return html.includes('<!DOCTYPE html>') || html.includes('<html');
@@ -394,10 +490,7 @@ function replaceFullPage(html, url) {
     createGlobalElements();
     bindAjaxForms();
     bindAjaxLinks();
-
-    // CORRECTION : On appelle la fonction centrale.
     executeRebinders();
-
     reloadScripts();
     showPopup('Page mise à jour', 'success');
 }
@@ -409,10 +502,9 @@ function updateContent(html, form) {
     if (container) {
         container.innerHTML = html;
         if (form.action !== window.location.href) {
-            window.history.pushState({}, '', form.action);
+            window.history.pushState({}, '', url);
         }
         rebindEventsInContainer(container);
-        showPopup('Contenu mis à jour', 'success');
     } else {
         showPopup('Conteneur cible introuvable', 'error');
     }
@@ -434,31 +526,15 @@ function reloadScripts() {
 function bindHistoryEvents() {
     window.addEventListener('popstate', async (e) => {
         if (e.state && e.state.url) {
-            const target = e.state.target || '#content-area';
-            showLoader();
-            try {
-                const response = await fetch(e.state.url, {
-                    headers: {'X-Requested-With': 'XMLHttpRequest'}
-                });
-                const html = await response.text();
-                await handleNavigationResponse({html}, e.state.url, target);
-                const activeLink = document.querySelector(`[href="${e.state.url}"]`);
-                if (activeLink) {
-                    updateActiveNavigation(activeLink);
-                }
-            } catch (error) {
-                console.error('Erreur de navigation historique:', error);
-                showPopup('Erreur de navigation', 'error');
-            } finally {
-                hideLoader();
-            }
+            const linkLikeObject = {
+                href: e.state.url,
+                dataset: {target: e.state.target || '#content-area'}
+            };
+            await handleAjaxNavigation(linkLikeObject);
         }
     });
 }
 
-// -------------------------------------------------------------------
-// Fonctions de convenance pour l'API publique
-// -------------------------------------------------------------------
 function showWarningCard(message, onConfirm) {
     const warningCard = document.getElementById('warning-card');
     const warningMessage = document.getElementById('warning-message');
@@ -470,33 +546,20 @@ function showWarningCard(message, onConfirm) {
     warningMessage.textContent = message;
     warningCard.style.display = 'flex';
 
-    const handleContinue = () => {
+    continueBtn.onclick = () => {
         hideWarningCard();
         if (onConfirm) onConfirm();
-        cleanup();
     };
 
-    const handleCancel = () => {
-        hideWarningCard();
-        cleanup();
-    };
+    cancelBtn.onclick = () => hideWarningCard();
 
-    const handleOverlayClick = (e) => {
-        if (e.target === warningCard) {
-            handleCancel();
+    warningCard.onclick = (event) => {
+        if (event.target === warningCard) {
+            hideWarningCard();
         }
     };
-
-    const cleanup = () => {
-        continueBtn.removeEventListener('click', handleContinue);
-        cancelBtn.removeEventListener('click', handleCancel);
-        warningCard.removeEventListener('click', handleOverlayClick);
-    };
-
-    continueBtn.addEventListener('click', handleContinue);
-    cancelBtn.addEventListener('click', handleCancel);
-    warningCard.addEventListener('click', handleOverlayClick);
 }
+
 
 function hideWarningCard() {
     const warningCard = document.getElementById('warning-card');
@@ -505,20 +568,12 @@ function hideWarningCard() {
     }
 }
 
-// -------------------------------------------------------------------
-// API publique (pour rétrocompatibilité)
-// -------------------------------------------------------------------
 window.ajaxRequest = async function (url, options = {}) {
     const method = options.method || 'GET';
     const shouldShowLoader = options.showLoader !== false;
-    const target = options.target;
 
     if (shouldShowLoader) {
-        if (target) {
-            showLoader();
-        } else {
-            showLoader();
-        }
+        showLoader();
     }
 
     try {
@@ -556,16 +611,12 @@ window.ajaxRequest = async function (url, options = {}) {
         else showPopup('Erreur serveur', 'error');
     } finally {
         if (shouldShowLoader) {
-            if (target) {
-                hideLoader();
-            } else {
-                hideLoader();
-            }
+            hideLoader();
         }
     }
 };
 
-// Export des fonctions pour l'API publique
+// Export des fonctions
 window.showPopup = showPopup;
 window.closePopup = closePopup;
 window.showLoader = showLoader;

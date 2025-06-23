@@ -328,12 +328,9 @@
                 Votre code de vérification
             </div>
             <div class="verification-code">
-                <?php $verificationCode = "123456"; // Exemple de code ?>
-                <?= htmlspecialchars(substr($verificationCode, 0, 3)) ?><span
-                        class="digit"><?= htmlspecialchars(substr($verificationCode, 3, 3)) ?></span>
+                <?= htmlspecialchars($verificationCode ?? "Erreur") ?>
             </div>
             <div class="expiration-info">
-                <?php $expirationTime = date("H:i", strtotime('+10 minutes')); // Exemple d'heure ?>
                 Expire à <span class="expiration-time"><?= htmlspecialchars($expirationTime) ?></span>
             </div>
         </div>

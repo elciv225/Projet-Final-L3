@@ -14,4 +14,12 @@ class AccueilController
             'content' => 'Ceci est la page d\'accueil de mon application.'
         ]);
     }
+
+    public function testAnimations(): Response{
+        return Response::view('public/test-animations', [
+            'title' => 'Test Animations',
+            'heading' => 'Test des animations CSS',
+            'content' => 'Cette page est dédiée aux tests d\'animations CSS.'
+        ]);
+    }
 }

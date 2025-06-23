@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/assets/css/menu.css">
     <link rel="stylesheet" href="/assets/css/gestion.css">
     <link rel="stylesheet" href="/assets/css/ajax.css">
+    <link rel="icon" href="data:,">
     <title><?= $title ?? 'Espace Administrateur' ?></title>
 </head>
 <body>
@@ -98,7 +99,6 @@
 
 <!-- Scripts -->
 <script src="/assets/js/ajax.js"></script>
-<script src="/assets/js/personnel-administratif.js"></script>
 <script>
     // Script d'initialisation spécifique à l'espace admin
     document.addEventListener('DOMContentLoaded', function () {
@@ -186,5 +186,8 @@
         }
     }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
 </body>
 </html>

@@ -137,77 +137,11 @@
 
 <!-- Fond pour la modale -->
 <div class="modal-overlay" id="modal-overlay"></div>
-
-<script>
-    /**
-     * CORRECTION : La logique de la modale est maintenant dans une fonction
-     * pour pouvoir être appelée plusieurs fois.
-     */
-    function setupModalEventListeners() {
-        const openTrigger = document.getElementById('open-steps-trigger');
-        const closeTrigger = document.getElementById('close-steps-trigger');
-        const modal = document.querySelector('.sidebar');
-        const overlay = document.getElementById('modal-overlay');
-        const blurTarget = document.querySelector('.main-content-wrapper');
-
-        const openModal = () => {
-            if (modal && overlay && blurTarget) {
-                overlay.classList.add('is-open');
-                modal.classList.add('is-open');
-                blurTarget.classList.add('is-blurred');
-            }
-        };
-
-        const closeModal = () => {
-            if (modal && overlay && blurTarget) {
-                overlay.classList.remove('is-open');
-                modal.classList.remove('is-open');
-                blurTarget.classList.remove('is-blurred');
-            }
-        };
-
-        // On s'assure que les éléments existent avant d'attacher les écouteurs
-        if (openTrigger) {
-            // Utiliser .onclick est une façon simple de réassigner l'événement
-            // sans se soucier de supprimer les anciens écouteurs.
-            openTrigger.onclick = openModal;
-        }
-        if (closeTrigger) {
-            closeTrigger.onclick = closeModal;
-        }
-        if (overlay) {
-            overlay.onclick = closeModal;
-        }
-    }
-
-    // Appel initial lors du premier chargement de la page
-    document.addEventListener('DOMContentLoaded', setupModalEventListeners);
-
-    /**
-     * IMPORTANT :
-     * Vous devez appeler `setupModalEventListeners()` à nouveau
-     * depuis votre fichier `ajax.js`, juste après avoir mis à jour le DOM
-     * avec le HTML reçu du serveur.
-     *
-     * Exemple de ce que vous devriez avoir dans votre `ajax.js`:
-     *
-     * fetch(url, options)
-     * .then(response => response.text())
-     * .then(html => {
-     * // Ligne où vous mettez à jour le contenu
-     * document.querySelector('.main-content-wrapper').innerHTML = html;
-     *
-     * // Appel CRUCIAL pour que la modale refonctionne
-     * setupModalEventListeners();
-     * });
-     */
-</script>
-
 <!-- Vos scripts externes -->
 <script src="/assets/js/authentification.js" defer></script>
 <script src="/assets/js/ajax.js" defer></script>
-<!-- Note: si le code ci-dessus est dans authentification.js, pas besoin de le dupliquer -->
-<!-- <script src="/assets/js/authentification.js" defer></script> -->
-
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
 </body>
 </html>
