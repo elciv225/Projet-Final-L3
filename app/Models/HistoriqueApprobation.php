@@ -2,49 +2,98 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\NiveauApprobation;
-use App\Models\CompteRendu;
-use PDO;
-
 /**
  * Class HistoriqueApprobation
  *
- * Represents the historique_approbation table.
- * Composite PK: (niveau_approbation_id, compte_rendu_id, date_approbation).
- *
  * @package App\Models
  */
-class HistoriqueApprobation extends BaseModel
+class HistoriqueApprobation
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'historique_approbation';
 
     /**
-     * @var string The ID of the niveau_approbation (FK, part of CPK).
+     * @var string L'ID du niveau d'approbation (FK, partie de la CPK).
      */
-    public string $niveau_approbation_id;
+    private string $niveauApprobationId;
 
     /**
-     * @var string The ID of the compte_rendu (FK, part of CPK).
+     * @var string L'ID du compte rendu (FK, partie de la CPK).
      */
-    public string $compte_rendu_id;
+    private string $compteRenduId;
 
     /**
-     * @var string The date of approval (part of CPK).
+     * @var string|null La date d'approbation.
      */
-    public string $date_approbation; // DDL specifies DATE
+    private ?string $dateApprobation; // DDL spécifie DATETIME
 
     /**
-     * HistoriqueApprobation constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $niveauApprobationId
+     * @param string $compteRenduId
+     * @param string|null $dateApprobation
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $niveauApprobationId, string $compteRenduId, ?string $dateApprobation)
     {
-        parent::__construct($pdo);
+        $this->niveauApprobationId = $niveauApprobationId;
+        $this->compteRenduId = $compteRenduId;
+        $this->dateApprobation = $dateApprobation;
     }
 
+    /**
+     * @return string
+     */
+    public function getNiveauApprobationId(): string
+    {
+        return $this->niveauApprobationId;
+    }
+
+    /**
+     * @param string $niveauApprobationId
+     */
+    public function setNiveauApprobationId(string $niveauApprobationId): void
+    {
+        $this->niveauApprobationId = $niveauApprobationId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompteRenduId(): string
+    {
+        return $this->compteRenduId;
+    }
+
+    /**
+     * @param string $compteRenduId
+     */
+    public function setCompteRenduId(string $compteRenduId): void
+    {
+        $this->compteRenduId = $compteRenduId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateApprobation(): ?string
+    {
+        return $this->dateApprobation;
+    }
+
+    /**
+     * @param string|null $dateApprobation
+     */
+    public function setDateApprobation(?string $dateApprobation): void
+    {
+        $this->dateApprobation = $dateApprobation;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

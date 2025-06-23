@@ -2,62 +2,75 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\StageEffectue; // Added import
-use PDO;
-
 /**
  * Class Entreprise
  *
- * Represents the entreprise table.
- *
  * @package App\Models
  */
-class Entreprise extends BaseModel
+class Entreprise
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'entreprise';
 
     /**
-     * @var string The ID of the company.
+     * @var string L'ID de l'entreprise.
      */
-    public string $id;
+    private string $id;
 
     /**
-     * @var string The name of the company.
+     * @var string Le libellé (nom) de l'entreprise.
      */
-    public string $nom_entreprise;
+    private string $libelle;
 
     /**
-     * @var string|null The address of the company.
+     * @param string $id
+     * @param string $libelle
      */
-    public ?string $adresse_entreprise;
-
-    /**
-     * @var string|null The phone number of the company.
-     */
-    public ?string $telephone_entreprise;
-
-    /**
-     * @var string|null The email of the company.
-     */
-    public ?string $email_entreprise;
-
-    /**
-     * @var string|null The sector of activity of the company.
-     */
-    public ?string $secteur_activite;
-
-    /**
-     * Entreprise constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
-     */
-    public function __construct(PDO $pdo)
+    public function __construct(string $id, string $libelle)
     {
-        parent::__construct($pdo);
+        $this->id = $id;
+        $this->libelle = $libelle;
     }
 
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle(): string
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle(string $libelle): void
+    {
+        $this->libelle = $libelle;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

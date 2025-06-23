@@ -47,7 +47,6 @@ body#content-area {
 
 /* --- Contenu du Formulaire --- */
 .form-content {
-    /* Ces styles sont maintenant relatifs au .main-content-wrapper */
     width: 100%;
     height: 100%;
     padding: 30px 50px;
@@ -59,12 +58,14 @@ body#content-area {
 .form-content form {
     display: flex;
     flex-direction: column;
+    height: auto;
     gap: 20px;
     width: 100%;
 }
 
 .form-header {
     display: flex;
+    position: absolute;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 40px;
@@ -264,12 +265,10 @@ body#content-area {
 @media (width <= 1023px) {
     .auth-container {
         max-width: none;
-        min-height: 100vh;
-        max-height: none;
         border-radius: 0;
         box-shadow: none;
-
-        /* La direction flex n'est plus nécessaire ici car les enfants se positionnent différemment */
+        display: flex;
+        flex-direction: column;
     }
 
     .main-content-wrapper {
@@ -287,6 +286,21 @@ body#content-area {
 
     .form-content {
         padding: 30px 20px;
+        display: flex;
+        height: auto;
+        flex-direction: column;
+        justify-content: center;
+        background: var(--background-secondary);
+    }
+
+    .form-header {
+        position: absolute;
+        top: 20px;
+        width: calc(100% - 40px);
+    }
+
+    .form-content form {
+        height: 100%;
     }
 
     .sidebar {

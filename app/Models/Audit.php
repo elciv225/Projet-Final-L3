@@ -2,71 +2,168 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Action;
-use App\Models\Traitement;
-use App\Models\Utilisateur;
-use PDO;
-
 /**
  * Class Audit
  *
- * Represents the audit table.
- *
  * @package App\Models
  */
-class Audit extends BaseModel
+class Audit
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'audit';
 
     /**
-     * @var int|null The ID of the audit entry (auto-incrementing).
+     * @var int|null L'ID de l'entrée d'audit (auto-incrémenté).
      */
-    public ?int $id;
+    private ?int $id;
 
     /**
-     * @var string|null The ID of the user who performed the action (FK to utilisateur.id).
+     * @var string|null Description de l'audit.
      */
-    public ?string $utilisateur_id;
+    private ?string $description; // DDL spécifie TEXT
 
     /**
-     * @var string|null The ID of the action related to this audit entry.
+     * @var string|null Date et heure de l'action.
      */
-    public ?string $action_id;
+    private ?string $dateAction; // DDL spécifie DATETIME
 
     /**
-     * @var string|null The ID of the traitement related to this audit entry.
+     * @var string L'ID de l'action (FK).
      */
-    public ?string $traitement_id;
+    private string $actionId;
 
     /**
-     * @var string|null The action performed.
+     * @var string L'ID du traitement (FK).
      */
-    public ?string $action_effectuee;
+    private string $traitementId;
 
     /**
-     * @var string|null The timestamp of the action.
+     * @var string L'ID de l'utilisateur (FK).
      */
-    public ?string $timestamp_action; // Assuming DATETIME or TIMESTAMP
+    private string $utilisateurId;
+
 
     /**
-     * @var string|null The IP address from which the action was performed.
+     * @param int|null $id
+     * @param string|null $description
+     * @param string|null $dateAction
+     * @param string $actionId
+     * @param string $traitementId
+     * @param string $utilisateurId
      */
-    public ?string $adresse_ip;
-
-    /**
-     * Audit constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
-     */
-    public function __construct(PDO $pdo)
+    public function __construct(?int $id, ?string $description, ?string $dateAction, string $actionId, string $traitementId, string $utilisateurId)
     {
-        parent::__construct($pdo);
+        $this->id = $id;
+        $this->description = $description;
+        $this->dateAction = $dateAction;
+        $this->actionId = $actionId;
+        $this->traitementId = $traitementId;
+        $this->utilisateurId = $utilisateurId;
     }
 
+    /**
+     * @return int|null
+     */
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
+    /**
+     * @param int|null $id
+     */
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
+    }
 
+    /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string|null $description
+     */
+    public function setDescription(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateAction(): ?string
+    {
+        return $this->dateAction;
+    }
+
+    /**
+     * @param string|null $dateAction
+     */
+    public function setDateAction(?string $dateAction): void
+    {
+        $this->dateAction = $dateAction;
+    }
+
+    /**
+     * @return string
+     */
+    public function getActionId(): string
+    {
+        return $this->actionId;
+    }
+
+    /**
+     * @param string $actionId
+     */
+    public function setActionId(string $actionId): void
+    {
+        $this->actionId = $actionId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTraitementId(): string
+    {
+        return $this->traitementId;
+    }
+
+    /**
+     * @param string $traitementId
+     */
+    public function setTraitementId(string $traitementId): void
+    {
+        $this->traitementId = $traitementId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
+    }
+
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

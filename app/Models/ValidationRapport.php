@@ -2,54 +2,121 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Enseignant;
-use App\Models\RapportEtudiant;
-use PDO;
-
 /**
  * Class ValidationRapport
  *
- * Represents the validation_rapport table.
- * Composite PK: (utilisateur_id, rapport_etudiant_id).
- *
  * @package App\Models
  */
-class ValidationRapport extends BaseModel
+class ValidationRapport
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'validation_rapport';
 
     /**
-     * @var string The ID of the validating user (FK to enseignant.utilisateur_id, part of CPK).
+     * @var string L'ID de l'utilisateur validateur (FK vers enseignant.utilisateur_id, partie de la CPK).
      */
-    public string $utilisateur_id;
+    private string $utilisateurId;
 
     /**
-     * @var string The ID of the student report (FK to rapport_etudiant.id, part of CPK).
+     * @var string L'ID du rapport étudiant (FK vers rapport_etudiant.id, partie de la CPK).
      */
-    public string $rapport_etudiant_id;
+    private string $rapportEtudiantId;
 
     /**
-     * @var string|null The date of validation.
+     * @var string|null La date de validation.
      */
-    public ?string $date_validation; // DDL specifies DATE
+    private ?string $dateValidation; // DDL spécifie DATE
 
     /**
-     * @var string|null Comments regarding the validation.
+     * @var string|null Commentaires concernant la validation.
      */
-    public ?string $commentaire;     // DDL specifies VARCHAR(255)
+    private ?string $commentaire;     // DDL spécifie TEXT
 
     /**
-     * ValidationRapport constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $utilisateurId
+     * @param string $rapportEtudiantId
+     * @param string|null $dateValidation
+     * @param string|null $commentaire
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $utilisateurId, string $rapportEtudiantId, ?string $dateValidation, ?string $commentaire)
     {
-        parent::__construct($pdo);
+        $this->utilisateurId = $utilisateurId;
+        $this->rapportEtudiantId = $rapportEtudiantId;
+        $this->dateValidation = $dateValidation;
+        $this->commentaire = $commentaire;
     }
 
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
+    }
+
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRapportEtudiantId(): string
+    {
+        return $this->rapportEtudiantId;
+    }
+
+    /**
+     * @param string $rapportEtudiantId
+     */
+    public function setRapportEtudiantId(string $rapportEtudiantId): void
+    {
+        $this->rapportEtudiantId = $rapportEtudiantId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateValidation(): ?string
+    {
+        return $this->dateValidation;
+    }
+
+    /**
+     * @param string|null $dateValidation
+     */
+    public function setDateValidation(?string $dateValidation): void
+    {
+        $this->dateValidation = $dateValidation;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCommentaire(): ?string
+    {
+        return $this->commentaire;
+    }
+
+    /**
+     * @param string|null $commentaire
+     */
+    public function setCommentaire(?string $commentaire): void
+    {
+        $this->commentaire = $commentaire;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

@@ -2,62 +2,144 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Etudiant;
-use App\Models\NiveauEtude;
-use App\Models\AnneeAcademique;
-use PDO;
-
 /**
  * Class InscriptionEtudiant
  *
- * Represents the inscription_etudiant table (student enrollment).
- * This table has a composite primary key (id_etudiant, id_annee_academique, id_niveau_etude).
- * The BaseModel may need adjustments to handle composite keys for find, update, delete.
- *
  * @package App\Models
  */
-class InscriptionEtudiant extends BaseModel
+class InscriptionEtudiant
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'inscription_etudiant';
 
     /**
-     * @var string The ID of the student (part of composite PK).
+     * @var string L'ID de l'utilisateur/étudiant (FK, partie de la CPK).
      */
-    public string $id_etudiant;
+    private string $utilisateurId;
 
     /**
-     * @var string The ID of the academic year (part of composite PK).
+     * @var string L'ID du niveau d'étude (FK, partie de la CPK).
      */
-    public string $id_annee_academique;
+    private string $niveauEtudeId;
 
     /**
-     * @var string The ID of the study level (part of composite PK).
+     * @var string L'ID de l'année académique (FK, partie de la CPK).
      */
-    public string $id_niveau_etude;
+    private string $anneeAcademiqueId;
 
     /**
-     * @var string|null The date of enrollment.
+     * @var string|null La date d'inscription.
      */
-    public ?string $date_inscription; // Assuming DATE SQL type
+    private ?string $dateInscription; // DDL spécifie DATE
 
     /**
-     * @var string|null The status of the enrollment.
+     * @var int|null Le montant de l'inscription.
      */
-    public ?string $statut_inscription;
-
+    private ?int $montant; // DDL spécifie INT
 
     /**
-     * InscriptionEtudiant constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $utilisateurId
+     * @param string $niveauEtudeId
+     * @param string $anneeAcademiqueId
+     * @param string|null $dateInscription
+     * @param int|null $montant
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $utilisateurId, string $niveauEtudeId, string $anneeAcademiqueId, ?string $dateInscription, ?int $montant)
     {
-        parent::__construct($pdo);
+        $this->utilisateurId = $utilisateurId;
+        $this->niveauEtudeId = $niveauEtudeId;
+        $this->anneeAcademiqueId = $anneeAcademiqueId;
+        $this->dateInscription = $dateInscription;
+        $this->montant = $montant;
     }
 
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
+    }
+
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNiveauEtudeId(): string
+    {
+        return $this->niveauEtudeId;
+    }
+
+    /**
+     * @param string $niveauEtudeId
+     */
+    public function setNiveauEtudeId(string $niveauEtudeId): void
+    {
+        $this->niveauEtudeId = $niveauEtudeId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAnneeAcademiqueId(): string
+    {
+        return $this->anneeAcademiqueId;
+    }
+
+    /**
+     * @param string $anneeAcademiqueId
+     */
+    public function setAnneeAcademiqueId(string $anneeAcademiqueId): void
+    {
+        $this->anneeAcademiqueId = $anneeAcademiqueId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateInscription(): ?string
+    {
+        return $this->dateInscription;
+    }
+
+    /**
+     * @param string|null $dateInscription
+     */
+    public function setDateInscription(?string $dateInscription): void
+    {
+        $this->dateInscription = $dateInscription;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMontant(): ?int
+    {
+        return $this->montant;
+    }
+
+    /**
+     * @param int|null $montant
+     */
+    public function setMontant(?int $montant): void
+    {
+        $this->montant = $montant;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

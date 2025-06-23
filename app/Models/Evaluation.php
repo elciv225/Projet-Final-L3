@@ -2,61 +2,144 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Enseignant;
-use App\Models\Etudiant;
-use App\Models\Ecue;
-use PDO;
-
 /**
  * Class Evaluation
  *
- * Represents the evaluation table.
- * Composite PK: (enseignant_id, etudiant_id, ecue_id).
- *
  * @package App\Models
  */
-class Evaluation extends BaseModel
+class Evaluation
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'evaluation';
 
-    // Properties representing the composite primary key and other fields
     /**
-     * @var string The ID of the teacher (FK to enseignant.utilisateur_id, part of CPK).
+     * @var string L'ID de l'enseignant (FK, partie de la CPK).
      */
-    public string $enseignant_id;
+    private string $enseignantId;
 
     /**
-     * @var string The ID of the student (FK to etudiant.utilisateur_id, part of CPK).
+     * @var string L'ID de l'étudiant (FK, partie de la CPK).
      */
-    public string $etudiant_id;
+    private string $etudiantId;
 
     /**
-     * @var string The ID of the ECUE (FK to ecue.id, part of CPK).
+     * @var string L'ID de l'ECUE (FK, partie de la CPK).
      */
-    public string $ecue_id;
+    private string $ecueId;
 
     /**
-     * @var float|null The student's grade/score. Note: DDL says TINYINT UNSIGNED, using float for flexibility.
+     * @var string|null La date de l'évaluation.
      */
-    public ?float $note; // DECIMAL(4,2) maps to float or string
+    private ?string $dateEvaluation; // DDL spécifie DATE
 
     /**
-     * @var string|null The date of the evaluation.
+     * @var int|null La note de l'étudiant.
      */
-    public ?string $date_evaluation; // Assuming DATE SQL type
+    private ?int $note; // DDL spécifie TINYINT UNSIGNED
 
     /**
-     * Evaluation constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $enseignantId
+     * @param string $etudiantId
+     * @param string $ecueId
+     * @param string|null $dateEvaluation
+     * @param int|null $note
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $enseignantId, string $etudiantId, string $ecueId, ?string $dateEvaluation, ?int $note)
     {
-        parent::__construct($pdo);
+        $this->enseignantId = $enseignantId;
+        $this->etudiantId = $etudiantId;
+        $this->ecueId = $ecueId;
+        $this->dateEvaluation = $dateEvaluation;
+        $this->note = $note;
     }
 
+    /**
+     * @return string
+     */
+    public function getEnseignantId(): string
+    {
+        return $this->enseignantId;
+    }
+
+    /**
+     * @param string $enseignantId
+     */
+    public function setEnseignantId(string $enseignantId): void
+    {
+        $this->enseignantId = $enseignantId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEtudiantId(): string
+    {
+        return $this->etudiantId;
+    }
+
+    /**
+     * @param string $etudiantId
+     */
+    public function setEtudiantId(string $etudiantId): void
+    {
+        $this->etudiantId = $etudiantId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEcueId(): string
+    {
+        return $this->ecueId;
+    }
+
+    /**
+     * @param string $ecueId
+     */
+    public function setEcueId(string $ecueId): void
+    {
+        $this->ecueId = $ecueId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateEvaluation(): ?string
+    {
+        return $this->dateEvaluation;
+    }
+
+    /**
+     * @param string|null $dateEvaluation
+     */
+    public function setDateEvaluation(?string $dateEvaluation): void
+    {
+        $this->dateEvaluation = $dateEvaluation;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getNote(): ?int
+    {
+        return $this->note;
+    }
+
+    /**
+     * @param int|null $note
+     */
+    public function setNote(?int $note): void
+    {
+        $this->note = $note;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

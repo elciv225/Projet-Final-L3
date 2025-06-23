@@ -5,53 +5,118 @@ namespace App\Models;
 /**
  * Class AffectationEncadrant
  *
- * Represents the affectation_encadrant table.
- * Composite PK: (utilisateur_id, rapport_etudiant_id, statut_jury_id).
- *
  * @package App\Models
  */
 class AffectationEncadrant
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'affectation_encadrant';
 
     /**
-     * @var string The ID of the enseignant (FK to enseignant.utilisateur_id, part of CPK).
+     * @var string ID de l'enseignant (FK vers enseignant.utilisateur_id, partie de la CPK).
      */
-    private string $utilisateur_id;
+    private string $utilisateurId;
 
     /**
-     * @var string The ID of the student report (FK to rapport_etudiant.id, part of CPK).
+     * @var string ID du rapport étudiant (FK vers rapport_etudiant.id, partie de la CPK).
      */
-    private string $rapport_etudiant_id;
+    private string $rapportEtudiantId;
 
     /**
-     * @var string The ID of the statut_jury (FK to statut_jury.id, part of CPK).
+     * @var string ID du statut jury (FK vers statut_jury.id, partie de la CPK).
      */
-    private string $statut_jury_id;
+    private string $statutJuryId;
 
     /**
-     * @var string|null The date of assignment.
+     * @var string|null Date d'affectation.
      */
-    private ?string $date_affectation; // DDL specifies DATE
+    private ?string $dateAffectation; // DDL spécifie DATE
 
     /**
-     * @param string $table
-     * @param string $utilisateur_id
-     * @param string $rapport_etudiant_id
-     * @param string $statut_jury_id
-     * @param string|null $date_affectation
+     * @param string $utilisateurId
+     * @param string $rapportEtudiantId
+     * @param string $statutJuryId
+     * @param string|null $dateAffectation
      */
-    public function __construct(string $table, string $utilisateur_id, string $rapport_etudiant_id, string $statut_jury_id, ?string $date_affectation)
+    public function __construct(string $utilisateurId, string $rapportEtudiantId, string $statutJuryId, ?string $dateAffectation)
     {
-        $this->table = $table;
-        $this->utilisateur_id = $utilisateur_id;
-        $this->rapport_etudiant_id = $rapport_etudiant_id;
-        $this->statut_jury_id = $statut_jury_id;
-        $this->date_affectation = $date_affectation;
+        $this->utilisateurId = $utilisateurId;
+        $this->rapportEtudiantId = $rapportEtudiantId;
+        $this->statutJuryId = $statutJuryId;
+        $this->dateAffectation = $dateAffectation;
     }
 
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
+    }
 
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRapportEtudiantId(): string
+    {
+        return $this->rapportEtudiantId;
+    }
+
+    /**
+     * @param string $rapportEtudiantId
+     */
+    public function setRapportEtudiantId(string $rapportEtudiantId): void
+    {
+        $this->rapportEtudiantId = $rapportEtudiantId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatutJuryId(): string
+    {
+        return $this->statutJuryId;
+    }
+
+    /**
+     * @param string $statutJuryId
+     */
+    public function setStatutJuryId(string $statutJuryId): void
+    {
+        $this->statutJuryId = $statutJuryId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateAffectation(): ?string
+    {
+        return $this->dateAffectation;
+    }
+
+    /**
+     * @param string|null $dateAffectation
+     */
+    public function setDateAffectation(?string $dateAffectation): void
+    {
+        $this->dateAffectation = $dateAffectation;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

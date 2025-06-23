@@ -2,53 +2,121 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Utilisateur;
-use PDO;
-
 /**
  * Class Notification
  *
- * Represents the notification table.
- * Composite PK: (emetteur_id, recepteur_id, date_notification).
- *
  * @package App\Models
  */
-class Notification extends BaseModel
+class Notification
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'notification';
 
     /**
-     * @var string The ID of the sender (FK to utilisateur.id, part of CPK).
+     * @var string L'ID de l'émetteur (FK, partie de la CPK).
      */
-    public string $emetteur_id;
+    private string $emetteurId;
 
     /**
-     * @var string The ID of the receiver (FK to utilisateur.id, part of CPK).
+     * @var string L'ID du récepteur (FK, partie de la CPK).
      */
-    public string $recepteur_id;
+    private string $recepteurId;
 
     /**
-     * @var string|null The message content.
+     * @var string|null Le contenu du message.
      */
-    public ?string $message; // DDL TEXT
+    private ?string $message; // DDL spécifie TEXT
 
     /**
-     * @var string The date of the notification (part of CPK).
+     * @var string La date de la notification (partie de la CPK).
      */
-    public string $date_notification; // DDL DATETIME
+    private string $dateNotification; // DDL spécifie DATETIME
 
     /**
-     * Notification constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $emetteurId
+     * @param string $recepteurId
+     * @param string|null $message
+     * @param string $dateNotification
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $emetteurId, string $recepteurId, ?string $message, string $dateNotification)
     {
-        parent::__construct($pdo);
+        $this->emetteurId = $emetteurId;
+        $this->recepteurId = $recepteurId;
+        $this->message = $message;
+        $this->dateNotification = $dateNotification;
     }
 
+    /**
+     * @return string
+     */
+    public function getEmetteurId(): string
+    {
+        return $this->emetteurId;
+    }
+
+    /**
+     * @param string $emetteurId
+     */
+    public function setEmetteurId(string $emetteurId): void
+    {
+        $this->emetteurId = $emetteurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRecepteurId(): string
+    {
+        return $this->recepteurId;
+    }
+
+    /**
+     * @param string $recepteurId
+     */
+    public function setRecepteurId(string $recepteurId): void
+    {
+        $this->recepteurId = $recepteurId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string|null $message
+     */
+    public function setMessage(?string $message): void
+    {
+        $this->message = $message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateNotification(): string
+    {
+        return $this->dateNotification;
+    }
+
+    /**
+     * @param string $dateNotification
+     */
+    public function setDateNotification(string $dateNotification): void
+    {
+        $this->dateNotification = $dateNotification;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

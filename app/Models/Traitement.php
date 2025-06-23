@@ -2,49 +2,75 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Audit;
-use App\Models\AccesTraitement;
-use App\Models\AutorisationAction; // Added import
-use PDO;
-
 /**
  * Class Traitement
  *
- * Represents the traitement table.
- *
  * @package App\Models
  */
-class Traitement extends BaseModel
+class Traitement
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'traitement';
 
     /**
-     * @var string The ID of the treatment.
+     * @var string L'ID du traitement.
      */
-    public string $id;
+    private string $id;
 
     /**
-     * @var string The label of the treatment.
+     * @var string Le libellé du traitement.
      */
-    public string $libelle;
+    private string $libelle;
 
     /**
-     * @var string|null A description of the treatment.
+     * @param string $id
+     * @param string $libelle
      */
-    public ?string $description;
-
-    /**
-     * Traitement constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
-     */
-    public function __construct(PDO $pdo)
+    public function __construct(string $id, string $libelle)
     {
-        parent::__construct($pdo);
+        $this->id = $id;
+        $this->libelle = $libelle;
     }
 
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle(): string
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle(string $libelle): void
+    {
+        $this->libelle = $libelle;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

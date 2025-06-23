@@ -2,49 +2,98 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Enseignant;
-use App\Models\Grade;
-use PDO;
-
 /**
  * Class HistoriqueGrade
  *
- * Represents the historique_grade table.
- * Composite PK: (utilisateur_id, grade_id, date_grade).
- *
  * @package App\Models
  */
-class HistoriqueGrade extends BaseModel
+class HistoriqueGrade
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'historique_grade';
 
     /**
-     * @var string The ID of the enseignant (FK to enseignant.utilisateur_id, part of CPK).
+     * @var string L'ID de l'enseignant (FK, partie de la CPK).
      */
-    public string $utilisateur_id;
+    private string $utilisateurId;
 
     /**
-     * @var string The ID of the grade (FK to grade.id, part of CPK).
+     * @var string L'ID du grade (FK, partie de la CPK).
      */
-    public string $grade_id;
+    private string $gradeId;
 
     /**
-     * @var string The date the grade was obtained/assigned (part of CPK).
+     * @var string|null La date d'obtention du grade.
      */
-    public string $date_grade; // DDL specifies DATE
+    private ?string $dateGrade; // DDL spécifie DATE
 
     /**
-     * HistoriqueGrade constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $utilisateurId
+     * @param string $gradeId
+     * @param string|null $dateGrade
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $utilisateurId, string $gradeId, ?string $dateGrade)
     {
-        parent::__construct($pdo);
+        $this->utilisateurId = $utilisateurId;
+        $this->gradeId = $gradeId;
+        $this->dateGrade = $dateGrade;
     }
 
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
+    }
+
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGradeId(): string
+    {
+        return $this->gradeId;
+    }
+
+    /**
+     * @param string $gradeId
+     */
+    public function setGradeId(string $gradeId): void
+    {
+        $this->gradeId = $gradeId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateGrade(): ?string
+    {
+        return $this->dateGrade;
+    }
+
+    /**
+     * @param string|null $dateGrade
+     */
+    public function setDateGrade(?string $dateGrade): void
+    {
+        $this->dateGrade = $dateGrade;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

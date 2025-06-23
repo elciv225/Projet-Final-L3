@@ -2,85 +2,293 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\GroupeUtilisateur;
-use App\Models\TypeUtilisateur;
-use App\Models\NiveauAccesDonnees;
-use App\Models\Audit;
-use App\Models\PersonnelAdministratif;
-use App\Models\Enseignant;
-use App\Models\Etudiant;
-use App\Models\AccesTraitement;
-use App\Models\Notification; // Added import
-use PDO;
-
 /**
  * Class Utilisateur
  *
- * Represents the utilisateur table.
- *
  * @package App\Models
  */
-class Utilisateur extends BaseModel
+class Utilisateur
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'utilisateur';
 
     /**
-     * @var string The ID of the user.
+     * @var string L'ID de l'utilisateur.
      */
-    public string $id;
+    private string $id;
 
     /**
-     * @var string The username.
+     * @var string|null Le nom de l'utilisateur.
      */
-    public string $nom_utilisateur;
+    private ?string $nom;
 
     /**
-     * @var string The password hash.
+     * @var string|null Les prénoms de l'utilisateur.
      */
-    public string $mot_de_passe;
+    private ?string $prenoms;
 
     /**
-     * @var string|null The email address.
+     * @var string|null L'adresse email de l'utilisateur.
      */
-    public ?string $email;
+    private ?string $email;
 
     /**
-     * @var string|null The creation date of the user account.
+     * @var string|null Le login de l'utilisateur.
      */
-    public ?string $date_creation_compte; // Assuming DATETIME or TIMESTAMP
+    private ?string $login;
 
     /**
-     * @var string|null The last login date.
+     * @var string|null Le mot de passe hashé de l'utilisateur.
      */
-    public ?string $date_derniere_connexion; // Assuming DATETIME or TIMESTAMP
+    private ?string $motDePasse;
 
     /**
-     * @var string|null The ID of the user type this user belongs to.
+     * @var string|null Le chemin ou l'URL de la photo de l'utilisateur.
      */
-    public ?string $type_utilisateur_id;
+    private ?string $photo;
 
     /**
-     * @var string|null The ID of the user group this user belongs to.
+     * @var string|null La date de naissance de l'utilisateur.
      */
-    public ?string $groupe_utilisateur_id;
+    private ?string $dateNaissance; // DDL spécifie DATE
 
     /**
-     * @var string|null The ID of the data access level for this user.
+     * @var string L'ID du groupe utilisateur (FK).
      */
-    public ?string $niveau_acces_donnees_id;
+    private string $groupeUtilisateurId; // DDL spécifie NOT NULL
 
     /**
-     * Utilisateur constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @var string L'ID du type d'utilisateur (FK).
      */
-    public function __construct(PDO $pdo)
-    {
-        parent::__construct($pdo);
+    private string $typeUtilisateurId; // DDL spécifie NOT NULL
+
+    /**
+     * @var string L'ID du niveau d'accès aux données (FK).
+     */
+    private string $niveauAccesDonneesId; // DDL spécifie NOT NULL
+
+    /**
+     * @param string $id
+     * @param string|null $nom
+     * @param string|null $prenoms
+     * @param string|null $email
+     * @param string|null $login
+     * @param string|null $motDePasse
+     * @param string|null $photo
+     * @param string|null $dateNaissance
+     * @param string $groupeUtilisateurId
+     * @param string $typeUtilisateurId
+     * @param string $niveauAccesDonneesId
+     */
+    public function __construct(
+        string $id,
+        ?string $nom,
+        ?string $prenoms,
+        ?string $email,
+        ?string $login,
+        ?string $motDePasse,
+        ?string $photo,
+        ?string $dateNaissance,
+        string $groupeUtilisateurId,
+        string $typeUtilisateurId,
+        string $niveauAccesDonneesId
+    ) {
+        $this->id = $id;
+        $this->nom = $nom;
+        $this->prenoms = $prenoms;
+        $this->email = $email;
+        $this->login = $login;
+        $this->motDePasse = $motDePasse;
+        $this->photo = $photo;
+        $this->dateNaissance = $dateNaissance;
+        $this->groupeUtilisateurId = $groupeUtilisateurId;
+        $this->typeUtilisateurId = $typeUtilisateurId;
+        $this->niveauAccesDonneesId = $niveauAccesDonneesId;
     }
 
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    /**
+     * @param string|null $nom
+     */
+    public function setNom(?string $nom): void
+    {
+        $this->nom = $nom;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPrenoms(): ?string
+    {
+        return $this->prenoms;
+    }
+
+    /**
+     * @param string|null $prenoms
+     */
+    public function setPrenoms(?string $prenoms): void
+    {
+        $this->prenoms = $prenoms;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string|null $email
+     */
+    public function setEmail(?string $email): void
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    /**
+     * @param string|null $login
+     */
+    public function setLogin(?string $login): void
+    {
+        $this->login = $login;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMotDePasse(): ?string
+    {
+        return $this->motDePasse;
+    }
+
+    /**
+     * @param string|null $motDePasse
+     */
+    public function setMotDePasse(?string $motDePasse): void
+    {
+        $this->motDePasse = $motDePasse;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param string|null $photo
+     */
+    public function setPhoto(?string $photo): void
+    {
+        $this->photo = $photo;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateNaissance(): ?string
+    {
+        return $this->dateNaissance;
+    }
+
+    /**
+     * @param string|null $dateNaissance
+     */
+    public function setDateNaissance(?string $dateNaissance): void
+    {
+        $this->dateNaissance = $dateNaissance;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroupeUtilisateurId(): string
+    {
+        return $this->groupeUtilisateurId;
+    }
+
+    /**
+     * @param string $groupeUtilisateurId
+     */
+    public function setGroupeUtilisateurId(string $groupeUtilisateurId): void
+    {
+        $this->groupeUtilisateurId = $groupeUtilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTypeUtilisateurId(): string
+    {
+        return $this->typeUtilisateurId;
+    }
+
+    /**
+     * @param string $typeUtilisateurId
+     */
+    public function setTypeUtilisateurId(string $typeUtilisateurId): void
+    {
+        $this->typeUtilisateurId = $typeUtilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNiveauAccesDonneesId(): string
+    {
+        return $this->niveauAccesDonneesId;
+    }
+
+    /**
+     * @param string $niveauAccesDonneesId
+     */
+    public function setNiveauAccesDonneesId(string $niveauAccesDonneesId): void
+    {
+        $this->niveauAccesDonneesId = $niveauAccesDonneesId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

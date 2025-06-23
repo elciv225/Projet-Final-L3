@@ -2,45 +2,52 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Utilisateur;
-use App\Models\InscriptionEtudiant;
-use App\Models\StageEffectue;
-use App\Models\Evaluation;
-use App\Models\DepotRapport;
-// Removed CompteRendu import as getComptesRendus is being removed
-use App\Models\Messagerie; // Added import
-use PDO;
-
 /**
  * Class Etudiant
  *
- * Represents the etudiant table.
- *
  * @package App\Models
  */
-class Etudiant extends BaseModel
+class Etudiant
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'etudiant';
 
     /**
-     * @var string The ID of the student. This is also a foreign key to utilisateur.id.
+     * @var string L'ID de l'étudiant (FK vers utilisateur.id).
      */
-    public string $id_utilisateur;
-
-    // Removed ine, nom, prenom, date_naissance, lieu_naissance, contact properties
+    private string $utilisateurId;
 
     /**
-     * Etudiant constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $utilisateurId
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $utilisateurId)
     {
-        parent::__construct($pdo);
+        $this->utilisateurId = $utilisateurId;
     }
 
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
+    }
+
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

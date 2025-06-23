@@ -5,45 +5,72 @@ namespace App\Models;
 /**
  * Class Action
  *
- * Represents the action table.
- *
  * @package App\Models
  */
 class Action
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'action';
 
     /**
-     * @var string The ID of the action.
+     * @var string
      */
-    public string $id;
+    private string $id;
 
     /**
-     * @var string The label of the action.
+     * @var string
      */
-    public string $libelle;
+    private string $libelle;
 
     /**
-     * @var string|null A description of the action.
-     */
-    public ?string $description;
-
-    /**
-     * @param string $table
      * @param string $id
      * @param string $libelle
-     * @param string|null $description
      */
-    public function __construct(string $table, string $id, string $libelle, ?string $description)
+    public function __construct(string $id, string $libelle)
     {
-        $this->table = $table;
         $this->id = $id;
         $this->libelle = $libelle;
-        $this->description = $description;
     }
 
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
 
+    /**
+     * @param string $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle(): string
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle(string $libelle): void
+    {
+        $this->libelle = $libelle;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

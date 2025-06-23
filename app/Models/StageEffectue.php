@@ -2,57 +2,121 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Etudiant;
-use App\Models\Entreprise;
-// AnneeAcademique and Enseignant are no longer directly related from this model
-use PDO;
-
 /**
  * Class StageEffectue
  *
- * Represents the stage_effectue table (internships).
- * Composite PK: (utilisateur_id, entreprise_id).
- *
  * @package App\Models
  */
-class StageEffectue extends BaseModel
+class StageEffectue
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'stage_effectue';
 
     /**
-     * @var string|null The ID of the student (FK to etudiant.utilisateur_id, part of composite PK).
+     * @var string L'ID de l'étudiant (FK, partie de la CPK).
      */
-    public ?string $utilisateur_id;
+    private string $utilisateurId;
 
     /**
-     * @var string|null The ID of the company (FK to entreprise.id, part of composite PK).
+     * @var string L'ID de l'entreprise (FK, partie de la CPK).
      */
-    public ?string $entreprise_id;
+    private string $entrepriseId;
 
     /**
-     * @var string|null The start date of the internship.
+     * @var string|null La date de début du stage.
      */
-    public ?string $date_debut;
+    private ?string $dateDebut; // DDL spécifie DATE
 
     /**
-     * @var string|null The end date of the internship.
+     * @var string|null La date de fin du stage.
      */
-    public ?string $date_fin;
-
-    // Removed sujet_stage, id_annee_academique, id_enseignant_encadrant as per strict DDL
+    private ?string $dateFin; // DDL spécifie DATE
 
     /**
-     * StageEffectue constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $utilisateurId
+     * @param string $entrepriseId
+     * @param string|null $dateDebut
+     * @param string|null $dateFin
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $utilisateurId, string $entrepriseId, ?string $dateDebut, ?string $dateFin)
     {
-        parent::__construct($pdo);
+        $this->utilisateurId = $utilisateurId;
+        $this->entrepriseId = $entrepriseId;
+        $this->dateDebut = $dateDebut;
+        $this->dateFin = $dateFin;
     }
 
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
+    }
+
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntrepriseId(): string
+    {
+        return $this->entrepriseId;
+    }
+
+    /**
+     * @param string $entrepriseId
+     */
+    public function setEntrepriseId(string $entrepriseId): void
+    {
+        $this->entrepriseId = $entrepriseId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateDebut(): ?string
+    {
+        return $this->dateDebut;
+    }
+
+    /**
+     * @param string|null $dateDebut
+     */
+    public function setDateDebut(?string $dateDebut): void
+    {
+        $this->dateDebut = $dateDebut;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateFin(): ?string
+    {
+        return $this->dateFin;
+    }
+
+    /**
+     * @param string|null $dateFin
+     */
+    public function setDateFin(?string $dateFin): void
+    {
+        $this->dateFin = $dateFin;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

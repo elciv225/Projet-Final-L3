@@ -2,52 +2,121 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Ecue; // Ensure Ecue is imported
-use PDO;
-
 /**
  * Class Ue
  *
- * Represents the ue table.
- *
  * @package App\Models
  */
-class Ue extends BaseModel
+class Ue
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'ue';
 
     /**
-     * @var string The ID of the UE.
+     * @var string L'ID de l'UE.
      */
-    public string $id;
+    private string $id;
 
     /**
-     * @var string The label of the UE.
+     * @var string Le libellé de l'UE.
      */
-    public string $libelle;
+    private string $libelle;
 
     /**
-     * @var int The number of credits for the UE (TINYINT UNSIGNED).
+     * @var int|null Le nombre de crédits pour l'UE.
      */
-    public int $credit;
+    private ?int $credit; // DDL spécifie TINYINT UNSIGNED
 
     /**
-     * @var string|null The ID of the ECUE this UE belongs to (FK to ecue.id).
+     * @var string L'ID de l'ECUE à laquelle cette UE appartient (FK).
      */
-    public ?string $ecue_id;
+    private string $ecueId; // DDL spécifie NOT NULL
 
     /**
-     * Ue constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $id
+     * @param string $libelle
+     * @param int|null $credit
+     * @param string $ecueId
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $id, string $libelle, ?int $credit, string $ecueId)
     {
-        parent::__construct($pdo);
+        $this->id = $id;
+        $this->libelle = $libelle;
+        $this->credit = $credit;
+        $this->ecueId = $ecueId;
     }
 
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle(): string
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle(string $libelle): void
+    {
+        $this->libelle = $libelle;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCredit(): ?int
+    {
+        return $this->credit;
+    }
+
+    /**
+     * @param int|null $credit
+     */
+    public function setCredit(?int $credit): void
+    {
+        $this->credit = $credit;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEcueId(): string
+    {
+        return $this->ecueId;
+    }
+
+    /**
+     * @param string $ecueId
+     */
+    public function setEcueId(string $ecueId): void
+    {
+        $this->ecueId = $ecueId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

@@ -2,50 +2,98 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\GroupeUtilisateur;
-use App\Models\Traitement;
-use App\Models\Action;
-use PDO;
-
 /**
  * Class AutorisationAction
  *
- * Represents the autorisation_action table.
- * Composite PK: (groupe_utilisateur_id, traitement_id, action_id).
- *
  * @package App\Models
  */
-class AutorisationAction extends BaseModel
+class AutorisationAction
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'autorisation_action';
 
     /**
-     * @var string The ID of the groupe_utilisateur (FK, part of CPK).
+     * @var string L'ID du groupe utilisateur (FK, partie de la CPK).
      */
-    public string $groupe_utilisateur_id;
+    private string $groupeUtilisateurId;
 
     /**
-     * @var string The ID of the traitement (FK, part of CPK).
+     * @var string L'ID du traitement (FK, partie de la CPK).
      */
-    public string $traitement_id;
+    private string $traitementId;
 
     /**
-     * @var string The ID of the action (FK, part of CPK).
+     * @var string L'ID de l'action (FK, partie de la CPK).
      */
-    public string $action_id;
+    private string $actionId;
 
     /**
-     * AutorisationAction constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $groupeUtilisateurId
+     * @param string $traitementId
+     * @param string $actionId
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $groupeUtilisateurId, string $traitementId, string $actionId)
     {
-        parent::__construct($pdo);
+        $this->groupeUtilisateurId = $groupeUtilisateurId;
+        $this->traitementId = $traitementId;
+        $this->actionId = $actionId;
     }
 
+    /**
+     * @return string
+     */
+    public function getGroupeUtilisateurId(): string
+    {
+        return $this->groupeUtilisateurId;
     }
+
+    /**
+     * @param string $groupeUtilisateurId
+     */
+    public function setGroupeUtilisateurId(string $groupeUtilisateurId): void
+    {
+        $this->groupeUtilisateurId = $groupeUtilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTraitementId(): string
+    {
+        return $this->traitementId;
+    }
+
+    /**
+     * @param string $traitementId
+     */
+    public function setTraitementId(string $traitementId): void
+    {
+        $this->traitementId = $traitementId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getActionId(): string
+    {
+        return $this->actionId;
+    }
+
+    /**
+     * @param string $actionId
+     */
+    public function setActionId(string $actionId): void
+    {
+        $this->actionId = $actionId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+}

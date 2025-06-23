@@ -2,52 +2,98 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\InscriptionEtudiant;
-// Removed import for StageEffectue
-use PDO;
-
 /**
  * Class AnneeAcademique
  *
- * Represents the annee_academique table.
- *
  * @package App\Models
  */
-class AnneeAcademique extends BaseModel
+class AnneeAcademique
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'annee_academique';
 
     /**
-     * @var string The ID of the academic year.
+     * @var string L'ID de l'année académique.
      */
-    public string $id;
+    private string $id;
 
     /**
-     * @var string The label of the academic year (e.g., "2023-2024").
+     * @var string La date de début de l'année académique.
      */
-    public string $libelle;
+    private string $dateDebut; // DDL spécifie DATE
 
     /**
-     * @var string The start date of the academic year.
+     * @var string La date de fin de l'année académique.
      */
-    public string $date_debut;
+    private string $dateFin; // DDL spécifie DATE
 
     /**
-     * @var string The end date of the academic year.
+     * @param string $id
+     * @param string $dateDebut
+     * @param string $dateFin
      */
-    public string $date_fin;
-
-    /**
-     * AnneeAcademique constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
-     */
-    public function __construct(PDO $pdo)
+    public function __construct(string $id, string $dateDebut, string $dateFin)
     {
-        parent::__construct($pdo);
+        $this->id = $id;
+        $this->dateDebut = $dateDebut;
+        $this->dateFin = $dateFin;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateDebut(): string
+    {
+        return $this->dateDebut;
+    }
+
+    /**
+     * @param string $dateDebut
+     */
+    public function setDateDebut(string $dateDebut): void
+    {
+        $this->dateDebut = $dateDebut;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateFin(): string
+    {
+        return $this->dateFin;
+    }
+
+    /**
+     * @param string $dateFin
+     */
+    public function setDateFin(string $dateFin): void
+    {
+        $this->dateFin = $dateFin;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
     }
 }

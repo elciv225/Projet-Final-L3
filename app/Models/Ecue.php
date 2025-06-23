@@ -2,48 +2,98 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Ue;
-use App\Models\Evaluation; // Added import
-use PDO;
-
 /**
  * Class Ecue
  *
- * Represents the ecue table.
- *
  * @package App\Models
  */
-class Ecue extends BaseModel
+class Ecue
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'ecue';
 
     /**
-     * @var string The ID of the ECUE.
+     * @var string L'ID de l'ECUE.
      */
-    public string $id;
+    private string $id;
 
     /**
-     * @var string The label of the ECUE.
+     * @var string Le libellé de l'ECUE.
      */
-    public string $libelle;
+    private string $libelle;
 
     /**
-     * @var int The number of credits for the ECUE (TINYINT UNSIGNED).
+     * @var int|null Le nombre de crédits pour l'ECUE.
      */
-    public int $credit;
+    private ?int $credit; // DDL spécifie TINYINT UNSIGNED
 
     /**
-     * Ecue constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $id
+     * @param string $libelle
+     * @param int|null $credit
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $id, string $libelle, ?int $credit)
     {
-        parent::__construct($pdo);
+        $this->id = $id;
+        $this->libelle = $libelle;
+        $this->credit = $credit;
     }
 
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle(): string
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle(string $libelle): void
+    {
+        $this->libelle = $libelle;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCredit(): ?int
+    {
+        return $this->credit;
+    }
+
+    /**
+     * @param int|null $credit
+     */
+    public function setCredit(?int $credit): void
+    {
+        $this->credit = $credit;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

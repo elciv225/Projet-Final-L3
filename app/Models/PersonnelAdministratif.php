@@ -2,40 +2,52 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Utilisateur;
-use App\Models\ApprobationRapport; // Added import
-use PDO;
-
 /**
  * Class PersonnelAdministratif
  *
- * Represents the personnel_administratif table.
- *
  * @package App\Models
  */
-class PersonnelAdministratif extends BaseModel
+class PersonnelAdministratif
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'personnel_administratif';
 
     /**
-     * @var string The ID of the administrative staff. This is also a foreign key to utilisateur.id.
+     * @var string L'ID du personnel administratif (FK vers utilisateur.id).
      */
-    public string $id_utilisateur;
-
-    // Removed nom, prenom, contact, id_fonction properties
+    private string $utilisateurId;
 
     /**
-     * PersonnelAdministratif constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $utilisateurId
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $utilisateurId)
     {
-        parent::__construct($pdo);
+        $this->utilisateurId = $utilisateurId;
     }
 
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
+    }
+
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

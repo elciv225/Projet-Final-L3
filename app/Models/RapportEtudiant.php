@@ -1,57 +1,122 @@
-
 <?php
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\DepotRapport;
-use App\Models\ApprobationRapport;
-use App\Models\ValidationRapport;
-use App\Models\AffectationEncadrant; // Added import
-use PDO;
-
 /**
  * Class RapportEtudiant
  *
- * Represents a student report in the rapport_etudiant table.
- *
  * @package App\Models
  */
-class RapportEtudiant extends BaseModel
+class RapportEtudiant
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'rapport_etudiant';
 
     /**
-     * @var int|null The ID of the report.
+     * @var string L'ID du rapport étudiant.
      */
-    public ?int $id;
+    private string $id;
 
     /**
-     * @var string|null The title of the report.
+     * @var string|null Le titre du rapport.
      */
-    public ?string $titre;
+    private ?string $titre;
 
     /**
-     * @var string|null The date of the report.
+     * @var string|null La date du rapport.
      */
-    public ?string $date_rapport;
+    private ?string $dateRapport; // DDL spécifie DATE
 
     /**
-     * @var string|null The theme of the thesis.
+     * @var string|null Le thème du mémoire.
      */
-    public ?string $theme_memoire;
+    private ?string $themeMemoire;
 
     /**
-     * RapportEtudiant constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $id
+     * @param string|null $titre
+     * @param string|null $dateRapport
+     * @param string|null $themeMemoire
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $id, ?string $titre, ?string $dateRapport, ?string $themeMemoire)
     {
-        parent::__construct($pdo);
+        $this->id = $id;
+        $this->titre = $titre;
+        $this->dateRapport = $dateRapport;
+        $this->themeMemoire = $themeMemoire;
     }
 
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTitre(): ?string
+    {
+        return $this->titre;
+    }
+
+    /**
+     * @param string|null $titre
+     */
+    public function setTitre(?string $titre): void
+    {
+        $this->titre = $titre;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateRapport(): ?string
+    {
+        return $this->dateRapport;
+    }
+
+    /**
+     * @param string|null $dateRapport
+     */
+    public function setDateRapport(?string $dateRapport): void
+    {
+        $this->dateRapport = $dateRapport;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getThemeMemoire(): ?string
+    {
+        return $this->themeMemoire;
+    }
+
+    /**
+     * @param string|null $themeMemoire
+     */
+    public function setThemeMemoire(?string $themeMemoire): void
+    {
+        $this->themeMemoire = $themeMemoire;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

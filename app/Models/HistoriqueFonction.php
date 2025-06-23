@@ -2,49 +2,98 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Enseignant;
-use App\Models\Fonction;
-use PDO;
-
 /**
  * Class HistoriqueFonction
  *
- * Represents the historique_fonction table.
- * Composite PK: (utilisateur_id, fonction_id, date_occupation).
- *
  * @package App\Models
  */
-class HistoriqueFonction extends BaseModel
+class HistoriqueFonction
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'historique_fonction';
 
     /**
-     * @var string The ID of the enseignant (FK to enseignant.utilisateur_id, part of CPK).
+     * @var string L'ID de l'enseignant (FK, partie de la CPK).
      */
-    public string $utilisateur_id;
+    private string $utilisateurId;
 
     /**
-     * @var string The ID of the function (FK to fonction.id, part of CPK).
+     * @var string L'ID de la fonction (FK, partie de la CPK).
      */
-    public string $fonction_id;
+    private string $fonctionId;
 
     /**
-     * @var string The date of occupation (part of CPK).
+     * @var string|null La date d'occupation.
      */
-    public string $date_occupation; // DDL specifies DATE
+    private ?string $dateOccupation; // DDL spécifie DATE
 
     /**
-     * HistoriqueFonction constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $utilisateurId
+     * @param string $fonctionId
+     * @param string|null $dateOccupation
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $utilisateurId, string $fonctionId, ?string $dateOccupation)
     {
-        parent::__construct($pdo);
+        $this->utilisateurId = $utilisateurId;
+        $this->fonctionId = $fonctionId;
+        $this->dateOccupation = $dateOccupation;
     }
 
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
+    }
+
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFonctionId(): string
+    {
+        return $this->fonctionId;
+    }
+
+    /**
+     * @param string $fonctionId
+     */
+    public function setFonctionId(string $fonctionId): void
+    {
+        $this->fonctionId = $fonctionId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateOccupation(): ?string
+    {
+        return $this->dateOccupation;
+    }
+
+    /**
+     * @param string|null $dateOccupation
+     */
+    public function setDateOccupation(?string $dateOccupation): void
+    {
+        $this->dateOccupation = $dateOccupation;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

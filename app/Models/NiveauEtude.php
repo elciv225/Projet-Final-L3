@@ -2,42 +2,75 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\InscriptionEtudiant; // Added import
-use PDO;
-
 /**
  * Class NiveauEtude
  *
- * Represents the niveau_etude table.
- *
  * @package App\Models
  */
-class NiveauEtude extends BaseModel
+class NiveauEtude
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'niveau_etude';
 
     /**
-     * @var string The ID of the study level.
+     * @var string L'ID du niveau d'étude.
      */
-    public string $id;
+    private string $id;
 
     /**
-     * @var string The label of the study level.
+     * @var string Le libellé du niveau d'étude.
      */
-    public string $libelle;
+    private string $libelle;
 
     /**
-     * NiveauEtude constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $id
+     * @param string $libelle
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $id, string $libelle)
     {
-        parent::__construct($pdo);
+        $this->id = $id;
+        $this->libelle = $libelle;
     }
 
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle(): string
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle(string $libelle): void
+    {
+        $this->libelle = $libelle;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

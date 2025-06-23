@@ -2,50 +2,98 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\PersonnelAdministratif;
-use App\Models\RapportEtudiant;
-use PDO;
-
 /**
  * Class ApprobationRapport
  *
- * Represents the approbation_rapport table.
- * Composite PK: (utilisateur_id, rapport_etudiant_id).
- *
  * @package App\Models
  */
-class ApprobationRapport extends BaseModel
+class ApprobationRapport
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'approbation_rapport';
 
     /**
-     * @var string The ID of the approving user (FK to personnel_administratif.utilisateur_id, part of CPK).
+     * @var string ID de l'utilisateur approbateur (FK vers personnel_administratif.utilisateur_id, partie de la CPK).
      */
-    public string $utilisateur_id;
+    private string $utilisateurId;
 
     /**
-     * @var string The ID of the student report (FK to rapport_etudiant.id, part of CPK).
+     * @var string ID du rapport étudiant (FK vers rapport_etudiant.id, partie de la CPK).
      */
-    public string $rapport_etudiant_id;
+    private string $rapportEtudiantId;
 
     /**
-     * @var string|null The date of approval.
+     * @var string|null Date d'approbation.
      */
-    public ?string $date_approbation; // DDL specifies DATE
+    private ?string $dateApprobation; // DDL spécifie DATE
 
     /**
-     * ApprobationRapport constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $utilisateurId
+     * @param string $rapportEtudiantId
+     * @param string|null $dateApprobation
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $utilisateurId, string $rapportEtudiantId, ?string $dateApprobation)
     {
-        parent::__construct($pdo);
+        $this->utilisateurId = $utilisateurId;
+        $this->rapportEtudiantId = $rapportEtudiantId;
+        $this->dateApprobation = $dateApprobation;
     }
 
-   
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
+    }
+
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRapportEtudiantId(): string
+    {
+        return $this->rapportEtudiantId;
+    }
+
+    /**
+     * @param string $rapportEtudiantId
+     */
+    public function setRapportEtudiantId(string $rapportEtudiantId): void
+    {
+        $this->rapportEtudiantId = $rapportEtudiantId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateApprobation(): ?string
+    {
+        return $this->dateApprobation;
+    }
+
+    /**
+     * @param string|null $dateApprobation
+     */
+    public function setDateApprobation(?string $dateApprobation): void
+    {
+        $this->dateApprobation = $dateApprobation;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

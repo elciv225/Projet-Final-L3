@@ -2,47 +2,52 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Utilisateur;
-// Removed StageEffectue import as getStagesEncadres is being removed
-use App\Models\Evaluation;
-use App\Models\ValidationRapport;
-use App\Models\AffectationEncadrant;
-use App\Models\HistoriqueFonction;
-use App\Models\HistoriqueGrade;
-use App\Models\RemiseCompteRendu;
-use App\Models\Messagerie; // Added import
-use PDO;
-
 /**
  * Class Enseignant
  *
- * Represents the enseignant table.
- *
  * @package App\Models
  */
-class Enseignant extends BaseModel
+class Enseignant
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'enseignant';
 
     /**
-     * @var string The ID of the teacher. This is also a foreign key to utilisateur.id.
+     * @var string L'ID de l'enseignant (FK vers utilisateur.id).
      */
-    public string $id_utilisateur;
-
-    // Removed nom, prenom, contact, specialite, id_grade properties
+    private string $utilisateurId;
 
     /**
-     * Enseignant constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $utilisateurId
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $utilisateurId)
     {
-        parent::__construct($pdo);
+        $this->utilisateurId = $utilisateurId;
     }
 
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
+    }
+
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

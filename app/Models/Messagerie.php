@@ -2,60 +2,144 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Enseignant;
-use App\Models\Etudiant;
-use App\Models\Discussion;
-use PDO;
-
 /**
  * Class Messagerie
  *
- * Represents the messagerie table.
- * Composite PK: (membre_commission_id, etudiant_concerne_id, discussion_id, date_message).
- *
  * @package App\Models
  */
-class Messagerie extends BaseModel
+class Messagerie
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'messagerie';
 
     /**
-     * @var string FK to enseignant.utilisateur_id, part of CPK.
+     * @var string ID du membre de la commission (FK vers enseignant.utilisateur_id, partie de la CPK).
      */
-    public string $membre_commission_id;
+    private string $membreCommissionId;
 
     /**
-     * @var string FK to etudiant.utilisateur_id, part of CPK.
+     * @var string ID de l'étudiant concerné (FK vers etudiant.utilisateur_id, partie de la CPK).
      */
-    public string $etudiant_concerne_id;
+    private string $etudiantConcerneId;
 
     /**
-     * @var string FK to discussion.id, part of CPK.
+     * @var string ID de la discussion (FK vers discussion.id, partie de la CPK).
      */
-    public string $discussion_id;
+    private string $discussionId;
 
     /**
-     * @var string|null The message content.
+     * @var string|null Contenu du message.
      */
-    public ?string $message; // DDL TEXT
+    private ?string $message; // DDL spécifie TEXT
 
     /**
-     * @var string The date of the message (part of CPK).
+     * @var string Date du message (partie de la CPK).
      */
-    public string $date_message; // DDL DATETIME
+    private string $dateMessage; // DDL spécifie DATETIME
 
     /**
-     * Messagerie constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $membreCommissionId
+     * @param string $etudiantConcerneId
+     * @param string $discussionId
+     * @param string|null $message
+     * @param string $dateMessage
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $membreCommissionId, string $etudiantConcerneId, string $discussionId, ?string $message, string $dateMessage)
     {
-        parent::__construct($pdo);
+        $this->membreCommissionId = $membreCommissionId;
+        $this->etudiantConcerneId = $etudiantConcerneId;
+        $this->discussionId = $discussionId;
+        $this->message = $message;
+        $this->dateMessage = $dateMessage;
     }
 
+    /**
+     * @return string
+     */
+    public function getMembreCommissionId(): string
+    {
+        return $this->membreCommissionId;
+    }
+
+    /**
+     * @param string $membreCommissionId
+     */
+    public function setMembreCommissionId(string $membreCommissionId): void
+    {
+        $this->membreCommissionId = $membreCommissionId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEtudiantConcerneId(): string
+    {
+        return $this->etudiantConcerneId;
+    }
+
+    /**
+     * @param string $etudiantConcerneId
+     */
+    public function setEtudiantConcerneId(string $etudiantConcerneId): void
+    {
+        $this->etudiantConcerneId = $etudiantConcerneId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDiscussionId(): string
+    {
+        return $this->discussionId;
+    }
+
+    /**
+     * @param string $discussionId
+     */
+    public function setDiscussionId(string $discussionId): void
+    {
+        $this->discussionId = $discussionId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string|null $message
+     */
+    public function setMessage(?string $message): void
+    {
+        $this->message = $message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateMessage(): string
+    {
+        return $this->dateMessage;
+    }
+
+    /**
+     * @param string $dateMessage
+     */
+    public function setDateMessage(string $dateMessage): void
+    {
+        $this->dateMessage = $dateMessage;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

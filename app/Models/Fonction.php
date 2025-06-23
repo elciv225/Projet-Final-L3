@@ -2,42 +2,75 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\HistoriqueFonction; // Added import
-use PDO;
-
 /**
  * Class Fonction
  *
- * Represents the fonction table.
- *
  * @package App\Models
  */
-class Fonction extends BaseModel
+class Fonction
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'fonction';
 
     /**
-     * @var string The ID of the function.
+     * @var string L'ID de la fonction.
      */
-    public string $id;
+    private string $id;
 
     /**
-     * @var string The label of the function.
+     * @var string Le libellé de la fonction.
      */
-    public string $libelle;
+    private string $libelle;
 
     /**
-     * Fonction constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $id
+     * @param string $libelle
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $id, string $libelle)
     {
-        parent::__construct($pdo);
+        $this->id = $id;
+        $this->libelle = $libelle;
     }
 
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle(): string
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle(string $libelle): void
+    {
+        $this->libelle = $libelle;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

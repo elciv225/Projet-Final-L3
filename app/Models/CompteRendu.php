@@ -2,50 +2,98 @@
 
 namespace App\Models;
 
-use App\Models\RemiseCompteRendu; // For existing getRemisesCompteRendu
-use App\Models\HistoriqueApprobation; // For upcoming getHistoriqueApprobations
-use PDO;
-
 /**
  * Class CompteRendu
  *
- * Represents the compte_rendu table.
- * DDL: id VARCHAR(15), titre VARCHAR(255), date_rapport DATE.
- *
  * @package App\Models
  */
-class CompteRendu extends BaseModel
+class CompteRendu
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'compte_rendu';
 
     /**
-     * @var string The ID of the report.
+     * @var string L'ID du compte rendu.
      */
-    public string $id;
+    private string $id;
 
     /**
-     * @var string|null The title of the report.
+     * @var string|null Le titre du compte rendu.
      */
-    public ?string $titre;
+    private ?string $titre;
 
     /**
-     * @var string|null The date of the report. (DDL: DATE)
+     * @var string|null La date du rapport.
      */
-    public ?string $date_rapport;
-
-    // Removed: contenu, date_creation, id_etudiant
+    private ?string $dateRapport; // DDL spécifie DATE
 
     /**
-     * CompteRendu constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $id
+     * @param string|null $titre
+     * @param string|null $dateRapport
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $id, ?string $titre, ?string $dateRapport)
     {
-        parent::__construct($pdo);
+        $this->id = $id;
+        $this->titre = $titre;
+        $this->dateRapport = $dateRapport;
     }
 
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
     }
+
+    /**
+     * @param string $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTitre(): ?string
+    {
+        return $this->titre;
+    }
+
+    /**
+     * @param string|null $titre
+     */
+    public function setTitre(?string $titre): void
+    {
+        $this->titre = $titre;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateRapport(): ?string
+    {
+        return $this->dateRapport;
+    }
+
+    /**
+     * @param string|null $dateRapport
+     */
+    public function setDateRapport(?string $dateRapport): void
+    {
+        $this->dateRapport = $dateRapport;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+}

@@ -2,49 +2,98 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Enseignant;
-use App\Models\CompteRendu;
-use PDO;
-
 /**
  * Class RemiseCompteRendu
  *
- * Represents the remise_compte_rendu table.
- * Composite PK: (utilisateur_id, compte_rendu_id).
- *
  * @package App\Models
  */
-class RemiseCompteRendu extends BaseModel
+class RemiseCompteRendu
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'remise_compte_rendu';
 
     /**
-     * @var string The ID of the enseignant (FK to enseignant.utilisateur_id, part of CPK).
+     * @var string L'ID de l'enseignant (FK, partie de la CPK).
      */
-    public string $utilisateur_id;
+    private string $utilisateurId;
 
     /**
-     * @var string The ID of the compte rendu (FK to compte_rendu.id, part of CPK).
+     * @var string L'ID du compte rendu (FK, partie de la CPK).
      */
-    public string $compte_rendu_id;
+    private string $compteRenduId;
 
     /**
-     * @var string|null The date of submission.
+     * @var string|null La date de remise.
      */
-    public ?string $date_rendu; // DDL specifies DATE
+    private ?string $dateRendu; // DDL spécifie DATE
 
     /**
-     * RemiseCompteRendu constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $utilisateurId
+     * @param string $compteRenduId
+     * @param string|null $dateRendu
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $utilisateurId, string $compteRenduId, ?string $dateRendu)
     {
-        parent::__construct($pdo);
+        $this->utilisateurId = $utilisateurId;
+        $this->compteRenduId = $compteRenduId;
+        $this->dateRendu = $dateRendu;
     }
 
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
+    }
+
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompteRenduId(): string
+    {
+        return $this->compteRenduId;
+    }
+
+    /**
+     * @param string $compteRenduId
+     */
+    public function setCompteRenduId(string $compteRenduId): void
+    {
+        $this->compteRenduId = $compteRenduId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateRendu(): ?string
+    {
+        return $this->dateRendu;
+    }
+
+    /**
+     * @param string|null $dateRendu
+     */
+    public function setDateRendu(?string $dateRendu): void
+    {
+        $this->dateRendu = $dateRendu;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }

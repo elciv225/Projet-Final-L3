@@ -2,49 +2,98 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\Etudiant;
-use App\Models\RapportEtudiant;
-use PDO;
-
 /**
  * Class DepotRapport
  *
- * Represents the depot_rapport table (report submissions).
- * Composite PK: (utilisateur_id, rapport_etudiant_id).
- *
  * @package App\Models
  */
-class DepotRapport extends BaseModel
+class DepotRapport
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'depot_rapport';
 
     /**
-     * @var string The ID of the student who submitted (FK to etudiant.utilisateur_id, part of CPK).
+     * @var string L'ID de l'étudiant qui a soumis (FK vers etudiant.utilisateur_id, partie de la CPK).
      */
-    public string $utilisateur_id;
-    
-    /**
-     * @var string The ID of the student report (FK to rapport_etudiant.id, part of CPK).
-     */
-    public string $rapport_etudiant_id;
+    private string $utilisateurId;
 
     /**
-     * @var string|null The date of submission.
+     * @var string L'ID du rapport étudiant (FK vers rapport_etudiant.id, partie de la CPK).
      */
-    public ?string $date_depot; // DDL specifies DATE
+    private string $rapportEtudiantId;
 
     /**
-     * DepotRapport constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @var string|null La date de soumission.
      */
-    public function __construct(PDO $pdo)
+    private ?string $dateDepot; // DDL spécifie DATE
+
+    /**
+     * @param string $utilisateurId
+     * @param string $rapportEtudiantId
+     * @param string|null $dateDepot
+     */
+    public function __construct(string $utilisateurId, string $rapportEtudiantId, ?string $dateDepot)
     {
-        parent::__construct($pdo);
+        $this->utilisateurId = $utilisateurId;
+        $this->rapportEtudiantId = $rapportEtudiantId;
+        $this->dateDepot = $dateDepot;
     }
 
+    /**
+     * @return string
+     */
+    public function getUtilisateurId(): string
+    {
+        return $this->utilisateurId;
     }
+
+    /**
+     * @param string $utilisateurId
+     */
+    public function setUtilisateurId(string $utilisateurId): void
+    {
+        $this->utilisateurId = $utilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRapportEtudiantId(): string
+    {
+        return $this->rapportEtudiantId;
+    }
+
+    /**
+     * @param string $rapportEtudiantId
+     */
+    public function setRapportEtudiantId(string $rapportEtudiantId): void
+    {
+        $this->rapportEtudiantId = $rapportEtudiantId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateDepot(): ?string
+    {
+        return $this->dateDepot;
+    }
+
+    /**
+     * @param string|null $dateDepot
+     */
+    public function setDateDepot(?string $dateDepot): void
+    {
+        $this->dateDepot = $dateDepot;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+}

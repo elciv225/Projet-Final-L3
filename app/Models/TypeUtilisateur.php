@@ -2,48 +2,98 @@
 
 namespace App\Models;
 
-use App\Database\BaseModel;
-use App\Models\CategorieUtilisateur;
-use App\Models\Utilisateur; // Added import
-use PDO;
-
 /**
  * Class TypeUtilisateur
  *
- * Represents the type_utilisateur table.
- *
  * @package App\Models
  */
-class TypeUtilisateur extends BaseModel
+class TypeUtilisateur
 {
     /**
-     * @var string The database table name.
+     * @var string
      */
     protected string $table = 'type_utilisateur';
 
     /**
-     * @var string The ID of the user type.
+     * @var string L'ID du type d'utilisateur.
      */
-    public string $id;
+    private string $id;
 
     /**
-     * @var string The label of the user type.
+     * @var string Le libellé du type d'utilisateur.
      */
-    public string $libelle;
+    private string $libelle;
 
     /**
-     * @var string|null The ID of the CategorieUtilisateur this TypeUtilisateur belongs to.
+     * @var string L'ID de la catégorie utilisateur à laquelle ce type appartient (FK).
      */
-    public ?string $categorie_utilisateur_id;
+    private string $categorieUtilisateurId; // DDL spécifie NOT NULL
 
     /**
-     * TypeUtilisateur constructor.
-     *
-     * @param PDO $pdo The PDO database connection object.
+     * @param string $id
+     * @param string $libelle
+     * @param string $categorieUtilisateurId
      */
-    public function __construct(PDO $pdo)
+    public function __construct(string $id, string $libelle, string $categorieUtilisateurId)
     {
-        parent::__construct($pdo);
+        $this->id = $id;
+        $this->libelle = $libelle;
+        $this->categorieUtilisateurId = $categorieUtilisateurId;
     }
 
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLibelle(): string
+    {
+        return $this->libelle;
+    }
+
+    /**
+     * @param string $libelle
+     */
+    public function setLibelle(string $libelle): void
+    {
+        $this->libelle = $libelle;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategorieUtilisateurId(): string
+    {
+        return $this->categorieUtilisateurId;
+    }
+
+    /**
+     * @param string $categorieUtilisateurId
+     */
+    public function setCategorieUtilisateurId(string $categorieUtilisateurId): void
+    {
+        $this->categorieUtilisateurId = $categorieUtilisateurId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
 }
