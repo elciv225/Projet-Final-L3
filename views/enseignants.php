@@ -1008,7 +1008,7 @@
                         <label class="form-label" for="teacher-number">Numéro Matricule</label>
                     </div>
                     <div class="form-group">
-                        <input type="text" name="teacherLastname" class="form-input" placeholder=" " id="student-lastname">
+                        <input type="text" name="teacherLastname" class="form-input" placeholder=" " id="teacher-lastname">
                         <label class="form-label" for="teacher-lastname">Nom</label>
                     </div>
                     <div class="form-group">
@@ -1022,7 +1022,7 @@
                 </div>
                 <div class="form-grid" style=" margin-top: 20px;">
                     <div class="form-group" style=" padding-right: 300px;">
-                        <input type="mail" name="email" class="form-input" placeholder=" " id="email">
+                        <input type="email" name="email" class="form-input" placeholder=" " id="email">
                         <label class="form-label" for="email">Email</label>
                     </div>
                     <div class="radio-group">
@@ -1356,7 +1356,7 @@ doc.save('personnel.pdf');
 
         let y = 10;
         doc.setFontSize(12);
-        doc.text("Liste du personnel", 10, y);
+        doc.text("Liste des enseignants", 10, y);
         y += 10;
 
         rows.forEach(row => {
@@ -1393,7 +1393,7 @@ doc.save('personnel.pdf');
                 </style>
             </head>
             <body>
-                <h2>Liste du personnel</h2>
+                <h2>Liste des Enseignants</h2>
                 ${tableHTML}
             </body>
             </html>

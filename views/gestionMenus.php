@@ -107,11 +107,14 @@
             max-width: 100vw;
             background: var(--background-secondary);
             transition: background-color 0.5s ease;
+
         }
 
         .main-container {
-            display: flex;
-            width: 100%;
+            flex: 1;
+            height: 100vh;
+            padding: 20px;
+            overflow: hidden;
         }
 
         /* Sidebar moderne */
@@ -149,22 +152,6 @@
             font-size: 24px;
         }
 
-        .sidebar-search {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #E5E7EB;
-            border-radius: 8px;
-            background: var(--background-secondary);
-            color: var(--text-primary);
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-
-        .sidebar-search:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--input-focus);
-        }
 
         .sidebar-nav {
             flex: 1;
@@ -310,47 +297,7 @@
             margin-bottom: 4px;
         }
 
-        .header-subtitle {
-            color: var(--text-disabled);
-            font-size: 14px;
-        }
 
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .search-container {
-            position: relative;
-            width: 320px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 16px 12px 40px;
-            border: 1px solid #E5E7EB;
-            border-radius: 8px;
-            background: var(--background-primary);
-            color: var(--text-primary);
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--input-focus);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-disabled);
-            font-size: 16px;
-        }
 
         .btn {
             display: inline-flex;
@@ -397,130 +344,7 @@
             margin-bottom: 32px;
         }
 
-        .stat-card {
-            background: var(--background-primary);
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid #E5E7EB;
-            box-shadow: var(--shadow-sm);
-        }
 
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .stat-title {
-            font-size: 14px;
-            color: var(--text-disabled);
-            font-weight: 500;
-        }
-
-        .stat-icon {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-
-        .stat-icon.blue { background: #3B82F6; }
-        .stat-icon.orange { background: #F59E0B; }
-        .stat-icon.green { background: #10B981; }
-        .stat-icon.red { background: #EF4444; }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        /* Form Sections */
-        .form-section {
-            background: var(--background-primary);
-            border: 1px solid #E5E7EB;
-            border-radius: 12px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .section-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid #E5E7EB;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .add-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 16px;
-        }
-
-        .add-btn:hover {
-            background: var(--button-primary-hover);
-            transform: scale(1.1);
-        }
-
-        .section-content {
-            padding: 24px;
-        }
-
-        .form-grid {
-            display: grid; /* Changed from flex to grid for better control of multiple columns */
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive columns */
-            gap: 20px;
-        }
-
-        .form-group {
-            position: relative;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #E5E7EB;
-            border-radius: 8px;
-            background: var(--background-primary);
-            color: var(--text-primary);
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--input-focus);
-        }
-
-        .form-label {
-            position: absolute;
-            left: 16px;
-            top: 12px;
-            font-size: 14px;
-            color: var(--text-disabled);
-            pointer-events: none;
-            transition: all 0.2s ease;
-            background: var(--background-primary);
-            padding: 0 4px;
-            z-index: 1; /* Ensure label is above input when transitioning */
-        }
 
         .form-input:focus ~ .form-label,
         .form-input:not(:placeholder-shown) ~ .form-label {
@@ -862,6 +686,254 @@
             font-size: 12px;
         }
 
+        /* Bouton + - */
+        .field-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .small-round-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .small-round-btn:hover {
+            background-color: #1b5fbd;
+        }
+
+
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group-inline {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group-inline label {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap; /* Prevent label from wrapping */
+        }
+
+        .select-wrapper {
+            position: relative;
+            flex-grow: 1;
+            width: 20px; /* Réduction de la taille visible du champ */
+
+        }
+
+        .custom-select {
+            width: 50%; /* ou 150px ou auto selon ton besoin */
+            padding: 10px 15px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            background: var(--background-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+            appearance: none; /* Hide default arrow */
+            -webkit-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23BDC3C7" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px; /* Space for custom arrow */
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .custom-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--input-focus);
+        }
+
+        /* Table styles */
+        .permissions-table-container {
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 30px;
+            box-shadow: var(--shadow-md);
+            margin: 30px auto; /* Centrage horizontal + espace vertical */
+            width: 95%; /* ou max-width: 1200px; pour contrôler la largeur */
+        }
+
+        .permissions-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center; /* Center content in table cells */
+
+        }
+
+        .permissions-table thead th {
+            background: var(--background-secondary);
+            padding: 12px 15px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-disabled);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .permissions-table tbody td {
+            border-bottom: 1px solid #F3F4F6;
+            font-size: 14px;
+            color: var(--text-primary);
+            padding: 20px 15px; /* augmente la hauteur des lignes */
+        }
+
+        .permissions-table tbody tr:hover {
+            background: var(--background-secondary);
+        }
+
+        .permissions-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .permissions-table th:first-child,
+        .permissions-table td:first-child {
+            text-align: left; /* Align first column to the left */
+            padding-left: 20px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+            margin: 0; /* Remove default margin */
+        }
+
+        .total-select-header {
+            text-align: right; /* "Tout Sélectionner" on the right */
+            padding-bottom: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            padding-right: 20px; /* Align with table padding */
+        }
+
+        .footer-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px; /* Adjust padding for bigger buttons */
+            border: none;
+            border-radius: 8px;
+            font-size: 15px; /* Slightly larger font */
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--button-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--button-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        h1 {
+            margin-bottom: clamp(30px, 5vw, 80px);
+        }
+
+
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            .form-group-inline {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .custom-select {
+                width: 100%;
+            }
+
+            .permissions-table thead th,
+            .permissions-table tbody td {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .permissions-table th:first-child,
+            .permissions-table td:first-child {
+                padding-left: 10px;
+            }
+
+            .total-select-header {
+                padding-right: 10px;
+            }
+
+            .footer-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+
+
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -989,379 +1061,163 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="page-header">
-            <div class="header-left">
-                <h1>Etudiants</h1>
-            </div>
-        </div>
 
-        <!-- Informations Generales -->
-        <div class="form-section">
-            <div class="section-header">
-                <h3 class="section-title">Information Generales</h3>
-            </div>
-            <div class="section-content">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <input type="text" name="studentNumber" class="form-input" placeholder=" " id="student-number">
-                        <label class="form-label" for="student-number">Numéro Carte d'Etudiant</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" name="studentLastname" class="form-input" placeholder=" " id="student-lastname">
-                        <label class="form-label" for="student-lastname">Nom</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" name="studentFirstname" class="form-input" placeholder=" " id="student-firstname">
-                        <label class="form-label" for="student-firstname">Prénoms</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="date" name="dateBirth" class="form-input" placeholder=" " id="birth-date">
-                        <label class="form-label" for="birth-date">Date de Naissance</label>
+            <h1>Gestion des menus</h1>
+
+            <div class="container">
+                <div class="form-group-inline">
+                    <label for="userGroupSelect">Groupe utilisateur:</label>
+                    <div class="select-wrapper">
+                        <select id="userGroupSelect" class="custom-select">
+                            <option value="">Sélectionner un groupe</option>
+                            <option value="admin">Administrateur</option>
+                            <option value="editor">Éditeur</option>
+                            <option value="viewer">Lecteur</option>
+                            <option value="guest">Invité</option>
+                        </select>
                     </div>
                 </div>
-                <div class="form-grid" style=" margin-top: 20px;">
-                    <div class="form-group" style=" padding-right: 300px;">
-                        <input type="mail" name="email" class="form-input" placeholder=" " id="email">
-                        <label class="form-label" for="email">Email</label>
+                <div class="permissions-table-container">
+                    <div class="total-select-header">
+                        <span>Tout Sélectionner</span>
+                        <input type="checkbox" id="masterPermissionCheckbox" class="checkbox">
                     </div>
-                    <div class="radio-group">
-                        <label>Genre:</label>
-                        <div class="radio-option">
-                            <input  type="radio" id="genreM" name="genre" value="M">
-                            <label for="genreM">M</label>
-                        </div>
-                        <div class="radio-option">
-                            <input class="radio-option" type="radio" id="genreF" name="genre" value="F">
-                            <label for="genreF">F</label>
-                        </div>
-                        <div class="radio-option">
-                            <input class="radio-option" type="radio" id="genreND" name="genre" value="ND">
-                            <label for="genreND">N.D</label>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Informations carriere -->
-        <div class="form-section">
-            <div class="section-header">
-                <h3 class="section-title">Information Academique</h3>
-            </div>
-            <div class="section-content">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <input type="text" name="niveauEtude" class="form-input" placeholder=" " id="niveauEtude">
-                        <label class="form-label" for="niveauEtude">Niveau d'Etude</label>
-                    </div>
-
-                    <div class="form-group">
-                        <input type="text" name="annee-academique" class="form-input" placeholder=" " id="annee-academique">
-                        <label class="form-label" for="annee-academique">Annee-Academique</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" name="contact" class="form-input" placeholder=" " id="contact">
-                        <label class="form-label" for="contact">contact</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div style="display: flex; justify-content: flex-end; padding: 20px 0;">
-            <button class="btn btn-primary" id="btnValider">Valider</button>
-        </div>
-
-
-        <!-- Orders Table -->
-        <div class="table-container">
-            <div class="table-header">
-                <h3 class="table-title">Liste des Etudiants</h3>
-                <div class="header-actions">
-                    <div class="search-container">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" class="search-input" placeholder="Rechercher par ...">
-                    </div>
-
-
-                </div>
-                <div class="header-actions">
-                    <button id="btnExportPDF" class="btn btn-secondary">🕐 Exporter en PDF</button>
-                    <button id="btnExportExcel" class="btn btn-secondary">📤 Exporter sur Excel</button>
-                    <button id="btnPrint" class="btn btn-secondary">📊 Imprimer</button>
-                    <button class="btn btn-primary" id="btnSupprimerSelection">Supprimer</button>
+                    <table class="permissions-table">
+                        <thead>
+                        <tr>
+                            <th>Traitement</th>
+                            <th>Ajouter</th>
+                            <th>Modifier</th>
+                            <th>Supprimer</th>
+                            <th>Imprimer</th>
+                        </tr>
+                        </thead>
+                        <tbody id="permissionsTableBody">
+                        <!-- Data will be dynamically loaded here by JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <div style="padding: 0 24px; border-bottom: 1px solid #E5E7EB;">
-                <div class="table-tabs">
-                    <div class="tab active">Tout selectioner</div>
-                    <div class="tab"></div>
-                    <div class="tab"></div>
-                    <div class="tab"></div>
-                    <div class="tab"></div>
-                </div>
+
+
+            <div class="footer-buttons">
+                <button class="btn btn-primary" id="validateButton">Valider</button>
             </div>
-
-            <table class="table">
-                <thead>
-                <tr>
-                    <th><input type="checkbox" class="checkbox"></th>
-                    <th>Numero Carte d'Etudiant</th>
-                    <th>Nom</th>
-                    <th>Prenom</th>
-                    <th>Date de naissance</th>
-                    <th>Email</th>
-                    <th>Niveau d'Etude</th>
-                    <th>Annee-Academique</th>
-                    <th>Contact</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
-
-            <div class="table-footer">
-                <div class="results-info">
-                    Showing 1-9 of 240 entries
-                </div>
-                <div class="pagination">
-                    <button class="pagination-btn">‹</button>
-                    <button class="pagination-btn active">1</button>
-                    <button class="pagination-btn">2</button>
-                    <button class="pagination-btn">3</button>
-                    <span>...</span>
-                    <button class="pagination-btn">12</button>
-                    <button class="pagination-btn">›</button>
-                </div>
-            </div>
-        </div>
     </main>
 </div>
 
 
 <script>
-    let rowToEdit = null;
+    document.addEventListener('DOMContentLoaded', function() {
+        const userGroupSelect = document.getElementById('userGroupSelect');
+        const masterPermissionCheckbox = document.getElementById('masterPermissionCheckbox');
+        const permissionsTableBody = document.getElementById('permissionsTableBody');
+        const validateButton = document.getElementById('validateButton');
 
-    document.getElementById('btnValider').addEventListener('click', function () {
-        const numerocarte = document.getElementById('student-number').value.trim();
-        const nom = document.getElementById('student-lastname').value.trim();
-        const prenom = document.getElementById('student-firstname').value.trim();
-        const dateNaissance = document.getElementById('birth-date').value;
-        const email = document.getElementById('email').value.trim();
-        const niveauEtude = document.getElementById('niveauEtude').value.trim();
-        const anneeAcademique = document.getElementById('annee-academique').value;
-        const contact = document.getElementById('contact').value;
+        // Sample data for treatments and their default permissions (can be loaded from API)
+        const treatments = [
+            { id: 'trait1', name: 'Traitement 1', permissions: { add: false, mod: true, del: true, imp: true } },
+            { id: 'trait2', name: 'Traitement 2', permissions: { add: true, mod: false, del: true, imp: true } },
+            { id: 'trait3', name: 'Traitement 3', permissions: { add: false, mod: false, del: true, imp: true } },
+            { id: 'trait4', name: 'Traitement 4', permissions: { add: false, mod: false, del: false, imp: true } },
+            // Add more treatments as needed
+        ];
 
-        // === Vérifications ===
+        /**
+         * Renders the permission table rows based on the current treatments data.
+         */
+        function renderPermissionsTable() {
+            permissionsTableBody.innerHTML = ''; // Clear existing rows
 
-        if (!numerocarte || !nom || !prenom || !dateNaissance || !email || !niveauEtude || !anneeAcademique || !contact) {
-            alert("Veuillez remplir tous les champs !");
-            return;
+            treatments.forEach(treatment => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                        <td>${treatment.name}</td>
+                        <td><div class="checkbox-container"><input type="checkbox" class="checkbox permission-checkbox" data-treatment-id="${treatment.id}" data-permission-type="add" ${treatment.permissions.add ? 'checked' : ''}></div></td>
+                        <td><div class="checkbox-container"><input type="checkbox" class="checkbox permission-checkbox" data-treatment-id="${treatment.id}" data-permission-type="mod" ${treatment.permissions.mod ? 'checked' : ''}></div></td>
+                        <td><div class="checkbox-container"><input type="checkbox" class="checkbox permission-checkbox" data-treatment-id="${treatment.id}" data-permission-type="del" ${treatment.permissions.del ? 'checked' : ''}></div></td>
+                        <td><div class="checkbox-container"><input type="checkbox" class="checkbox permission-checkbox" data-treatment-id="${treatment.id}" data-permission-type="imp" ${treatment.permissions.imp ? 'checked' : ''}></div></td>
+                    `;
+                permissionsTableBody.appendChild(row);
+            });
+            updateMasterPermissionCheckboxState(); // Update master checkbox after rendering
+            addPermissionCheckboxListeners(); // Add listeners to new checkboxes
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            alert("Adresse email invalide !");
-            return;
+        /**
+         * Adds change event listeners to all individual permission checkboxes.
+         */
+        function addPermissionCheckboxListeners() {
+            document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
+                // Remove existing listeners to prevent duplicates if renderPermissionsTable is called multiple times
+                checkbox.removeEventListener('change', updateMasterPermissionCheckboxState);
+                checkbox.addEventListener('change', updateMasterPermissionCheckboxState);
+            });
         }
 
-        // Vérification de la date de naissance
-        const dateNaiss = new Date(dateNaissance);
-        const aujourdHui = new Date();
-        const ageMin = new Date();
-        ageMin.setFullYear(aujourdHui.getFullYear() - 20);
-
-        if (dateNaiss > aujourdHui) {
-            alert("La date de naissance ne peut pas être dans le futur.");
-            return;
+        /**
+         * Updates the state of the master permission checkbox based on individual checkboxes.
+         */
+        function updateMasterPermissionCheckboxState() {
+            const allCheckboxes = document.querySelectorAll('.permission-checkbox');
+            if (allCheckboxes.length === 0) {
+                masterPermissionCheckbox.checked = false;
+                masterPermissionCheckbox.indeterminate = false;
+                return;
+            }
+            const checkedCheckboxes = document.querySelectorAll('.permission-checkbox:checked');
+            masterPermissionCheckbox.checked = checkedCheckboxes.length === allCheckboxes.length;
+            masterPermissionCheckbox.indeterminate = checkedCheckboxes.length > 0 && checkedCheckboxes.length < allCheckboxes.length;
         }
 
-        if (dateNaiss > ageMin) {
-            alert("Vous n'etes pas en age d'etre un etudiant.");
-            return;
-        }
-
-
-        // Vérification de l’unicité du matricule si on ajoute
-        if (!rowToEdit) {
-            const lignes = document.querySelectorAll('.table tbody tr');
-            for (let ligne of lignes) {
-                const cellulenumerocarte = ligne.children[1]?.textContent;
-                if (cellulenumerocarte === numerocarte) {
-                    alert("Ce numero de carte existe déjà !");
-                    return;
+        // Event listener for the "Tout Sélectionner" checkbox
+        masterPermissionCheckbox.addEventListener('change', function() {
+            const isChecked = this.checked;
+            document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
+                checkbox.checked = isChecked;
+                // Update the internal data model as well
+                const treatmentId = checkbox.dataset.treatmentId;
+                const permissionType = checkbox.dataset.permissionType;
+                const treatment = treatments.find(t => t.id === treatmentId);
+                if (treatment) {
+                    treatment.permissions[permissionType] = isChecked;
                 }
-            }
-        }
-
-        if (rowToEdit) {
-            // Modification
-            rowToEdit.cells[1].textContent = numerocarte;
-            rowToEdit.cells[2].textContent = nom;
-            rowToEdit.cells[3].textContent = prenom;
-            rowToEdit.cells[4].textContent = dateNaissance;
-            rowToEdit.cells[5].textContent = email;
-            rowToEdit.cells[6].textContent = niveauEtude;
-            rowToEdit.cells[7].textContent = anneeAcademique;
-            rowToEdit.cells[8].textContent = contact;
-
-            rowToEdit = null;
-            document.getElementById('btnValider').textContent = 'Valider';
-        } else {
-            // Ajout d'une nouvelle ligne
-            const tbody = document.querySelector('.table tbody');
-            const newRow = document.createElement('tr');
-
-            newRow.innerHTML = `
-            <td><input type="checkbox" class="checkbox"></td>
-            <td>${numerocarte}</td>
-            <td>${nom}</td>
-            <td>${prenom}</td>
-            <td>${dateNaissance}</td>
-            <td>${email}</td>
-            <td>${niveauEtude}</td>
-            <td>${anneeAcademique}</td>
-            <td>${contact}</td>
-            <td>
-                <div class="table-actions">
-                    <button class="action-btn edit-btn">✏️</button>
-                    <button class="action-btn delete-btn">🗑️</button>
-                </div>
-            </td>
-        `;
-
-            tbody.appendChild(newRow);
-        }
-
-        // Nettoyage
-        document.querySelectorAll('.form-input').forEach(input => input.value = '');
-    });
-
-    // === Supprimer une ligne ===
-    document.querySelector('.table tbody').addEventListener('click', function (e) {
-        if (e.target.classList.contains('delete-btn')) {
-            const row = e.target.closest('tr');
-            row.remove();
-        }
-    });
-
-    // === Modifier une ligne ===
-    document.querySelector('.table tbody').addEventListener('click', function (e) {
-        if (e.target.classList.contains('edit-btn')) {
-            const row = e.target.closest('tr');
-            rowToEdit = row;
-
-            document.getElementById('student-number').value = row.cells[1].textContent;
-            document.getElementById('student-lastname').value = row.cells[2].textContent;
-            document.getElementById('student-firstname').value = row.cells[3].textContent;
-            document.getElementById('birth-date').value = row.cells[4].textContent;
-            document.getElementById('email').value = row.cells[5].textContent;
-            document.getElementById('niveauEtude').value = row.cells[6].textContent;
-            document.getElementById('annee-academique').value = row.cells[7].textContent;
-            document.getElementById('contact').value = row.cells[8].textContent;
-
-            document.getElementById('btnValider').textContent = 'Mettre à jour';
-        }
-    });
-
-    // === Suppression multiple ===
-    document.getElementById('btnSupprimerSelection').addEventListener('click', function () {
-        const checkboxes = document.querySelectorAll('.table tbody .checkbox:checked');
-        if (checkboxes.length === 0) {
-            alert("Veuillez cocher au moins une ligne !");
-            return;
-        }
-
-        if (confirm("Confirmez-vous la suppression des lignes sélectionnées ?")) {
-            checkboxes.forEach(checkbox => {
-                const row = checkbox.closest('tr');
-                row.remove();
             });
-        }
-    });
-
-    //Barre de recherche
-    document.getElementById('searchInput').addEventListener('keyup', function () {
-        const searchTerm = this.value.toLowerCase();
-        const rows = document.querySelectorAll('.table tbody tr');
-
-        rows.forEach(row => {
-            const rowText = row.textContent.toLowerCase();
-            if (rowText.includes(searchTerm)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
-
-
-</script>
-
-
-<!-- Bibliothèque pour Excel -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<!-- Bibliothèque pour PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script>
-    // 🕐 Exporter en PDF
-    document.getElementById("btnExportPDF").addEventListener("click", async function () {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-
-        const table = document.querySelector(".table");
-        const rows = table.querySelectorAll("tr");
-
-        let y = 10;
-        doc.setFontSize(12);
-        doc.text("Liste du personnel", 10, y);
-        y += 10;
-
-        rows.forEach(row => {
-            let x = 10;
-            row.querySelectorAll("th, td").forEach(cell => {
-                const text = cell.innerText || cell.textContent;
-                doc.text(text.trim(), x, y);
-                x += 30; // Espace entre les colonnes
-            });
-            y += 10;
         });
 
-        doc.save("personnel.pdf");
-    });
+        // Event listener for the "Valider" button
+        validateButton.addEventListener('click', function() {
+            const selectedGroup = userGroupSelect.value;
+            if (!selectedGroup) {
+                alert("Veuillez sélectionner un groupe utilisateur."); // Replace with custom modal later
+                return;
+            }
 
-    // 📤 Exporter sur Excel
-    document.getElementById("btnExportExcel").addEventListener("click", function () {
-        const table = document.querySelector(".table");
-        const wb = XLSX.utils.table_to_book(table, { sheet: "Personnel" });
-        XLSX.writeFile(wb, "personnel.xlsx");
-    });
+            // Gather current permissions from the UI
+            const currentPermissions = {};
+            document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
+                const treatmentId = checkbox.dataset.treatmentId;
+                const permissionType = checkbox.dataset.permissionType;
+                if (!currentPermissions[treatmentId]) {
+                    currentPermissions[treatmentId] = {};
+                }
+                currentPermissions[treatmentId][permissionType] = checkbox.checked;
+            });
 
-    // 📊 Imprimer
-    document.getElementById("btnPrint").addEventListener("click", function () {
-        const tableHTML = document.querySelector(".table").outerHTML;
-        const newWindow = window.open("", "", "width=900,height=700");
-        newWindow.document.write(`
-            <html>
-            <head>
-                <title>Impression</title>
-                <style>
-                    table { width: 100%; border-collapse: collapse; }
-                    th, td { border: 1px solid #000; padding: 8px; text-align: left; }
-                </style>
-            </head>
-            <body>
-                <h2>Liste du personnel</h2>
-                ${tableHTML}
-            </body>
-            </html>
-        `);
-        newWindow.document.close();
-        newWindow.print();
+            console.log('Groupe sélectionné:', selectedGroup);
+            console.log('Permissions actuelles:', currentPermissions);
+            alert("Permissions mises à jour pour le groupe: " + selectedGroup + "\n(Vérifiez la console pour les détails)");
+            // In a real application, you would send this data to your backend
+            // e.g., fetch('/api/update-permissions', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ group: selectedGroup, permissions: currentPermissions })
+            // }).then(response => response.json()).then(data => console.log(data));
+        });
+
+        // Initial render of the table on page load
+        renderPermissionsTable();
     });
 </script>
 

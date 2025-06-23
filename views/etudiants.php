@@ -1338,7 +1338,7 @@
     // 📤 Exporter sur Excel
     document.getElementById("btnExportExcel").addEventListener("click", function () {
         const table = document.querySelector(".table");
-        const wb = XLSX.utils.table_to_book(table, { sheet: "Personnel" });
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Etudiant" });
         XLSX.writeFile(wb, "personnel.xlsx");
     });
 

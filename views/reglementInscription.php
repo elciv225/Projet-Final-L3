@@ -1068,7 +1068,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <input type="text" name="studentNumber" class="form-input" placeholder=" " id="student-number">
-                        <label class="form-label" for="student-number">Numéro Carte d'Etudiant</label>
+                        <label class="form-label" for="student-number">Numero Carte d'Etudiant</label>
                     </div>
                     <div class="form-group">
                         <input type="text" name="studentLastname" class="form-input" placeholder=" " id="student-lastname">
@@ -1100,12 +1100,20 @@
                     </div>
 
                     <div class="form-group">
-                        <input type="text" name="total" class="form-input" placeholder=" " id="annee-academique">
-                        <label class="form-label" for="">Annee-Academique</label>
+                        <input type="date" name="datereglement" class="form-input" placeholder=" " id="datereglement">
+                        <label class="form-label" for="datereglement">Date de reglement</label>
                     </div>
                     <div class="form-group">
-                        <input type="text" name="contact" class="form-input" placeholder=" " id="contact">
-                        <label class="form-label" for="contact">contact</label>
+                        <input type="text" name="totalpaye" class="form-input" placeholder=" " id="totalpaye">
+                        <label class="form-label" for="totalpaye">Total Payé</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="restepaye" class="form-input" placeholder=" " id="restepaye">
+                        <label class="form-label" for="restepaye">Reste à Payé</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="montantapaye" class="form-input" placeholder=" " id="montantapaye">
+                        <label class="form-label" for="montantapaye">Montant à Payé</label>
                     </div>
                 </div>
             </div>
@@ -1153,8 +1161,9 @@
                     <th>Numero Carte d'Etudiant</th>
                     <th>Nom</th>
                     <th>Prenom</th>
-                    <th>Promotion</th>
-                    <th>Moyenne Semestre</th>
+                    <th>Niveau D'Etude</th>
+                    <th>Montant Payé</th>
+                    <th>Date de Règlement</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -1189,8 +1198,9 @@
         const numerocarte = document.getElementById('student-number').value.trim();
         const nom = document.getElementById('student-lastname').value.trim();
         const prenom = document.getElementById('student-firstname').value.trim();
-        const promotion = document.getElementById('promotion').value;
-        const moyennesemestre = document.getElementById('moyenne_semestre').value.trim();
+        const niveauetude = document.getElementById('niveauEtude').value.trim();
+        const montantpaye = document.getElementById('montantpaye').value;
+        const datereglement = document.getElementById('datereglement').value.trim();
 
         // === Vérifications ===
 
@@ -1218,8 +1228,9 @@
             rowToEdit.cells[1].textContent = numerocarte;
             rowToEdit.cells[2].textContent = nom;
             rowToEdit.cells[3].textContent = prenom;
-            rowToEdit.cells[4].textContent = promotion;
-            rowToEdit.cells[5].textContent = moyennesemestre;
+            rowToEdit.cells[4].textContent = niveauetude;
+            rowToEdit.cells[5].textContent = montantpaye;
+            rowToEdit.cells[6].textContent = datereglement;
 
             rowToEdit = null;
             document.getElementById('btnValider').textContent = 'Valider';
@@ -1233,8 +1244,9 @@
             <td>${numerocarte}</td>
             <td>${nom}</td>
             <td>${prenom}</td>
-            <td>${promotion}</td>
-            <td>${moyennesemestre}</td>
+            <td>${niveauetude}</td>
+            <td>${montantpaye}</td>
+            <td>${datereglement}</td>
             <td>
                 <div class="table-actions">
                     <button class="action-btn edit-btn">✏️</button>
@@ -1267,8 +1279,9 @@
             document.getElementById('student-number').value = row.cells[1].textContent;
             document.getElementById('student-lastname').value = row.cells[2].textContent;
             document.getElementById('student-firstname').value = row.cells[3].textContent;
-            document.getElementById('promotion').value = row.cells[4].textContent;
-            document.getElementById('moyenne_semestre').value = row.cells[5].textContent;
+            document.getElementById('niveauEtude').value = row.cells[4].textContent;
+            document.getElementById('montantpaye').value = row.cells[5].textContent;
+            document.getElementById('datereglement').value = row.cells[6].textContent;
 
             document.getElementById('btnValider').textContent = 'Mettre à jour';
         }
