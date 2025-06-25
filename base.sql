@@ -4,7 +4,7 @@ CREATE TABLE rapport_etudiant
     titre         VARCHAR(255),
     date_rapport  DATE,
     theme_memoire VARCHAR(50),
-    PRIMARY KEY (id)
+    PRIMARY KEY (id)z
 );
 
 CREATE TABLE niveau_approbation

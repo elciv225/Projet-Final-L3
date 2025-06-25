@@ -2,11 +2,15 @@
 
 use App\Controllers\AdministrateurController;
 use App\Controllers\AuthentificationPublicController;
+use App\Controllers\Gestions\EcueController;
 use App\Controllers\Gestions\EnseignantsController;
 use App\Controllers\Gestions\EtudiantsController;
 use App\Controllers\Gestions\EvaluationEtudiantController;
 use App\Controllers\Gestions\PersonnelAdministratifController;
 use App\Controllers\Gestions\AttributionMenuController;
+use App\Controllers\Gestions\ReglementInscriptionController;
+use App\Controllers\Gestions\UeController;
+use App\Controllers\Gestions\UtilisateursController;
 use App\Controllers\Public\AccueilController;
 use App\Controllers\Public\SoumissionRapportController;
 
@@ -123,6 +127,69 @@ $configurationModules = [
                 ]
             ]
         ],
+        'ue' => [
+            'controleur' => UeController::class,
+            'methodePrincipale' => 'index',
+            'label' => 'UE',
+            'icone' => '💁🏾‍',
+            'description' => 'Gestion des étudiants de l\'établissement',
+            'traitements' => [
+                'ajouter' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Ajouter un nouvel étudiant',
+                ],
+                'modifier' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Modifier les informations d\'un étudiant existant',
+                ],
+                'supprimer' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Supprimer un étudiant',
+                ]
+            ]
+        ],
+        'ecue' => [
+            'controleur' => EcueController::class,
+            'methodePrincipale' => 'index',
+            'label' => 'ECUE',
+            'icone' => '💁🏾‍',
+            'description' => 'Gestion des étudiants de l\'établissement',
+            'traitements' => [
+                'ajouter' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Ajouter un nouvel étudiant',
+                ],
+                'modifier' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Modifier les informations d\'un étudiant existant',
+                ],
+                'supprimer' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Supprimer un étudiant',
+                ]
+            ]
+        ],
+        'reglement-inscription' => [
+            'controleur' => ReglementInscriptionController::class,
+            'methodePrincipale' => 'index',
+            'label' => 'Reglement Inscription',
+            'icone' => '💲',
+            'description' => 'Gestion des étudiants de l\'établissement',
+            'traitements' => [
+                'ajouter' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Ajouter un nouvel étudiant',
+                ],
+                'modifier' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Modifier les informations d\'un étudiant existant',
+                ],
+                'supprimer' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Supprimer un étudiant',
+                ]
+            ]
+        ],
     ]
 ];
 
@@ -174,7 +241,7 @@ foreach ($configurationModules as $categorie => $modulesParCategorie) {
                     $routes[] = [
                         $configTraitement['methodeHttp'],
                         "/$categorie/$nomModule/$nomTraitement",
-                        [$configurationModule['controleur'],  $nomTraitement]
+                        [$configurationModule['controleur'], $nomTraitement]
                     ];
                 }
             }
