@@ -23,37 +23,23 @@
                 <div class="nav-section-title">Principal</div>
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <a href="/espace-administrateur"
+                        <a href="/espace-commission"
                            class="nav-link-ajax <?= (!isset($currentSection)) ? 'active' : '' ?>"
                            data-target="#content-area">
                             <span class="nav-icon">📊</span>
                             <span>Tableau de bord</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="/espace-commission/commission/discussion"
+                           class="nav-link-ajax <?= (!isset($currentSection)) ? 'active' : '' ?>"
+                           data-target="#content-area">
+                            <span class="nav-icon">👌</span>
+                            <span>Discussion</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
-
-            <?php if (!empty($modules)): ?>
-                <?php foreach ($modules as $categoryName => $categoryModules): ?>
-                    <div class="nav-section">
-                        <div class="nav-section-title"><?= ucfirst($categoryName) ?></div>
-                        <ul class="nav-list">
-                            <?php foreach ($categoryModules as $moduleName => $moduleConfig): ?>
-                                <li class="nav-item">
-                                    <a href="/espace-commission/<?= $categoryName ?>/<?= $moduleName ?>"
-                                       class="nav-link-ajax <?= (isset($currentSection) && $currentSection === $moduleName && isset($currentCategory) && $currentCategory === $categoryName) ? 'active' : '' ?>"
-                                       data-target="#content-area"
-                                       data-module="<?= $moduleName ?>"
-                                       data-category="<?= $categoryName ?>">
-                                        <span class="nav-icon"><?= $moduleConfig['icone'] ?></span>
-                                        <span><?= $moduleConfig['label'] ?></span>
-                                    </a>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
         </nav>
 
         <div class="user-section">
@@ -98,7 +84,6 @@
 
 <!-- Scripts -->
 <script src="/assets/js/ajax.js"></script>
-<script src="/assets/js/personnel-administratif.js"></script>
 <script>
     // Script d'initialisation spécifique à l'espace admin
     document.addEventListener('DOMContentLoaded', function () {
@@ -186,5 +171,8 @@
         }
     }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
 </body>
 </html>

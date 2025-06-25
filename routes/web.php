@@ -2,6 +2,8 @@
 
 use App\Controllers\AdministrateurController;
 use App\Controllers\AuthentificationPublicController;
+use App\Controllers\Commission\DiscussionController;
+use App\Controllers\CommissionController;
 use App\Controllers\Gestions\EcueController;
 use App\Controllers\Gestions\EnseignantsController;
 use App\Controllers\Gestions\EtudiantsController;
@@ -209,6 +211,8 @@ $routes = [
     ['GET', '/authentification', [AuthentificationPublicController::class, 'index']],
     ['GET', '/soumission-rapport', [SoumissionRapportController::class, 'index']],
     ['GET', '/test-animations', [AccueilController::class, 'testAnimations']],
+    ['GET', '/espace-commission', [CommissionController::class, 'index']],
+    ['GET', '/espace-commission/commission/discussion', [DiscussionController::class, 'index']],
 
     /* === Routes de l'espace administrateur === */
     ['GET', '/espace-administrateur', [AdministrateurController::class, 'index']],
@@ -221,11 +225,7 @@ $routes = [
 foreach ($configurationModules as $categorie => $modulesParCategorie) {
     foreach ($modulesParCategorie as $nomModule => $configurationModule) {
         /* === Routes des menus de l'administrateur (GET) === */
-        $routes[] = [
-            'GET',
-            "/espace-administrateur/$categorie/$nomModule",
-            [AdministrateurController::class, 'gestionMenuModules']
-        ];
+        $routes[] = ['GET', "/espace-administrateur/$categorie/$nomModule", [AdministrateurController::class, 'gestionMenuModules']];
 
         // Ajout des routes pour les traitements spécifiques du module (POST, etc.)
         if (isset($configurationModule['traitements'])) {
