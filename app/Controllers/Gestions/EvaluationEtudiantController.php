@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Controllers\Gestions;
-
 use System\Http\Response;
 
-class EnseignantsController
+class EvaluationEtudiantController
 {
     public function index(): Response
     {
@@ -15,6 +14,6 @@ class EnseignantsController
         ];
 
         // Toujours retourner la vue de gestion, jamais la page complète
-        return Response::view('gestion/enseignants', $data);
+        return Response::view('gestion/evaluation-etudiant', $data);
     }
 }

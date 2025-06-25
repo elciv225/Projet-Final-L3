@@ -65,7 +65,7 @@ body#content-area {
 
 .form-header {
     display: flex;
-    position: absolute;
+    position: relative;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 40px;

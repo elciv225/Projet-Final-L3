@@ -104,14 +104,15 @@
 
             </div>
             <div class="header-actions">
-                <button class="btn btn-secondary">🕐 Exporter en PDF</button>
-                <button class="btn btn-secondary">📤 Exporter sur Excel</button>
-                <button class="btn btn-secondary">📊 Imprimer</button>
+                <button id="btnExportPDF" class="btn btn-secondary">🕐 Exporter en PDF</button>
+                <button id="btnExportExcel" class="btn btn-secondary">📤 Exporter sur Excel</button>
+                <button id="btnPrint" class="btn btn-secondary">📊 Imprimer</button>
+
                 <button class="btn btn-primary" id="btnSupprimerSelection">Supprimer</button>
             </div>
         </div>
 
-        <div style="padding: 0 24px; border-bottom: 1px var(--border-medium) ;">
+        <div>
             <div class="table-tabs">
                 <div class="tab active">Tout selectioner</div>
                 <div class="tab"></div>

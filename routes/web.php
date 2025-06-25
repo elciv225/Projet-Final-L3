@@ -4,7 +4,9 @@ use App\Controllers\AdministrateurController;
 use App\Controllers\AuthentificationPublicController;
 use App\Controllers\Gestions\EnseignantsController;
 use App\Controllers\Gestions\EtudiantsController;
+use App\Controllers\Gestions\EvaluationEtudiantController;
 use App\Controllers\Gestions\PersonnelAdministratifController;
+use App\Controllers\Gestions\AttributionMenuController;
 use App\Controllers\Public\AccueilController;
 use App\Controllers\Public\SoumissionRapportController;
 
@@ -78,7 +80,49 @@ $configurationModules = [
                     'description' => 'Supprimer un étudiant',
                 ]
             ]
-        ]
+        ],
+        'evaluation-etudiant' => [
+            'controleur' => EvaluationEtudiantController::class,
+            'methodePrincipale' => 'index',
+            'label' => 'Évaluation Étudiants',
+            'icone' => '🤧‍',
+            'description' => 'Gestion des étudiants de l\'établissement',
+            'traitements' => [
+                'ajouter' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Ajouter un nouvel étudiant',
+                ],
+                'modifier' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Modifier les informations d\'un étudiant existant',
+                ],
+                'supprimer' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Supprimer un étudiant',
+                ]
+            ]
+        ],
+        'attribution-menu' => [
+            'controleur' => AttributionMenuController::class,
+            'methodePrincipale' => 'index',
+            'label' => 'Gestion des menus',
+            'icone' => '💁🏾‍♂️',
+            'description' => 'Gestion des étudiants de l\'établissement',
+            'traitements' => [
+                'ajouter' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Ajouter un nouvel étudiant',
+                ],
+                'modifier' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Modifier les informations d\'un étudiant existant',
+                ],
+                'supprimer' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Supprimer un étudiant',
+                ]
+            ]
+        ],
     ]
 ];
 

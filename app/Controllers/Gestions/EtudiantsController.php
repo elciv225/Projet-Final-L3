@@ -20,7 +20,7 @@ class EtudiantsController
         ];
 
 // Toujours retourner la vue de gestion, jamais la page complète
-        return Response::view('gestions/etudiants/index', $data);
+        return Response::view('gestion/etudiants', $data);
     }
 
     private function isAjaxRequest(): bool
