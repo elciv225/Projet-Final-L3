@@ -21,7 +21,8 @@
                     <label class="form-label" for="student-lastname">Nom</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="studentFirstname" class="form-input" placeholder=" " id="student-firstname">
+                    <input type="text" name="studentFirstname" class="form-input" placeholder=" "
+                           id="student-firstname">
                     <label class="form-label" for="student-firstname">Prénoms</label>
                 </div>
                 <div class="form-group">
@@ -37,7 +38,7 @@
                 <div class="radio-group">
                     <label>Genre:</label>
                     <div class="radio-option">
-                        <input  type="radio" id="genreM" name="genre" value="M">
+                        <input type="radio" id="genreM" name="genre" value="M">
                         <label for="genreM">M</label>
                     </div>
                     <div class="radio-option">
@@ -129,7 +130,126 @@
             </tr>
             </thead>
             <tbody>
-
+            <tr>
+                <td><input type="checkbox" class="checkbox"></td>
+                <td>ETU001</td>
+                <td>Koné</td>
+                <td>Fatoumata</td>
+                <td>15/03/2002</td>
+                <td>fatoumata.kone@example.com</td>
+                <td>Licence 3</td>
+                <td>2024-2025</td>
+                <td>0700000001</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="checkbox"></td>
+                <td>ETU002</td>
+                <td>Traoré</td>
+                <td>Moussa</td>
+                <td>22/07/2001</td>
+                <td>moussa.traore@example.com</td>
+                <td>Master 1</td>
+                <td>2024-2025</td>
+                <td>0700000002</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="checkbox"></td>
+                <td>ETU003</td>
+                <td>Diaby</td>
+                <td>Aïcha</td>
+                <td>01/11/2003</td>
+                <td>aicha.diaby@example.com</td>
+                <td>Licence 2</td>
+                <td>2024-2025</td>
+                <td>0700000003</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="checkbox"></td>
+                <td>ETU004</td>
+                <td>Kouassi</td>
+                <td>Jean-Luc</td>
+                <td>05/09/2000</td>
+                <td>jeanluc.kouassi@example.com</td>
+                <td>Master 2</td>
+                <td>2024-2025</td>
+                <td>0700000004</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="checkbox"></td>
+                <td>ETU005</td>
+                <td>Yao</td>
+                <td>Marie</td>
+                <td>10/01/2004</td>
+                <td>marie.yao@example.com</td>
+                <td>Licence 1</td>
+                <td>2024-2025</td>
+                <td>0700000005</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="checkbox"></td>
+                <td>ETU006</td>
+                <td>Doumbia</td>
+                <td>Bakary</td>
+                <td>18/04/2002</td>
+                <td>bakary.doumbia@example.com</td>
+                <td>Licence 3</td>
+                <td>2024-2025</td>
+                <td>0700000006</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="checkbox"></td>
+                <td>ETU007</td>
+                <td>Adjoua</td>
+                <td>Fanta</td>
+                <td>29/08/2001</td>
+                <td>fanta.adjoua@example.com</td>
+                <td>Master 1</td>
+                <td>2024-2025</td>
+                <td>0700000007</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="checkbox"></td>
+                <td>ETU008</td>
+                <td>Koffi</td>
+                <td>Serge</td>
+                <td>03/12/2003</td>
+                <td>serge.koffi@example.com</td>
+                <td>Licence 2</td>
+                <td>2024-2025</td>
+                <td>0700000008</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="checkbox"></td>
+                <td>ETU009</td>
+                <td>Sanogo</td>
+                <td>Aminata</td>
+                <td>25/06/2000</td>
+                <td>aminata.sanogo@example.com</td>
+                <td>Master 2</td>
+                <td>2024-2025</td>
+                <td>0700000009</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="checkbox"></td>
+                <td>ETU010</td>
+                <td>N'Guessan</td>
+                <td>Marc</td>
+                <td>12/02/2004</td>
+                <td>marc.nguessan@example.com</td>
+                <td>Licence 1</td>
+                <td>2024-2025</td>
+                <td>0700000010</td>
+                <td></td>
+            </tr>
             </tbody>
         </table>
 

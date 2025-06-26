@@ -13,9 +13,6 @@ services:
       # Variables d'environnement spécifiques au développement local
       APP_ENV: local
       APP_DEBUG: true
-      XDEBUG_MODE: develop,debug
-      XDEBUG_CONFIG: "client_host=host.docker.internal client_port=9003"
-      # Configuration email pour MailHog
       MAIL_MAILER: smtp
       MAIL_HOST: mailhog
       MAIL_PORT: 1025
@@ -24,7 +21,7 @@ services:
       MAIL_ENCRYPTION: null
     depends_on:
       - db
-      - mailhog
+      - mailhog # MailHog est bien là !
     networks:
       - app_network
 
@@ -62,17 +59,6 @@ services:
     networks:
       - app_network
 
-  # Redis pour le cache (optionnel mais recommandé)
-  redis:
-    image: redis:alpine
-    container_name: redis_local
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data_local:/data
-    networks:
-      - app_network
-
   # Mailhog pour capturer et visualiser les emails en développement
   mailhog:
     image: mailhog/mailhog:latest
@@ -86,8 +72,6 @@ services:
 # Volumes pour la persistance des données
 volumes:
   db_data_local:
-    driver: local
-  redis_data_local:
     driver: local
 
 # Réseau pour permettre la communication entre containers

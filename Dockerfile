@@ -16,8 +16,6 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
-    vim \
-    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # Installer les extensions PHP
@@ -34,11 +32,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     soap \
     opcache
 
-# Installer Xdebug et Redis via PECL
-RUN pecl update-channels \
-    && pecl install xdebug redis \
-    && docker-php-ext-enable xdebug redis
-
 # Activer les modules Apache nécessaires
 RUN a2enmod rewrite headers
 
@@ -47,12 +40,6 @@ RUN echo "memory_limit=512M" >> /usr/local/etc/php/conf.d/memory.ini \
     && echo "upload_max_filesize=50M" >> /usr/local/etc/php/conf.d/uploads.ini \
     && echo "post_max_size=50M" >> /usr/local/etc/php/conf.d/uploads.ini \
     && echo "max_execution_time=300" >> /usr/local/etc/php/conf.d/timeouts.ini
-
-# Configuration de Xdebug
-RUN echo "xdebug.mode=develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 # Configuration OPcache
 RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \

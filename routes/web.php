@@ -87,6 +87,27 @@ $configurationModules = [
                 ]
             ]
         ],
+        'utilisateurs' => [
+            'controleur' => UtilisateursController::class,
+            'methodePrincipale' => 'index',
+            'label' => 'Utilsateur',
+            'icone' => '👨‍',
+            'description' => 'Gestion des utilisateurs de l\'établissement',
+            'traitements' => [
+                'ajouter' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Ajouter un nouvel étudiant',
+                ],
+                'modifier' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Modifier les informations d\'un étudiant existant',
+                ],
+                'supprimer' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Supprimer un étudiant',
+                ]
+            ]
+        ],
         'evaluation-etudiant' => [
             'controleur' => EvaluationEtudiantController::class,
             'methodePrincipale' => 'index',
@@ -192,6 +213,7 @@ $configurationModules = [
                 ]
             ]
         ],
+
     ]
 ];
 
