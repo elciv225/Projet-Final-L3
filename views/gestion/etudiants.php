@@ -31,7 +31,7 @@
                 </div>
             </div>
             <div class="form-grid" style=" margin-top: 20px;">
-                <div class="form-group" style=" padding-right: 300px;">
+                <div class="form-group" >
                     <input type="mail" name="email" class="form-input" placeholder=" " id="email">
                     <label class="form-label" for="email">Email</label>
                 </div>
