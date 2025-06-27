@@ -38,15 +38,15 @@
                 </div>
             </div>
             <div class="form-grid" style=" margin-top: 20px;">
-                <div class="form-group" style="padding-right: 300px;">
+                <div class="form-group">
                     <input type="text" name="niveau-acces" class="form-input" placeholder=" " id="niveau-acces">
                     <label class="form-label" for="niveau-acces">Niveau d'acces</label>
                 </div>
-                <div class="form-group" style="padding-right: 300px;">
+                <div class="form-group">
                     <input type="text" name="login" class="form-input" placeholder=" " id="login">
                     <label class="form-label" for="login">Login</label>
                 </div>
-                <div class="form-group" style="padding-right: 300px;">
+                <div class="form-group" >
                     <input type="text" name="password" class="form-input" placeholder=" " id="password">
                     <label class="form-label" for="password">Mot De Passe</label>
                 </div>

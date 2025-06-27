@@ -39,7 +39,7 @@
                     <div class="hero-grid">
                         <div class="hero-content">
                             <p class="label">Portail de Soutenance</p>
-                            <h1 class="hero-title serif-title" id="hero-title">Projet ✖️✖️✖️️</h1>
+                            <h1 class="hero-title serif-title" id="hero-title">Projet ✖️✖️✖️️ Ouiiii</h1>
                             <p class="hero-subtitle">La plateforme officielle pour le dépôt de votre mémoire et de vos documents de soutenance.</p>
                             <a href="/authentification" class="btn btn-primary hero-actions">Soumettre mon dossier</a>
                         </div>
