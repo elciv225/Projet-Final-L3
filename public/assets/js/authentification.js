@@ -1,5 +1,65 @@
 (function() {
-    // 1. On définit la fonction qui initialise les écouteurs pour la modale
+    /**
+     * Gère les animations d'apparition des éléments de la page avec GSAP.
+     * Est conçue pour être appelée au chargement initial et après chaque rechargement AJAX.
+     */
+    function animatePageIn() {
+        const authContainer = document.querySelector('.auth-container');
+        const formAnimContainer = document.querySelector('.form-container-anim');
+
+        // S'assure que les éléments existent avant d'animer
+        if (!authContainer || !formAnimContainer) {
+            console.error("Les conteneurs pour l'animation n'ont pas été trouvés.");
+            return;
+        }
+
+        // Réinitialise la visibilité pour l'animation
+        gsap.set(authContainer, { autoAlpha: 1 }); // autoAlpha gère opacity et visibility
+        gsap.set(formAnimContainer, { autoAlpha: 1 });
+
+        // CORRECTION: Définir l'état initial visible pour les éléments statiques (sidebar)
+        gsap.set(".sidebar", { opacity: 1, x: 0 });
+        gsap.set(".sidebar-header, .etapes-nav, .sidebar-footer", { opacity: 1, y: 0 });
+
+        // Pour les éléments du formulaire, définir l'état final après animation
+        gsap.set(".form-title-group h2, .form-title-group p", { opacity: 1, y: 0 });
+        gsap.set(".form-group", { opacity: 1, y: 0 });
+        gsap.set(".btn.btn-primary", { opacity: 1, y: 0 });
+
+        // Timeline pour l'animation des éléments du formulaire qui changent
+        const tl = gsap.timeline({ delay: 0.3 }); // Léger délai pour un effet plus doux
+
+        tl.fromTo(".form-title-group h2, .form-title-group p",
+            { y: 20, opacity: 0 },
+            {
+                duration: 0.6,
+                y: 0,
+                opacity: 1,
+                stagger: 0.15,
+                ease: "power3.out"
+            })
+            .fromTo(".form-group",
+                { y: 15, opacity: 0 },
+                {
+                    duration: 0.5,
+                    y: 0,
+                    opacity: 1,
+                    stagger: 0.1,
+                    ease: "power3.out"
+                }, "-=0.3") // Se superpose légèrement à l'animation précédente
+            .fromTo(".btn.btn-primary",
+                { y: 10, opacity: 0 },
+                {
+                    duration: 0.5,
+                    y: 0,
+                    opacity: 1,
+                    ease: "power3.out"
+                }, "-=0.2");
+    }
+
+    /**
+     * Configure les écouteurs d'événements pour la modale (sidebar en vue mobile) en utilisant GSAP.
+     */
     function setupModalEventListeners() {
         const openTrigger = document.getElementById('open-steps-trigger');
         const closeTrigger = document.getElementById('close-steps-trigger');
@@ -7,47 +67,59 @@
         const overlay = document.getElementById('modal-overlay');
         const blurTarget = document.querySelector('.main-content-wrapper');
 
-        // Si le bouton pour ouvrir n'existe pas, on arrête tout.
-        if (!openTrigger) return;
+        if (!openTrigger || !modal || !overlay || !blurTarget) return;
+
+        // Timeline GSAP pour l'ouverture, réutilisable
+        const openTimeline = gsap.timeline({ paused: true, reversed: true });
+        openTimeline.to(overlay, { autoAlpha: 1, duration: 0.3, ease: 'power2.inOut' })
+            .to(modal, { y: '0%', autoAlpha: 1, duration: 0.4, ease: 'power3.out' }, '-=0.2')
+            .to(blurTarget, { filter: 'blur(5px)', duration: 0.3, ease: 'power2.inOut' }, '<');
+
 
         const openModal = () => {
-            if (modal && overlay && blurTarget) {
-                overlay.classList.add('is-open');
-                modal.classList.add('is-open');
-                blurTarget.classList.add('is-blurred');
-            }
+            openTimeline.play();
         };
 
         const closeModal = () => {
-            if (modal && overlay && blurTarget) {
-                overlay.classList.remove('is-open');
-                modal.classList.remove('is-open');
-                blurTarget.classList.remove('is-blurred');
-            }
+            openTimeline.reverse();
         };
 
-        // On utilise .onclick pour s'assurer que l'événement est toujours le dernier défini,
-        // évitant les doublons que addEventListener pourrait créer.
         openTrigger.onclick = openModal;
-        if (closeTrigger) closeTrigger.onclick = closeModal;
-        if (overlay) overlay.onclick = closeModal;
+        closeTrigger.onclick = closeModal;
+        overlay.onclick = closeModal;
     }
 
-    // 2. On s'assure que notre tableau global existe (au cas où ce script se chargerait avant ajax.js)
+    // --- Intégration avec le système AJAX existant ---
+
+    // Assure que le tableau global existe
     window.ajaxRebinders = window.ajaxRebinders || [];
 
-    // 3. On ajoute notre fonction d'initialisation au tableau pour qu'elle soit appelée par ajax.js.
-    // On vérifie d'abord si elle n'est pas déjà présente pour éviter les doublons.
-    if (!window.ajaxRebinders.some(fn => fn.name === 'setupModalEventListeners')) {
+    // Noms des fonctions pour vérifier si elles sont déjà dans le tableau
+    const pageAnimFuncName = 'animatePageIn';
+    const modalFuncName = 'setupModalEventListeners';
+
+    // Ajoute la fonction d'animation si elle n'est pas déjà présente
+    if (!window.ajaxRebinders.some(fn => fn.name === pageAnimFuncName)) {
+        Object.defineProperty(animatePageIn, 'name', { value: pageAnimFuncName });
+        window.ajaxRebinders.push(animatePageIn);
+    }
+
+    // Ajoute la fonction de la modale si elle n'est pas déjà présente
+    if (!window.ajaxRebinders.some(fn => fn.name === modalFuncName)) {
+        Object.defineProperty(setupModalEventListeners, 'name', { value: modalFuncName });
         window.ajaxRebinders.push(setupModalEventListeners);
     }
 
-    // 4. On exécute la fonction une fois au chargement initial, juste au cas où
-    // l'événement DOMContentLoaded de ajax.js se serait déjà déclenché.
-    // L'utilisation d'une IIFE (Immediately Invoked Function Expression) encapsule la logique.
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setupModalEventListeners);
-    } else {
+    // Exécution initiale au chargement de la page
+    function initialLoad() {
+        animatePageIn();
         setupModalEventListeners();
     }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initialLoad);
+    } else {
+        initialLoad();
+    }
+
 })();
