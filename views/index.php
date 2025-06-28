@@ -29,7 +29,7 @@ use System\Http\Response;
                 <div class="nav-section-title">Principal</div>
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <a href="/index-universite"
+                        <a href="/index"
                            class="nav-link-ajax <?= (!isset($currentSection)) ? 'active' : '' ?>"
                            data-target="#content-area">
                             <span class="nav-icon">📊</span>
@@ -46,7 +46,7 @@ use System\Http\Response;
                         <ul class="nav-list">
                             <?php foreach ($categoryModules as $moduleName => $moduleConfig): ?>
                                 <li class="nav-item">
-                                    <a href="/index-universite/<?= $categoryName ?>/<?= $moduleName ?>"
+                                    <a href="/index/<?= $categoryName ?>/<?= $moduleName ?>"
                                        class="nav-link-ajax <?= (isset($currentSection) && $currentSection === $moduleName && isset($currentCategory) && $currentCategory === $categoryName) ? 'active' : '' ?>"
                                        data-target="#content-area"
                                        data-module="<?= $moduleName ?>"
@@ -156,7 +156,7 @@ use System\Http\Response;
 
     // Fonction pour recharger un module spécifique
     function reloadModule(category, moduleName) {
-        const moduleUrl = `/index-universite/${category}/${moduleName}`;
+        const moduleUrl = `/index/${category}/${moduleName}`;
         reloadSection(moduleUrl);
     }
 
@@ -178,7 +178,7 @@ use System\Http\Response;
             const newItem = document.createElement('li');
             newItem.className = 'nav-item';
             newItem.innerHTML = `
-                <a href="/index-universite/${category}/${moduleName}"
+                <a href="/index/${category}/${moduleName}"
                    class="nav-link-ajax"
                    data-target="#content-area"
                    data-module="${moduleName}"

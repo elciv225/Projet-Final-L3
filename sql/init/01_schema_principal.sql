@@ -103,7 +103,6 @@ CREATE TABLE niveau_approbation
     PRIMARY KEY (id)
 );
 
-
 -- =================================================================
 --                  TABLES DE PROCESSUS & LOGS
 -- =================================================================
@@ -126,13 +125,33 @@ CREATE TABLE action
     PRIMARY KEY (id)
 );
 
+-- Table: menu
+-- Description: Définit les lib des bouton des menu ainsi la vue associé, son icone
+CREATE TABLE menu
+(
+    id      VARCHAR(20),
+    libelle VARCHAR(50),
+    vue     VARCHAR(50),
+    PRIMARY KEY (id)
+)
+
+-- Table: menu_traitement
+-- Description: Associe un menu à son traitement
+CREATE TABLE menu_traitement
+(
+    menu_id       VARCHAR(20),
+    traitement_id       VARCHAR(20),
+    PRIMARY KEY (menu_id, traitement_id),
+    FOREIGN KEY (menu_id) REFERENCES menu (id),
+    FOREIGN KEY (traitement_id) REFERENCES traitement (id)
+);
+
 -- Table: traitement_action
--- Description: Associe des actions à un traitement avec un ordre d'exécution.
+-- Description: Associe des actions à un traitement.
 CREATE TABLE traitement_action
 (
     traitement_id VARCHAR(20) NOT NULL, -- ex: 'TRT_INSCRIPTION'
     action_id     VARCHAR(20) NOT NULL, -- ex: 'ACT_VERIF_PAIE'
-    ordre         SMALLINT,
     PRIMARY KEY (traitement_id, action_id),
     FOREIGN KEY (traitement_id) REFERENCES traitement (id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (action_id) REFERENCES action (id) ON DELETE RESTRICT ON UPDATE CASCADE

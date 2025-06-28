@@ -1,6 +1,6 @@
 <?php
 
-use App\Controllers\IndexUniversiteController;
+use App\Controllers\IndexController;
 use App\Controllers\AuthentificationPublicController;
 use App\Controllers\Commission\DiscussionController;
 use App\Controllers\CommissionController;
@@ -258,7 +258,7 @@ $routes = [
     ['GET', '/espace-commission/commission/discussion', [DiscussionController::class, 'index']],
 
     /* === Routes de l'espace administrateur === */
-    ['GET', '/index-universite', [IndexUniversiteController::class, 'index']],
+    ['GET', '/index', [IndexController::class, 'index']],
 ];
 
 /**
@@ -268,15 +268,15 @@ $routes = [
 foreach ($configurationModules as $categorie => $modulesParCategorie) {
     foreach ($modulesParCategorie as $nomModule => $configurationModule) {
         /* === Routes des menus de l'administrateur (GET) === */
-        $routes[] = ['GET', "/index-universite/$categorie/$nomModule", [IndexUniversiteController::class, 'gestionMenuModules']];
+        $routes[] = ['GET', "/index/$categorie/$nomModule", [IndexController::class, 'gestionMenuModules']];
 
         // Ajout des routes pour les traitements spécifiques du module (POST, etc.)
         if (isset($configurationModule['traitements'])) {
             foreach ($configurationModule['traitements'] as $nomTraitement => $configTraitement) {
                 $routes[] = [
                     $configTraitement['methodeHttp'],
-                    "/index-universite/$categorie/$nomModule/$nomTraitement/",
-                    [IndexUniversiteController::class, 'gererTraitementModule']
+                    "/index/$categorie/$nomModule/$nomTraitement/",
+                    [IndexController::class, 'gererTraitementModule']
                 ];
 
                 // Route directe pour API
