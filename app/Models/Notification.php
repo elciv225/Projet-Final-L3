@@ -15,14 +15,16 @@ class Notification
     protected string $table = 'notification';
 
     /**
-     * @var string L'ID de l'émetteur (FK, partie de la CPK).
+     * L'utilisateur émetteur de la notification.
+     * @var Utilisateur
      */
-    private string $emetteurId;
+    private Utilisateur $emetteur;
 
     /**
-     * @var string L'ID du récepteur (FK, partie de la CPK).
+     * L'utilisateur récepteur de la notification.
+     * @var Utilisateur
      */
-    private string $recepteurId;
+    private Utilisateur $recepteur;
 
     /**
      * @var string|null Le contenu du message.
@@ -30,54 +32,68 @@ class Notification
     private ?string $message; // DDL spécifie TEXT
 
     /**
-     * @var string La date de la notification (partie de la CPK).
+     * @var string La date de la notification (partie de la CPK). Format TIMESTAMP.
      */
-    private string $dateNotification; // DDL spécifie DATETIME
+    private string $dateNotification;
 
     /**
-     * @param string $emetteurId
-     * @param string $recepteurId
-     * @param string|null $message
+     * Indique si la notification a été lue.
+     * @var bool
+     */
+    private bool $lu = false;
+
+
+    /**
+     * @param Utilisateur $emetteur
+     * @param Utilisateur $recepteur
      * @param string $dateNotification
+     * @param string|null $message
+     * @param bool $lu
      */
-    public function __construct(string $emetteurId, string $recepteurId, ?string $message, string $dateNotification)
-    {
-        $this->emetteurId = $emetteurId;
-        $this->recepteurId = $recepteurId;
-        $this->message = $message;
+    public function __construct(
+        Utilisateur $emetteur,
+        Utilisateur $recepteur,
+        string $dateNotification, // CPK, donc non nullable
+        ?string $message,
+        bool $lu = false
+    ) {
+        $this->emetteur = $emetteur;
+        $this->recepteur = $recepteur;
         $this->dateNotification = $dateNotification;
+        $this->message = $message;
+        $this->lu = $lu;
     }
 
     /**
-     * @return string
+     * @return Utilisateur
      */
-    public function getEmetteurId(): string
+    public function getEmetteur(): Utilisateur
     {
-        return $this->emetteurId;
+        return $this->emetteur;
     }
 
     /**
-     * @param string $emetteurId
+     * @param Utilisateur $emetteur
      */
-    public function setEmetteurId(string $emetteurId): void
+    public function setEmetteur(Utilisateur $emetteur): void
     {
-        $this->emetteurId = $emetteurId;
+        $this->emetteur = $emetteur;
     }
 
     /**
-     * @return string
+     * @return Utilisateur
      */
-    public function getRecepteurId(): string
+    public function getRecepteur(): Utilisateur
     {
-        return $this->recepteurId;
+        return $this->recepteur;
     }
 
     /**
-     * @param string $recepteurId
+     * @param Utilisateur $recepteur
      */
-    public function setRecepteurId(string $recepteurId): void
+    public function setRecepteur(Utilisateur $recepteur): void
     {
-        $this->recepteurId = $recepteurId;
+        $this->recepteur = $recepteur;
     }
 
     /**
@@ -110,6 +126,22 @@ class Notification
     public function setDateNotification(string $dateNotification): void
     {
         $this->dateNotification = $dateNotification;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLu(): bool
+    {
+        return $this->lu;
+    }
+
+    /**
+     * @param bool $lu
+     */
+    public function setLu(bool $lu): void
+    {
+        $this->lu = $lu;
     }
 
     /**

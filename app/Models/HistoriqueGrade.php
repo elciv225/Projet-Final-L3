@@ -15,14 +15,16 @@ class HistoriqueGrade
     protected string $table = 'historique_grade';
 
     /**
-     * @var string L'ID de l'enseignant (FK, partie de la CPK).
+     * L'enseignant concerné.
+     * @var Enseignant
      */
-    private string $utilisateurId;
+    private Enseignant $enseignant;
 
     /**
-     * @var string L'ID du grade (FK, partie de la CPK).
+     * Le grade obtenu.
+     * @var Grade
      */
-    private string $gradeId;
+    private Grade $grade;
 
     /**
      * @var string|null La date d'obtention du grade.
@@ -30,47 +32,50 @@ class HistoriqueGrade
     private ?string $dateGrade; // DDL spécifie DATE
 
     /**
-     * @param string $utilisateurId
-     * @param string $gradeId
+     * @param Enseignant $enseignant
+     * @param Grade $grade
      * @param string|null $dateGrade
      */
-    public function __construct(string $utilisateurId, string $gradeId, ?string $dateGrade)
-    {
-        $this->utilisateurId = $utilisateurId;
-        $this->gradeId = $gradeId;
+    public function __construct(
+        Enseignant $enseignant,
+        Grade $grade,
+        ?string $dateGrade
+    ) {
+        $this->enseignant = $enseignant;
+        $this->grade = $grade;
         $this->dateGrade = $dateGrade;
     }
 
     /**
-     * @return string
+     * @return Enseignant
      */
-    public function getUtilisateurId(): string
+    public function getEnseignant(): Enseignant
     {
-        return $this->utilisateurId;
+        return $this->enseignant;
     }
 
     /**
-     * @param string $utilisateurId
+     * @param Enseignant $enseignant
      */
-    public function setUtilisateurId(string $utilisateurId): void
+    public function setEnseignant(Enseignant $enseignant): void
     {
-        $this->utilisateurId = $utilisateurId;
+        $this->enseignant = $enseignant;
     }
 
     /**
-     * @return string
+     * @return Grade
      */
-    public function getGradeId(): string
+    public function getGrade(): Grade
     {
-        return $this->gradeId;
+        return $this->grade;
     }
 
     /**
-     * @param string $gradeId
+     * @param Grade $grade
      */
-    public function setGradeId(string $gradeId): void
+    public function setGrade(Grade $grade): void
     {
-        $this->gradeId = $gradeId;
+        $this->grade = $grade;
     }
 
     /**

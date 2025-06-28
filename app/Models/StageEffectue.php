@@ -15,14 +15,16 @@ class StageEffectue
     protected string $table = 'stage_effectue';
 
     /**
-     * @var string L'ID de l'étudiant (FK, partie de la CPK).
+     * L'étudiant ayant effectué le stage.
+     * @var Etudiant
      */
-    private string $utilisateurId;
+    private Etudiant $etudiant;
 
     /**
-     * @var string L'ID de l'entreprise (FK, partie de la CPK).
+     * L'entreprise où le stage a été effectué.
+     * @var Entreprise
      */
-    private string $entrepriseId;
+    private Entreprise $entreprise;
 
     /**
      * @var string|null La date de début du stage.
@@ -35,49 +37,53 @@ class StageEffectue
     private ?string $dateFin; // DDL spécifie DATE
 
     /**
-     * @param string $utilisateurId
-     * @param string $entrepriseId
+     * @param Etudiant $etudiant
+     * @param Entreprise $entreprise
      * @param string|null $dateDebut
      * @param string|null $dateFin
      */
-    public function __construct(string $utilisateurId, string $entrepriseId, ?string $dateDebut, ?string $dateFin)
-    {
-        $this->utilisateurId = $utilisateurId;
-        $this->entrepriseId = $entrepriseId;
+    public function __construct(
+        Etudiant $etudiant,
+        Entreprise $entreprise,
+        ?string $dateDebut,
+        ?string $dateFin
+    ) {
+        $this->etudiant = $etudiant;
+        $this->entreprise = $entreprise;
         $this->dateDebut = $dateDebut;
         $this->dateFin = $dateFin;
     }
 
     /**
-     * @return string
+     * @return Etudiant
      */
-    public function getUtilisateurId(): string
+    public function getEtudiant(): Etudiant
     {
-        return $this->utilisateurId;
+        return $this->etudiant;
     }
 
     /**
-     * @param string $utilisateurId
+     * @param Etudiant $etudiant
      */
-    public function setUtilisateurId(string $utilisateurId): void
+    public function setEtudiant(Etudiant $etudiant): void
     {
-        $this->utilisateurId = $utilisateurId;
+        $this->etudiant = $etudiant;
     }
 
     /**
-     * @return string
+     * @return Entreprise
      */
-    public function getEntrepriseId(): string
+    public function getEntreprise(): Entreprise
     {
-        return $this->entrepriseId;
+        return $this->entreprise;
     }
 
     /**
-     * @param string $entrepriseId
+     * @param Entreprise $entreprise
      */
-    public function setEntrepriseId(string $entrepriseId): void
+    public function setEntreprise(Entreprise $entreprise): void
     {
-        $this->entrepriseId = $entrepriseId;
+        $this->entreprise = $entreprise;
     }
 
     /**

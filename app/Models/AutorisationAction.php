@@ -15,78 +15,84 @@ class AutorisationAction
     protected string $table = 'autorisation_action';
 
     /**
-     * @var string L'ID du groupe utilisateur (FK, partie de la CPK).
+     * Le groupe d'utilisateur concerné par l'autorisation.
+     * @var GroupeUtilisateur
      */
-    private string $groupeUtilisateurId;
+    private GroupeUtilisateur $groupeUtilisateur;
 
     /**
-     * @var string L'ID du traitement (FK, partie de la CPK).
+     * Le traitement concerné par l'autorisation.
+     * @var Traitement
      */
-    private string $traitementId;
+    private Traitement $traitement;
 
     /**
-     * @var string L'ID de l'action (FK, partie de la CPK).
+     * L'action spécifique autorisée pour le groupe sur le traitement.
+     * @var Action
      */
-    private string $actionId;
+    private Action $action;
 
     /**
-     * @param string $groupeUtilisateurId
-     * @param string $traitementId
-     * @param string $actionId
+     * @param GroupeUtilisateur $groupeUtilisateur
+     * @param Traitement $traitement
+     * @param Action $action
      */
-    public function __construct(string $groupeUtilisateurId, string $traitementId, string $actionId)
-    {
-        $this->groupeUtilisateurId = $groupeUtilisateurId;
-        $this->traitementId = $traitementId;
-        $this->actionId = $actionId;
+    public function __construct(
+        GroupeUtilisateur $groupeUtilisateur,
+        Traitement $traitement,
+        Action $action
+    ) {
+        $this->groupeUtilisateur = $groupeUtilisateur;
+        $this->traitement = $traitement;
+        $this->action = $action;
     }
 
     /**
-     * @return string
+     * @return GroupeUtilisateur
      */
-    public function getGroupeUtilisateurId(): string
+    public function getGroupeUtilisateur(): GroupeUtilisateur
     {
-        return $this->groupeUtilisateurId;
+        return $this->groupeUtilisateur;
     }
 
     /**
-     * @param string $groupeUtilisateurId
+     * @param GroupeUtilisateur $groupeUtilisateur
      */
-    public function setGroupeUtilisateurId(string $groupeUtilisateurId): void
+    public function setGroupeUtilisateur(GroupeUtilisateur $groupeUtilisateur): void
     {
-        $this->groupeUtilisateurId = $groupeUtilisateurId;
+        $this->groupeUtilisateur = $groupeUtilisateur;
     }
 
     /**
-     * @return string
+     * @return Traitement
      */
-    public function getTraitementId(): string
+    public function getTraitement(): Traitement
     {
-        return $this->traitementId;
+        return $this->traitement;
     }
 
     /**
-     * @param string $traitementId
+     * @param Traitement $traitement
      */
-    public function setTraitementId(string $traitementId): void
+    public function setTraitement(Traitement $traitement): void
     {
-        $this->traitementId = $traitementId;
+        $this->traitement = $traitement;
     }
 
     /**
-     * @return string
+     * @return Action
      */
-    public function getActionId(): string
+    public function getAction(): Action
     {
-        return $this->actionId;
+        return $this->action;
     }
 
     /**
-     * @param string $actionId
+     * @param Action $action
      */
-    public function setActionId(string $actionId): void
+    public function setAction(Action $action): void
     {
-        $this->actionId = $actionId;
+        $this->action = $action;
     }
 
     /**
