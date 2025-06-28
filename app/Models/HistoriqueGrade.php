@@ -38,9 +38,10 @@ class HistoriqueGrade
      */
     public function __construct(
         Enseignant $enseignant,
-        Grade $grade,
-        ?string $dateGrade
-    ) {
+        Grade      $grade,
+        ?string    $dateGrade
+    )
+    {
         $this->enseignant = $enseignant;
         $this->grade = $grade;
         $this->dateGrade = $dateGrade;

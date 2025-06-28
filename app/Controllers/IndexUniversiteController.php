@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use System\Http\Response;
 
-class AdministrateurController extends Controller
+class IndexUniversiteController extends Controller
 {
     /**
      * Page d'accueil de l'espace administrateur
@@ -24,13 +24,13 @@ class AdministrateurController extends Controller
         }
 
         // Sinon, retourner la page complète avec le menu intégré
-        return Response::view('espace-administrateur', $data);
+        return Response::view('index-universite', $data);
     }
 
     /**
      * Gestionnaire dynamique pour tous les modules
      */
-    public function gestionMenuModules(string $view = 'espace-administrateur'): Response
+    public function gestionMenuModules(string $view = 'index-universite'): Response
     {
         return parent::gestionMenuModules($view);
     }
@@ -40,10 +40,10 @@ class AdministrateurController extends Controller
      * @param string $category
      * @param string $moduleName
      * @param string $traitementName
-     * @param string $endpoint L'endpoint de la requête (e.g., 'espace-administrateur/gestion/etudiants/ajouter').
+     * @param string $endpoint L'endpoint de la requête (e.g., 'index-universite/gestion/etudiants/ajouter').
      * @return Response
      */
-    public function gererTraitementModule( string $category, string $moduleName, string $traitementName, string $endpoint = 'espace-administrateur'): Response
+    public function gererTraitementModule( string $category, string $moduleName, string $traitementName, string $endpoint = 'index-universite'): Response
     {
        return parent::gererTraitementModule($endpoint,$category, $moduleName, $traitementName);
     }
