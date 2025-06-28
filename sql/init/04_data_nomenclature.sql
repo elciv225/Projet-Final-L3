@@ -1,0 +1,2 @@
+-- Insertion des éléments de base primordiale pour l'application
+-- // TODO

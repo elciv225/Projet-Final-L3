@@ -21,7 +21,7 @@ services:
       MAIL_ENCRYPTION: null
     depends_on:
       - db
-      - mailhog # MailHog est bien là !
+      - mailhog
     networks:
       - app_network
 
@@ -33,9 +33,12 @@ services:
       - "3306:3306" # Port MySQL accessible depuis l'hôte
     environment:
       MYSQL_DATABASE: local_db
-      MYSQL_USER: dev_user
-      MYSQL_PASSWORD: dev_password
-      MYSQL_ROOT_PASSWORD: root_password
+      # L'utilisateur de développement est maintenant 'projet_xxx'
+      MYSQL_USER: projet_xxx
+      # Définition du mot de passe pour l'utilisateur de développement
+      MYSQL_PASSWORD: projet_xxx
+      # Définition du mot de passe pour l'utilisateur root
+      MYSQL_ROOT_PASSWORD: projet_xxx
     volumes:
       - db_data_local:/var/lib/mysql # Persistance des données
       - ./sql/init:/docker-entrypoint-initdb.d # Scripts d'initialisation SQL (optionnel)
@@ -49,11 +52,11 @@ services:
     ports:
       - "8082:80" # Accessible sur http://localhost:8082
     environment:
-      PMA_HOST: db
+      PMA_HOST: db # Indique que l'hôte de la BDD est le service 'db'
       PMA_PORT: 3306
-      PMA_USER: root
-      PMA_PASSWORD: root_password
-      MYSQL_ROOT_PASSWORD: root_password
+      # Connexion automatique avec l'utilisateur et le mot de passe 'projet_xxx'
+      PMA_USER: projet_xxx
+      PMA_PASSWORD: projet_xxx
     depends_on:
       - db
     networks:

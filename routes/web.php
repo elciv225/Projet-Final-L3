@@ -213,6 +213,27 @@ $configurationModules = [
                 ]
             ]
         ],
+        'messagerie-commission' => [
+            'controleur' => DiscussionController::class,
+            'methodePrincipale' => 'index',
+            'label' => 'Discussion',
+            'icone' => '😎',
+            'description' => 'Gestion des étudiants de l\'établissement',
+            'traitements' => [
+                'ajouter' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Ajouter un nouvel étudiant',
+                ],
+                'modifier' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Modifier les informations d\'un étudiant existant',
+                ],
+                'supprimer' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Supprimer un étudiant',
+                ]
+            ]
+        ],
 
     ]
 ];
