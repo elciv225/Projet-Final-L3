@@ -15,19 +15,22 @@ class InscriptionEtudiant
     protected string $table = 'inscription_etudiant';
 
     /**
-     * @var string L'ID de l'utilisateur/étudiant (FK, partie de la CPK).
+     * L'étudiant concerné par l'inscription.
+     * @var Etudiant
      */
-    private string $utilisateurId;
+    private Etudiant $etudiant;
 
     /**
-     * @var string L'ID du niveau d'étude (FK, partie de la CPK).
+     * Le niveau d'étude pour lequel l'étudiant s'inscrit.
+     * @var NiveauEtude
      */
-    private string $niveauEtudeId;
+    private NiveauEtude $niveauEtude;
 
     /**
-     * @var string L'ID de l'année académique (FK, partie de la CPK).
+     * L'année académique de l'inscription.
+     * @var AnneeAcademique
      */
-    private string $anneeAcademiqueId;
+    private AnneeAcademique $anneeAcademique;
 
     /**
      * @var string|null La date d'inscription.
@@ -40,67 +43,72 @@ class InscriptionEtudiant
     private ?int $montant; // DDL spécifie INT
 
     /**
-     * @param string $utilisateurId
-     * @param string $niveauEtudeId
-     * @param string $anneeAcademiqueId
+     * @param Etudiant $etudiant
+     * @param NiveauEtude $niveauEtude
+     * @param AnneeAcademique $anneeAcademique
      * @param string|null $dateInscription
      * @param int|null $montant
      */
-    public function __construct(string $utilisateurId, string $niveauEtudeId, string $anneeAcademiqueId, ?string $dateInscription, ?int $montant)
-    {
-        $this->utilisateurId = $utilisateurId;
-        $this->niveauEtudeId = $niveauEtudeId;
-        $this->anneeAcademiqueId = $anneeAcademiqueId;
+    public function __construct(
+        Etudiant $etudiant,
+        NiveauEtude $niveauEtude,
+        AnneeAcademique $anneeAcademique,
+        ?string $dateInscription,
+        ?int $montant
+    ) {
+        $this->etudiant = $etudiant;
+        $this->niveauEtude = $niveauEtude;
+        $this->anneeAcademique = $anneeAcademique;
         $this->dateInscription = $dateInscription;
         $this->montant = $montant;
     }
 
     /**
-     * @return string
+     * @return Etudiant
      */
-    public function getUtilisateurId(): string
+    public function getEtudiant(): Etudiant
     {
-        return $this->utilisateurId;
+        return $this->etudiant;
     }
 
     /**
-     * @param string $utilisateurId
+     * @param Etudiant $etudiant
      */
-    public function setUtilisateurId(string $utilisateurId): void
+    public function setEtudiant(Etudiant $etudiant): void
     {
-        $this->utilisateurId = $utilisateurId;
+        $this->etudiant = $etudiant;
     }
 
     /**
-     * @return string
+     * @return NiveauEtude
      */
-    public function getNiveauEtudeId(): string
+    public function getNiveauEtude(): NiveauEtude
     {
-        return $this->niveauEtudeId;
+        return $this->niveauEtude;
     }
 
     /**
-     * @param string $niveauEtudeId
+     * @param NiveauEtude $niveauEtude
      */
-    public function setNiveauEtudeId(string $niveauEtudeId): void
+    public function setNiveauEtude(NiveauEtude $niveauEtude): void
     {
-        $this->niveauEtudeId = $niveauEtudeId;
+        $this->niveauEtude = $niveauEtude;
     }
 
     /**
-     * @return string
+     * @return AnneeAcademique
      */
-    public function getAnneeAcademiqueId(): string
+    public function getAnneeAcademique(): AnneeAcademique
     {
-        return $this->anneeAcademiqueId;
+        return $this->anneeAcademique;
     }
 
     /**
-     * @param string $anneeAcademiqueId
+     * @param AnneeAcademique $anneeAcademique
      */
-    public function setAnneeAcademiqueId(string $anneeAcademiqueId): void
+    public function setAnneeAcademique(AnneeAcademique $anneeAcademique): void
     {
-        $this->anneeAcademiqueId = $anneeAcademiqueId;
+        $this->anneeAcademique = $anneeAcademique;
     }
 
     /**

@@ -97,8 +97,6 @@
                     <span class="search-icon">🔍</span>
                     <input type="text" id="searchInput" class="search-input" placeholder="Rechercher par ...">
                 </div>
-
-
             </div>
             <div class="header-actions">
                 <button id="btnExportPDF" class="btn btn-secondary">🕐 Exporter en PDF</button>

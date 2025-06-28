@@ -15,19 +15,22 @@ class AffectationEncadrant
     protected string $table = 'affectation_encadrant';
 
     /**
-     * @var string ID de l'enseignant (FK vers enseignant.utilisateur_id, partie de la CPK).
+     * L'enseignant affecté.
+     * @var Enseignant
      */
-    private string $utilisateurId;
+    private Enseignant $enseignant; // anciennement utilisateurId
 
     /**
-     * @var string ID du rapport étudiant (FK vers rapport_etudiant.id, partie de la CPK).
+     * Le rapport étudiant concerné.
+     * @var RapportEtudiant
      */
-    private string $rapportEtudiantId;
+    private RapportEtudiant $rapportEtudiant;
 
     /**
-     * @var string ID du statut jury (FK vers statut_jury.id, partie de la CPK).
+     * Le statut de l'enseignant dans le jury pour ce rapport.
+     * @var StatutJury
      */
-    private string $statutJuryId;
+    private StatutJury $statutJury;
 
     /**
      * @var string|null Date d'affectation.
@@ -35,65 +38,69 @@ class AffectationEncadrant
     private ?string $dateAffectation; // DDL spécifie DATE
 
     /**
-     * @param string $utilisateurId
-     * @param string $rapportEtudiantId
-     * @param string $statutJuryId
+     * @param Enseignant $enseignant
+     * @param RapportEtudiant $rapportEtudiant
+     * @param StatutJury $statutJury
      * @param string|null $dateAffectation
      */
-    public function __construct(string $utilisateurId, string $rapportEtudiantId, string $statutJuryId, ?string $dateAffectation)
-    {
-        $this->utilisateurId = $utilisateurId;
-        $this->rapportEtudiantId = $rapportEtudiantId;
-        $this->statutJuryId = $statutJuryId;
+    public function __construct(
+        Enseignant $enseignant,
+        RapportEtudiant $rapportEtudiant,
+        StatutJury $statutJury,
+        ?string $dateAffectation
+    ) {
+        $this->enseignant = $enseignant;
+        $this->rapportEtudiant = $rapportEtudiant;
+        $this->statutJury = $statutJury;
         $this->dateAffectation = $dateAffectation;
     }
 
     /**
-     * @return string
+     * @return Enseignant
      */
-    public function getUtilisateurId(): string
+    public function getEnseignant(): Enseignant
     {
-        return $this->utilisateurId;
+        return $this->enseignant;
     }
 
     /**
-     * @param string $utilisateurId
+     * @param Enseignant $enseignant
      */
-    public function setUtilisateurId(string $utilisateurId): void
+    public function setEnseignant(Enseignant $enseignant): void
     {
-        $this->utilisateurId = $utilisateurId;
+        $this->enseignant = $enseignant;
     }
 
     /**
-     * @return string
+     * @return RapportEtudiant
      */
-    public function getRapportEtudiantId(): string
+    public function getRapportEtudiant(): RapportEtudiant
     {
-        return $this->rapportEtudiantId;
+        return $this->rapportEtudiant;
     }
 
     /**
-     * @param string $rapportEtudiantId
+     * @param RapportEtudiant $rapportEtudiant
      */
-    public function setRapportEtudiantId(string $rapportEtudiantId): void
+    public function setRapportEtudiant(RapportEtudiant $rapportEtudiant): void
     {
-        $this->rapportEtudiantId = $rapportEtudiantId;
+        $this->rapportEtudiant = $rapportEtudiant;
     }
 
     /**
-     * @return string
+     * @return StatutJury
      */
-    public function getStatutJuryId(): string
+    public function getStatutJury(): StatutJury
     {
-        return $this->statutJuryId;
+        return $this->statutJury;
     }
 
     /**
-     * @param string $statutJuryId
+     * @param StatutJury $statutJury
      */
-    public function setStatutJuryId(string $statutJuryId): void
+    public function setStatutJury(StatutJury $statutJury): void
     {
-        $this->statutJuryId = $statutJuryId;
+        $this->statutJury = $statutJury;
     }
 
     /**

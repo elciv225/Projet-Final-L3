@@ -24,16 +24,16 @@ class AuditAction
     private ?int $id;
 
     /**
-     * L'ID de l'enregistrement d'audit parent auquel cette action est liée (Clé étrangère).
-     * @var int
+     * L'enregistrement d'audit parent auquel cette action est liée.
+     * @var Audit
      */
-    private int $auditId;
+    private Audit $audit;
 
     /**
-     * L'ID de l'action qui a été exécutée (Clé étrangère).
-     * @var string
+     * L'action qui a été exécutée.
+     * @var Action
      */
-    private string $actionId;
+    private Action $action;
 
     /**
      * L'ordre d'exécution de l'action, si applicable.
@@ -63,8 +63,8 @@ class AuditAction
     /**
      * Constructeur de la classe AuditAction.
      *
-     * @param int $auditId L'ID de l'audit parent.
-     * @param string $actionId L'ID de l'action exécutée.
+     * @param Audit $audit L'audit parent.
+     * @param Action $action L'action exécutée.
      * @param string $statut Le statut de l'exécution ('SUCCES', 'ECHEC').
      * @param int|null $ordre L'ordre d'exécution (optionnel).
      * @param string|null $heureExecution L'heure d'exécution (optionnel, défaut à maintenant si non fourni par la DB).
@@ -72,8 +72,8 @@ class AuditAction
      * @param int|null $id L'ID de l'enregistrement (optionnel, pour instanciation depuis la DB).
      */
     public function __construct(
-        int $auditId,
-        string $actionId,
+        Audit $audit,
+        Action $action,
         string $statut,
         ?int $ordre = null,
         ?string $heureExecution = null,
@@ -81,8 +81,8 @@ class AuditAction
         ?int $id = null
     ) {
         $this->id = $id;
-        $this->auditId = $auditId;
-        $this->actionId = $actionId;
+        $this->audit = $audit;
+        $this->action = $action;
         $this->statut = $statut;
         $this->ordre = $ordre;
         $this->heureExecution = $heureExecution;
@@ -114,35 +114,35 @@ class AuditAction
     }
 
     /**
-     * @return int
+     * @return Audit
      */
-    public function getAuditId(): int
+    public function getAudit(): Audit
     {
-        return $this->auditId;
+        return $this->audit;
     }
 
     /**
-     * @param int $auditId
+     * @param Audit $audit
      */
-    public function setAuditId(int $auditId): void
+    public function setAudit(Audit $audit): void
     {
-        $this->auditId = $auditId;
+        $this->audit = $audit;
     }
 
     /**
-     * @return string
+     * @return Action
      */
-    public function getActionId(): string
+    public function getAction(): Action
     {
-        return $this->actionId;
+        return $this->action;
     }
 
     /**
-     * @param string $actionId
+     * @param Action $action
      */
-    public function setActionId(string $actionId): void
+    public function setAction(Action $action): void
     {
-        $this->actionId = $actionId;
+        $this->action = $action;
     }
 
     /**
@@ -190,7 +190,6 @@ class AuditAction
      */
     public function setStatut(string $statut): void
     {
-        // On pourrait ajouter une validation ici si nécessaire
         $this->statut = $statut;
     }
 
@@ -209,8 +208,4 @@ class AuditAction
     {
         $this->message = $message;
     }
-
-    // TODO: Ajouter les méthodes pour récupérer les objets Audit et Action associés si nécessaire
-    // public function audit(): Audit { /* ... */ }
-    // public function action(): Action { /* ... */ }
 }

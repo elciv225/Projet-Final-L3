@@ -2,32 +2,13 @@
 
 namespace App\Models;
 
-/**
- * Class Action
- *
- * @package App\Models
- */
 class Action
 {
-    /**
-     * @var string
-     */
+
     protected string $table = 'action';
-
-    /**
-     * @var string
-     */
     private string $id;
-
-    /**
-     * @var string
-     */
     private string $libelle;
 
-    /**
-     * @param string $id
-     * @param string $libelle
-     */
     public function __construct(string $id, string $libelle)
     {
         $this->id = $id;

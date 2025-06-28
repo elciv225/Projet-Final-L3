@@ -1,3 +1,8 @@
+<?php
+
+use System\Http\Response;
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -74,7 +79,7 @@
         <?php if (isset($moduleContent)): ?>
             <!-- Contenu d'un module spécifique -->
             <?php
-            if ($moduleContent instanceof \System\Http\Response) {
+            if ($moduleContent instanceof Response) {
                 // Si c'est une Response, on doit l'afficher
                 $moduleContent->send();
             } else {

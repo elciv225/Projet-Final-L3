@@ -19,16 +19,16 @@ class TraitementAction
     protected string $table = 'traitement_action';
 
     /**
-     * L'ID du traitement (Clé étrangère, partie de la clé primaire composée).
-     * @var string
+     * L'objet Traitement associé.
+     * @var Traitement
      */
-    private string $traitementId;
+    private Traitement $traitement;
 
     /**
-     * L'ID de l'action (Clé étrangère, partie de la clé primaire composée).
-     * @var string
+     * L'objet Action associé.
+     * @var Action
      */
-    private string $actionId;
+    private Action $action;
 
     /**
      * L'ordre d'exécution de l'action dans le traitement.
@@ -40,14 +40,14 @@ class TraitementAction
     /**
      * Constructeur de la classe TraitementAction.
      *
-     * @param string $traitementId L'identifiant du traitement.
-     * @param string $actionId L'identifiant de l'action.
+     * @param Traitement $traitement L'objet Traitement.
+     * @param Action $action L'objet Action.
      * @param int|null $ordre L'ordre d'exécution de l'action (optionnel).
      */
-    public function __construct(string $traitementId, string $actionId, ?int $ordre)
+    public function __construct(Traitement $traitement, Action $action, ?int $ordre)
     {
-        $this->traitementId = $traitementId;
-        $this->actionId = $actionId;
+        $this->traitement = $traitement;
+        $this->action = $action;
         $this->ordre = $ordre;
     }
 
@@ -60,35 +60,35 @@ class TraitementAction
     }
 
     /**
-     * @return string
+     * @return Traitement
      */
-    public function getTraitementId(): string
+    public function getTraitement(): Traitement
     {
-        return $this->traitementId;
+        return $this->traitement;
     }
 
     /**
-     * @param string $traitementId
+     * @param Traitement $traitement
      */
-    public function setTraitementId(string $traitementId): void
+    public function setTraitement(Traitement $traitement): void
     {
-        $this->traitementId = $traitementId;
+        $this->traitement = $traitement;
     }
 
     /**
-     * @return string
+     * @return Action
      */
-    public function getActionId(): string
+    public function getAction(): Action
     {
-        return $this->actionId;
+        return $this->action;
     }
 
     /**
-     * @param string $actionId
+     * @param Action $action
      */
-    public function setActionId(string $actionId): void
+    public function setAction(Action $action): void
     {
-        $this->actionId = $actionId;
+        $this->action = $action;
     }
 
     /**
@@ -106,8 +106,4 @@ class TraitementAction
     {
         $this->ordre = $ordre;
     }
-
-    // TODO: Ajouter les méthodes pour récupérer les objets Traitement et Action associés si nécessaire
-    // public function traitement(): Traitement { /* ... */ }
-    // public function action(): Action { /* ... */ }
 }
