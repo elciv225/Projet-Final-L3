@@ -86,7 +86,7 @@ class Response
     /**
      * Méthodes de convenance pour les réponses courantes
      */
-    public static function success(string $message, array $data = [], string $redirect = null): self
+    public static function success(string $message, array $data = [], ?string $redirect = null): self
     {
         $response = [
             'statut' => 'succes',
@@ -103,7 +103,6 @@ class Response
 
         return self::json($response);
     }
-
     public static function error(string $message, array $data = [], int $status = 400): self
     {
         $response = [
@@ -120,8 +119,16 @@ class Response
 
     public static function redirect(string $url, int $status = 302): self
     {
-        $headers = ['Location' => $url];
-        return new self('', $status, $headers);
+        if (!self::isAjaxRequest()) {
+            $headers = ['Location' => $url];
+            return new self('', $status, $headers);
+        } else {
+            return self::json([
+                'statut' => 'succes',
+                'message' => 'Redirection en cours...',
+                'redirect' => $url
+            ], 200);
+        }
     }
 
     public static function isAjaxRequest(): bool

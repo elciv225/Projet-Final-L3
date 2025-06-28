@@ -1,19 +1,20 @@
 <?php
 
-use App\Controllers\IndexController;
-use App\Controllers\AuthentificationPublicController;
+use App\Controllers\AuthentificationController;
 use App\Controllers\Commission\DiscussionController;
 use App\Controllers\CommissionController;
+use App\Controllers\Gestions\AttributionMenuController;
 use App\Controllers\Gestions\EcueController;
 use App\Controllers\Gestions\EnseignantsController;
 use App\Controllers\Gestions\EtudiantsController;
 use App\Controllers\Gestions\EvaluationEtudiantController;
 use App\Controllers\Gestions\PersonnelAdministratifController;
-use App\Controllers\Gestions\AttributionMenuController;
 use App\Controllers\Gestions\ReglementInscriptionController;
 use App\Controllers\Gestions\UeController;
 use App\Controllers\Gestions\UtilisateursController;
+use App\Controllers\IndexController;
 use App\Controllers\Public\AccueilController;
+use App\Controllers\Public\AuthentificationPublicController;
 use App\Controllers\Public\SoumissionRapportController;
 
 /**
@@ -252,6 +253,7 @@ $routes = [
     /* === Routes des pages publiques === */
     ['GET', '/', [AccueilController::class, 'index']],
     ['GET', '/authentification', [AuthentificationPublicController::class, 'index']],
+    ['GET', '/authentification-universite', [AuthentificationController::class, 'index']],
     ['GET', '/soumission-rapport', [SoumissionRapportController::class, 'index']],
     ['GET', '/test-animations', [AccueilController::class, 'testAnimations']],
     ['GET', '/espace-commission', [CommissionController::class, 'index']],
@@ -296,6 +298,7 @@ foreach ($configurationModules as $categorie => $modulesParCategorie) {
 $routes = array_merge($routes, [
     /* === Routes des traitements (formulaires) === */
     ['POST', '/authentification', [AuthentificationPublicController::class, 'authentification']],
+    ['POST', '/authentification-universite', [AuthentificationController::class, 'authentification']],
 ]);
 
 

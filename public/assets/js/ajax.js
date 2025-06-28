@@ -444,6 +444,14 @@ async function handleFormResponse(response, form) {
         data = {html: await response.text()};
     }
 
+    if (data.redirect) {
+        showPopup(data.message || 'Redirection...', data.statut || 'info');
+        setTimeout(() => {
+            window.location.href = data.redirect;
+        }, 500);
+        return; // Stop further processing if redirect is present
+    }
+
     if (data.statut) {
         const messageType = data.statut === 'succes' || data.statut === 'success' ? 'success' : data.statut;
         showPopup(data.message || 'Opération réussie', messageType);

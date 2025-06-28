@@ -1,4 +1,4 @@
-(function() {
+(function () {
     /**
      * Gère les animations d'apparition des éléments de la page avec GSAP.
      * Est conçue pour être appelée au chargement initial et après chaque rechargement AJAX.
@@ -8,29 +8,28 @@
         const formAnimContainer = document.querySelector('.form-container-anim');
 
         // S'assure que les éléments existent avant d'animer
-        if (!authContainer || !formAnimContainer) {
-            console.error("Les conteneurs pour l'animation n'ont pas été trouvés.");
-            return;
+        if (authContainer && formAnimContainer) {
+            // Réinitialise la visibilité pour l'animation
+            gsap.set(authContainer, {autoAlpha: 1}); // autoAlpha gère opacity et visibility
+
+            // CORRECTION: Définir l'état initial visible pour les éléments statiques (sidebar)
+            gsap.set(".sidebar", {opacity: 1, x: 0});
+            gsap.set(".sidebar-header, .etapes-nav, .sidebar-footer", {opacity: 1, y: 0});
         }
 
-        // Réinitialise la visibilité pour l'animation
-        gsap.set(authContainer, { autoAlpha: 1 }); // autoAlpha gère opacity et visibility
-        gsap.set(formAnimContainer, { autoAlpha: 1 });
+        gsap.set(formAnimContainer, {autoAlpha: 1});
 
-        // CORRECTION: Définir l'état initial visible pour les éléments statiques (sidebar)
-        gsap.set(".sidebar", { opacity: 1, x: 0 });
-        gsap.set(".sidebar-header, .etapes-nav, .sidebar-footer", { opacity: 1, y: 0 });
 
         // Pour les éléments du formulaire, définir l'état final après animation
-        gsap.set(".form-title-group h2, .form-title-group p", { opacity: 1, y: 0 });
-        gsap.set(".form-group", { opacity: 1, y: 0 });
-        gsap.set(".btn.btn-primary", { opacity: 1, y: 0 });
+        gsap.set(".form-title-group h2, .form-title-group p", {opacity: 1, y: 0});
+        gsap.set(".form-group", {opacity: 1, y: 0});
+        gsap.set(".btn.btn-primary", {opacity: 1, y: 0});
 
         // Timeline pour l'animation des éléments du formulaire qui changent
-        const tl = gsap.timeline({ delay: 0.3 }); // Léger délai pour un effet plus doux
+        const tl = gsap.timeline({delay: 0.3}); // Léger délai pour un effet plus doux
 
         tl.fromTo(".form-title-group h2, .form-title-group p",
-            { y: 20, opacity: 0 },
+            {y: 20, opacity: 0},
             {
                 duration: 0.6,
                 y: 0,
@@ -39,7 +38,7 @@
                 ease: "power3.out"
             })
             .fromTo(".form-group",
-                { y: 15, opacity: 0 },
+                {y: 15, opacity: 0},
                 {
                     duration: 0.5,
                     y: 0,
@@ -48,7 +47,7 @@
                     ease: "power3.out"
                 }, "-=0.3") // Se superpose légèrement à l'animation précédente
             .fromTo(".btn.btn-primary",
-                { y: 10, opacity: 0 },
+                {y: 10, opacity: 0},
                 {
                     duration: 0.5,
                     y: 0,
@@ -70,10 +69,10 @@
         if (!openTrigger || !modal || !overlay || !blurTarget) return;
 
         // Timeline GSAP pour l'ouverture, réutilisable
-        const openTimeline = gsap.timeline({ paused: true, reversed: true });
-        openTimeline.to(overlay, { autoAlpha: 1, duration: 0.3, ease: 'power2.inOut' })
-            .to(modal, { y: '0%', autoAlpha: 1, duration: 0.4, ease: 'power3.out' }, '-=0.2')
-            .to(blurTarget, { filter: 'blur(5px)', duration: 0.3, ease: 'power2.inOut' }, '<');
+        const openTimeline = gsap.timeline({paused: true, reversed: true});
+        openTimeline.to(overlay, {autoAlpha: 1, duration: 0.3, ease: 'power2.inOut'})
+            .to(modal, {y: '0%', autoAlpha: 1, duration: 0.4, ease: 'power3.out'}, '-=0.2')
+            .to(blurTarget, {filter: 'blur(5px)', duration: 0.3, ease: 'power2.inOut'}, '<');
 
 
         const openModal = () => {
@@ -100,13 +99,13 @@
 
     // Ajoute la fonction d'animation si elle n'est pas déjà présente
     if (!window.ajaxRebinders.some(fn => fn.name === pageAnimFuncName)) {
-        Object.defineProperty(animatePageIn, 'name', { value: pageAnimFuncName });
+        Object.defineProperty(animatePageIn, 'name', {value: pageAnimFuncName});
         window.ajaxRebinders.push(animatePageIn);
     }
 
     // Ajoute la fonction de la modale si elle n'est pas déjà présente
     if (!window.ajaxRebinders.some(fn => fn.name === modalFuncName)) {
-        Object.defineProperty(setupModalEventListeners, 'name', { value: modalFuncName });
+        Object.defineProperty(setupModalEventListeners, 'name', {value: modalFuncName});
         window.ajaxRebinders.push(setupModalEventListeners);
     }
 

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Public;
 
+use App\Controllers\Controller;
 use System\Http\Response;
 use System\Mail\Mail;
 
