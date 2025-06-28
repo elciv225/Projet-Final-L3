@@ -22,17 +22,12 @@ class Audit
     /**
      * @var string|null Description de l'audit.
      */
-    private ?string $description; // DDL spécifie TEXT
+    private ?string $description; // DDL spécifie VARCHAR(255)
 
     /**
-     * @var string|null Date et heure de l'action.
+     * @var string|null Date et heure du traitement.
      */
-    private ?string $dateAction; // DDL spécifie DATETIME
-
-    /**
-     * @var string L'ID de l'action (FK).
-     */
-    private string $actionId;
+    private ?string $dateTraitement; // DDL spécifie TIMESTAMP
 
     /**
      * @var string L'ID du traitement (FK).
@@ -48,17 +43,15 @@ class Audit
     /**
      * @param int|null $id
      * @param string|null $description
-     * @param string|null $dateAction
-     * @param string $actionId
+     * @param string|null $dateTraitement
      * @param string $traitementId
      * @param string $utilisateurId
      */
-    public function __construct(?int $id, ?string $description, ?string $dateAction, string $actionId, string $traitementId, string $utilisateurId)
+    public function __construct(?int $id, ?string $description, ?string $dateTraitement, string $traitementId, string $utilisateurId)
     {
         $this->id = $id;
         $this->description = $description;
-        $this->dateAction = $dateAction;
-        $this->actionId = $actionId;
+        $this->dateTraitement = $dateTraitement;
         $this->traitementId = $traitementId;
         $this->utilisateurId = $utilisateurId;
     }
@@ -98,33 +91,17 @@ class Audit
     /**
      * @return string|null
      */
-    public function getDateAction(): ?string
+    public function getDateTraitement(): ?string
     {
-        return $this->dateAction;
+        return $this->dateTraitement;
     }
 
     /**
-     * @param string|null $dateAction
+     * @param string|null $dateTraitement
      */
-    public function setDateAction(?string $dateAction): void
+    public function setDateTraitement(?string $dateTraitement): void
     {
-        $this->dateAction = $dateAction;
-    }
-
-    /**
-     * @return string
-     */
-    public function getActionId(): string
-    {
-        return $this->actionId;
-    }
-
-    /**
-     * @param string $actionId
-     */
-    public function setActionId(string $actionId): void
-    {
-        $this->actionId = $actionId;
+        $this->dateTraitement = $dateTraitement;
     }
 
     /**
