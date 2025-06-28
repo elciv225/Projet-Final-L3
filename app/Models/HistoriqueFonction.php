@@ -15,14 +15,16 @@ class HistoriqueFonction
     protected string $table = 'historique_fonction';
 
     /**
-     * @var string L'ID de l'enseignant (FK, partie de la CPK).
+     * L'enseignant concerné.
+     * @var Enseignant
      */
-    private string $utilisateurId;
+    private Enseignant $enseignant;
 
     /**
-     * @var string L'ID de la fonction (FK, partie de la CPK).
+     * La fonction occupée.
+     * @var Fonction
      */
-    private string $fonctionId;
+    private Fonction $fonction;
 
     /**
      * @var string|null La date d'occupation.
@@ -30,47 +32,50 @@ class HistoriqueFonction
     private ?string $dateOccupation; // DDL spécifie DATE
 
     /**
-     * @param string $utilisateurId
-     * @param string $fonctionId
+     * @param Enseignant $enseignant
+     * @param Fonction $fonction
      * @param string|null $dateOccupation
      */
-    public function __construct(string $utilisateurId, string $fonctionId, ?string $dateOccupation)
-    {
-        $this->utilisateurId = $utilisateurId;
-        $this->fonctionId = $fonctionId;
+    public function __construct(
+        Enseignant $enseignant,
+        Fonction $fonction,
+        ?string $dateOccupation
+    ) {
+        $this->enseignant = $enseignant;
+        $this->fonction = $fonction;
         $this->dateOccupation = $dateOccupation;
     }
 
     /**
-     * @return string
+     * @return Enseignant
      */
-    public function getUtilisateurId(): string
+    public function getEnseignant(): Enseignant
     {
-        return $this->utilisateurId;
+        return $this->enseignant;
     }
 
     /**
-     * @param string $utilisateurId
+     * @param Enseignant $enseignant
      */
-    public function setUtilisateurId(string $utilisateurId): void
+    public function setEnseignant(Enseignant $enseignant): void
     {
-        $this->utilisateurId = $utilisateurId;
+        $this->enseignant = $enseignant;
     }
 
     /**
-     * @return string
+     * @return Fonction
      */
-    public function getFonctionId(): string
+    public function getFonction(): Fonction
     {
-        return $this->fonctionId;
+        return $this->fonction;
     }
 
     /**
-     * @param string $fonctionId
+     * @param Fonction $fonction
      */
-    public function setFonctionId(string $fonctionId): void
+    public function setFonction(Fonction $fonction): void
     {
-        $this->fonctionId = $fonctionId;
+        $this->fonction = $fonction;
     }
 
     /**

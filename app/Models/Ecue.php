@@ -27,17 +27,25 @@ class Ecue
     /**
      * @var int|null Le nombre de crédits pour l'ECUE.
      */
-    private ?int $credit; // DDL spécifie TINYINT UNSIGNED
+    private ?int $credit; // DDL SQL spécifie SMALLINT
+
+    /**
+     * L'Unité d'Enseignement à laquelle cet ECUE appartient.
+     * @var Ue
+     */
+    private Ue $ue;
 
     /**
      * @param string $id
      * @param string $libelle
+     * @param Ue $ue
      * @param int|null $credit
      */
-    public function __construct(string $id, string $libelle, ?int $credit)
+    public function __construct(string $id, string $libelle, Ue $ue, ?int $credit)
     {
         $this->id = $id;
         $this->libelle = $libelle;
+        $this->ue = $ue;
         $this->credit = $credit;
     }
 
@@ -87,6 +95,22 @@ class Ecue
     public function setCredit(?int $credit): void
     {
         $this->credit = $credit;
+    }
+
+    /**
+     * @return Ue
+     */
+    public function getUe(): Ue
+    {
+        return $this->ue;
+    }
+
+    /**
+     * @param Ue $ue
+     */
+    public function setUe(Ue $ue): void
+    {
+        $this->ue = $ue;
     }
 
     /**

@@ -15,14 +15,16 @@ class RemiseCompteRendu
     protected string $table = 'remise_compte_rendu';
 
     /**
-     * @var string L'ID de l'enseignant (FK, partie de la CPK).
+     * L'enseignant ayant remis le compte rendu.
+     * @var Enseignant
      */
-    private string $utilisateurId;
+    private Enseignant $enseignant;
 
     /**
-     * @var string L'ID du compte rendu (FK, partie de la CPK).
+     * Le compte rendu remis.
+     * @var CompteRendu
      */
-    private string $compteRenduId;
+    private CompteRendu $compteRendu;
 
     /**
      * @var string|null La date de remise.
@@ -30,47 +32,50 @@ class RemiseCompteRendu
     private ?string $dateRendu; // DDL spécifie DATE
 
     /**
-     * @param string $utilisateurId
-     * @param string $compteRenduId
+     * @param Enseignant $enseignant
+     * @param CompteRendu $compteRendu
      * @param string|null $dateRendu
      */
-    public function __construct(string $utilisateurId, string $compteRenduId, ?string $dateRendu)
-    {
-        $this->utilisateurId = $utilisateurId;
-        $this->compteRenduId = $compteRenduId;
+    public function __construct(
+        Enseignant $enseignant,
+        CompteRendu $compteRendu,
+        ?string $dateRendu
+    ) {
+        $this->enseignant = $enseignant;
+        $this->compteRendu = $compteRendu;
         $this->dateRendu = $dateRendu;
     }
 
     /**
-     * @return string
+     * @return Enseignant
      */
-    public function getUtilisateurId(): string
+    public function getEnseignant(): Enseignant
     {
-        return $this->utilisateurId;
+        return $this->enseignant;
     }
 
     /**
-     * @param string $utilisateurId
+     * @param Enseignant $enseignant
      */
-    public function setUtilisateurId(string $utilisateurId): void
+    public function setEnseignant(Enseignant $enseignant): void
     {
-        $this->utilisateurId = $utilisateurId;
+        $this->enseignant = $enseignant;
     }
 
     /**
-     * @return string
+     * @return CompteRendu
      */
-    public function getCompteRenduId(): string
+    public function getCompteRendu(): CompteRendu
     {
-        return $this->compteRenduId;
+        return $this->compteRendu;
     }
 
     /**
-     * @param string $compteRenduId
+     * @param CompteRendu $compteRendu
      */
-    public function setCompteRenduId(string $compteRenduId): void
+    public function setCompteRendu(CompteRendu $compteRendu): void
     {
-        $this->compteRenduId = $compteRenduId;
+        $this->compteRendu = $compteRendu;
     }
 
     /**
