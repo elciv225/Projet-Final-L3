@@ -16,7 +16,122 @@ document.addEventListener('DOMContentLoaded', function () {
     bindAjaxLinks();
     bindHistoryEvents();
     executeRebinders();
+
+    // --- Load initial content if the URL is not the base path ---
+    const initialUrlPath = window.location.pathname;
+    // Define your application's base path. If your app is in a subdirectory, adjust this.
+    // Example: const basePath = '/myapp/';
+    const basePath = '/'; // Assuming app runs at the root
+    const contentAreaSelector = '#content-area'; // Default main content area
+
+    // Avoid initial load for very specific paths like auth or if it's the base path.
+    // This logic might need to be more sophisticated based on your app's routes.
+    const noInitialLoadPaths = ['/authentification', '/login', '/logout']; // Add paths that manage their own full content
+
+    if (initialUrlPath !== basePath &&
+        !noInitialLoadPaths.some(path => initialUrlPath.startsWith(path)) &&
+        document.querySelector(contentAreaSelector)) {
+
+        console.log(`Initial AJAX-like content load for: ${window.location.href}`);
+        loadInitialAjaxContent(window.location.href, contentAreaSelector);
+    }
 });
+
+
+async function loadInitialAjaxContent(url, targetSelector) {
+    const contentWrapper = document.querySelector(targetSelector) || document.body;
+    // Do not show progress bar for initial load to avoid flicker if server sends full content.
+    // User will see browser's native loader.
+    // If server is configured to send partials even on direct hit with XHR header,
+    // then progress bar could be re-enabled here.
+
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest', // Crucial for server to differentiate
+                'Accept': 'text/html, application/json'
+            }
+        });
+
+        if (!response.ok) {
+            // If the server returned an error for the initial content,
+            // it might have already rendered an error page.
+            // Or, if it's a SPA-like shell, we might show an error in the content area.
+            console.error(`Erreur HTTP lors du chargement initial: ${response.status}`);
+            // Avoid showing popup if server likely handled the error page itself.
+            // showPopup(`Erreur ${response.status} lors du chargement du contenu.`, 'error');
+            return;
+        }
+
+        const contentType = response.headers.get('content-type');
+        let data;
+
+        if (contentType?.includes('application/json')) {
+            data = await response.json();
+            if (data.html) { // If JSON contains HTML content
+                 // Fall through to HTML processing
+            } else if (data.redirect) {
+                // Should not happen on initial load ideally, but handle it
+                window.location.href = data.redirect;
+                return;
+            } else {
+                console.warn("Initial load received JSON without HTML or redirect:", data);
+                return;
+            }
+        } else { // Assuming text/html
+            data = { html: await response.text() };
+        }
+
+        const container = document.querySelector(targetSelector);
+        if (!container) {
+            console.error(`Conteneur cible introuvable '${targetSelector}' pour le chargement initial.`);
+            return;
+        }
+
+        if (data.html) {
+            let contentToInject = data.html;
+
+            // Check if the server sent a full page or just the content fragment.
+            // If it's a full page, try to extract the target container's content.
+            // This is important if the server doesn't differentiate between initial load and XHR for this URL.
+            if (isFullPage(contentToInject)) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = contentToInject;
+                // Try to find the specific content area from the full HTML response
+                const mainContentElement = tempDiv.querySelector(targetSelector) || tempDiv.querySelector('.main-content') || tempDiv.querySelector('.main-content-wrapper');
+                if (mainContentElement) {
+                    contentToInject = mainContentElement.innerHTML;
+                } else {
+                    // If we can't find the specific content area, but it's a full page,
+                    // it implies the server has already rendered the correct full page.
+                    // In this case, we might not need to do anything further,
+                    // or we might have an issue if the JS expects to replace content.
+                    // For now, we assume if it's a full page and we can't find the target,
+                    // the server has done its job. Re-eval if issues arise.
+                    console.log("Initial load received full page, target content extraction might be needed or server handled it.");
+                    // To avoid replacing the whole document.body if server handled it:
+                    if (targetSelector === 'body' || targetSelector === 'html') {
+                        // If server sent full page and we are trying to replace body,
+                        // it means the server likely sent the correct state already.
+                        // Re-initialize scripts and event binders on the current document.
+                        rebindEventsInContainer(document.body);
+                        return;
+                    }
+                }
+            }
+
+            container.innerHTML = contentToInject;
+            rebindEventsInContainer(container); // Rebind scripts and events for the new content
+        }
+        // No success popup for initial load, it should be seamless.
+
+    } catch (error) {
+        console.error('Erreur de chargement AJAX initial:', error);
+        // Avoid aggressive popups on initial load errors as browser might show its own.
+        // showPopup('Erreur lors du chargement du contenu initial de la page.', 'error');
+    }
+}
+
 
 // -------------------------------------------------------------------
 // Fonctions de base (Popups, Loader, etc.)
