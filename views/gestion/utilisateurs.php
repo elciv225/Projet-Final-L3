@@ -6,78 +6,103 @@
         </div>
     </div>
 
-    <!-- Informations Generales de l'utilisateur -->
+    <!-- Informations Utilisateur -->
     <div class="form-section">
         <div class="section-header">
-            <h3 class="section-title">Information Generales de l'utilisateur</h3>
+            <h3 class="section-title">Détails de l'Utilisateur</h3>
         </div>
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <input type="text" name="userName" class="form-input" placeholder=" " id="userName">
-                    <label class="form-label" for="userName">Nom d'utilisateur</label>
+                    <input type="text" name="id" class="form-input" placeholder=" " id="user-id" required>
+                    <label class="form-label" for="user-id">Matricule (ID)</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="fonction" class="form-input" placeholder=" " id="fonction">
-                    <label class="form-label" for="">Fonction</label>
+                    <input type="text" name="nom" class="form-input" placeholder=" " id="user-lastname" required>
+                    <label class="form-label" for="user-lastname">Nom</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="type-utilisateur" class="form-input" placeholder=" " id="type-utilisateur">
-                    <label class="form-label" for="type-utilisateur">Type d'utilisateur</label>
+                    <input type="text" name="prenoms" class="form-input" placeholder=" " id="user-firstname" required>
+                    <label class="form-label" for="user-firstname">Prénoms</label>
                 </div>
                 <div class="form-group">
-                    <div class="form-group">
-                        <select class="form-input" id="groupe-utilisateur" name="groupe-utilisateur">
-                            <option value="">Sélectionnez un groupe utilisateur</option>
-                            <option value="etudiant">Etudiants</option>
-                            <option value="personnel-administratif">Personnels Administratifs</option>
-                            <option value="enseignant">Enseignants</option>
-                        </select>
-                        <label class="form-label" for="groupe-utilisateur">Groupe Utilisateur</label>
+                    <input type="email" name="email" class="form-input" placeholder=" " id="user-mail" required>
+                    <label class="form-label" for="user-mail">Email</label>
+                </div>
+                <div class="form-group">
+                    <input type="date" name="date_naissance" class="form-input" placeholder=" " id="birth-date">
+                    <label class="form-label" for="birth-date">Date de Naissance</label>
+                </div>
+                 <div class="form-group">
+                    <label class="form-label" for="photo">Photo</label>
+                    <input type="file" name="photo" class="form-input" id="photo">
+                </div>
+                <!-- Genre field can be added here if it's decided to add it to utilisateur table -->
+                 <div class="form-group radio-group">
+                    <label>Genre:</label>
+                    <div class="radio-option">
+                        <input type="radio" id="genreM" name="genre" value="M">
+                        <label for="genreM">M</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="genreF" name="genre" value="F">
+                        <label for="genreF">F</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="genreND" name="genre" value="ND">
+                        <label for="genreND">N.D</label>
                     </div>
                 </div>
-            </div>
-            <div class="form-grid" style=" margin-top: 20px;">
-                <div class="form-group">
-                    <input type="text" name="niveau-acces" class="form-input" placeholder=" " id="niveau-acces">
-                    <label class="form-label" for="niveau-acces">Niveau d'acces</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="login" class="form-input" placeholder=" " id="login">
-                    <label class="form-label" for="login">Login</label>
-                </div>
-                <div class="form-group" >
-                    <input type="text" name="password" class="form-input" placeholder=" " id="password">
-                    <label class="form-label" for="password">Mot De Passe</label>
+                 <div class="form-group">
+                    <input type="tel" name="telephone" class="form-input" placeholder=" " id="telephone">
+                    <label class="form-label" for="telephone">Téléphone</label>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <!-- Mise a jour des informations de l'utilisateur -->
+    <!-- Informations de Connexion et Rôles -->
     <div class="form-section">
         <div class="section-header">
-            <h3 class="section-title">Mise à jour des information de l'utilisateur</h3>
+            <h3 class="section-title">Informations de Connexion et Rôles</h3>
         </div>
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <input type="text" name="user-lastname" class="form-input" placeholder=" " id="user-lastname">
-                    <label class="form-label" for="user-lastname">Nom</label>
-                </div>
-
-                <div class="form-group">
-                    <input type="text" name="user-firstname" class="form-input" placeholder=" " id="user-firstname">
-                    <label class="form-label" for="user-firstname">Prenom</label>
+                    <input type="text" name="login" class="form-input" placeholder=" " id="login" required>
+                    <label class="form-label" for="login">Login</label>
                 </div>
                 <div class="form-group">
-                    <input type="date" name="birth-date" class="form-input" placeholder=" " id="birth-date">
-                    <label class="form-label" for="birth-date">Date de Naissance</label>
+                    <input type="password" name="mot_de_passe" class="form-input" placeholder=" " id="mot_de_passe">
+                    <label class="form-label" for="mot_de_passe">Mot de Passe (laisser vide pour ne pas changer)</label>
                 </div>
                 <div class="form-group">
-                    <input type="email" name="user-mail" class="form-input" placeholder=" " id="user-mail">
-                    <label class="form-label" for="user-mail">Email</label>
+                    <select name="groupe_utilisateur_id" id="groupe_utilisateur_id" class="form-input" required>
+                        <option value="">Sélectionnez un groupe</option>
+                        <!-- Options à peupler depuis la table groupe_utilisateur -->
+                    </select>
+                    <label class="form-label" for="groupe_utilisateur_id">Groupe Utilisateur</label>
+                </div>
+                <div class="form-group">
+                    <select name="type_utilisateur_id" id="type_utilisateur_id" class="form-input" required>
+                        <option value="">Sélectionnez un type</option>
+                        <!-- Options à peupler depuis la table type_utilisateur -->
+                    </select>
+                    <label class="form-label" for="type_utilisateur_id">Type d'utilisateur</label>
+                </div>
+                <div class="form-group">
+                    <select name="niveau_acces_donnees_id" id="niveau_acces_donnees_id" class="form-input" required>
+                        <option value="">Sélectionnez un niveau d'accès</option>
+                        <!-- Options à peupler depuis la table niveau_acces_donnees -->
+                    </select>
+                    <label class="form-label" for="niveau_acces_donnees_id">Niveau d'accès</label>
+                </div>
+                <div class="form-group">
+                    <select name="fonction_id" class="form-input" id="fonction_id">
+                         <option value="">Sélectionnez une fonction (si applicable)</option>
+                        <!-- Options à peupler depuis la table fonction -->
+                    </select>
+                    <label class="form-label" for="fonction_id">Fonction</label>
                 </div>
             </div>
         </div>

@@ -6,36 +6,104 @@
     </div>
 
 
-    <div class="form-group small-width right-align  mb-20">
-        <select class="form-input" id="annee-academique" name="annee-academique">
-            <option value="">Année-Académique</option>
-            <option value=""></option>
-            <option value=""></option>
-        </select>
-    </div>
-    <!-- Informations de l'etudiant -->
-    <div class="form-section">
-        <div class="section-header">
-            <h3 class="section-title">Information Etudiant</h3>
+    <form id="reglementForm">
+        <div class="form-group small-width right-align mb-20">
+            <select class="form-input" id="annee_academique_id_filter" name="annee_academique_id_filter">
+                <option value="">Filtrer par Année Académique</option>
+                <!-- Options à peupler par PHP/JS -->
+            </select>
         </div>
-        <div class="section-content">
-            <div class="form-grid">
-                <div class="form-group">
-                    <input type="text" name="studentNumber" class="form-input" placeholder=" " id="student-number">
-                    <label class="form-label" for="student-number">Numero Carte d'Etudiant</label>
+        <!-- Informations de l'etudiant -->
+        <div class="form-section">
+            <div class="section-header">
+                <h3 class="section-title">Information Etudiant</h3>
+            </div>
+            <div class="section-content">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <input type="text" name="utilisateur_id" class="form-input" placeholder=" " id="student-number" required>
+                        <label class="form-label" for="student-number">Numéro Carte d'Etudiant (ID Utilisateur)</label>
+                    </div>
+                    <div class="form-group">
+                        <!-- Nom, Prénoms, Niveau d'Etude are display-only, fetched after entering student ID -->
+                        <input type="text" name="studentLastnameDisplay" class="form-input" placeholder=" " id="student-lastname" readonly disabled>
+                        <label class="form-label" for="student-lastname">Nom (auto)</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="studentFirstnameDisplay" class="form-input" placeholder=" " id="student-firstname" readonly disabled>
+                        <label class="form-label" for="student-firstname">Prénoms (auto)</label>
+                    </div>
+                    <div class="form-group">
+                         <select class="form-input" id="niveau_etude_id" name="niveau_etude_id" required>
+                            <option value="">Niveau d'Étude pour Inscription</option>
+                            <!-- Options à peupler par PHP/JS, e.g. based on student or generally -->
+                        </select>
+                        <label class="form-label" for="niveau_etude_id">Niveau d'Etude (Inscription)</label>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-input" id="annee_academique_id_inscription" name="annee_academique_id" required>
+                            <option value="">Année Académique pour Inscription</option>
+                            <!-- Options à peupler par PHP/JS -->
+                        </select>
+                        <label class="form-label" for="annee_academique_id_inscription">Année Académique (Inscription)</label>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="text" name="studentLastname" class="form-input" placeholder=" " id="student-lastname">
-                    <label class="form-label" for="student-lastname">Nom</label>
+            </div>
+        </div>
+
+        <!-- Reglements des frais d'inscription -->
+        <div class="form-section">
+            <div class="section-header">
+                <h3 class="section-title">Règlements Frais D'Inscription</h3>
+            </div>
+            <div class="section-content">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <input type="number" name="montant" class="form-input" placeholder=" " id="montant" required min="0" step="any">
+                        <label class="form-label" for="montant">Montant Payé</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="date" name="date_inscription" class="form-input" placeholder=" " id="date_inscription" required>
+                        <label class="form-label" for="date_inscription">Date de Règlement/Inscription</label>
+                    </div>
+                    <!-- Calculated fields removed from direct input, will be displayed by JS if needed -->
+                    <div class="form-group">
+                        <input type="text" name="montant_a_payer_display" class="form-input" placeholder=" " id="montant_a_payer_display" readonly disabled>
+                        <label class="form-label" for="montant_a_payer_display">Montant Total à Payer (info)</label>
+                    </div>
+                     <div class="form-group">
+                        <input type="text" name="total_deja_paye_display" class="form-input" placeholder=" " id="total_deja_paye_display" readonly disabled>
+                        <label class="form-label" for="total_deja_paye_display">Total Déjà Payé (info)</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="reste_a_payer_display" class="form-input" placeholder=" " id="reste_a_payer_display" readonly disabled>
+                        <label class="form-label" for="reste_a_payer_display">Reste à Payer (info)</label>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="text" name="studentFirstname" class="form-input" placeholder=" "
-                           id="student-firstname">
-                    <label class="form-label" for="student-firstname">Prénoms</label>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; padding: 20px 0;">
+            <button type="submit" class="btn btn-primary" id="btnValider">Valider Paiement</button>
+        </div>
+    </form>
+    <!-- End Form -->
+
+    <!-- Table for history -->
+    <div class="table-container">
+        <div class="table-header">
+            <h3 class="table-title">Historique des Règlements</h3>
+            <div class="header-actions">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInputReglement" class="search-input" placeholder="Rechercher par N° Etudiant...">
                 </div>
-                <div class="form-group">
-                    <input type="text" name="niveauEtude" class="form-input" placeholder=" " id="niveauEtude">
-                    <label class="form-label" for="niveauEtude">Niveau d'Etude</label>
+            </div>
+            <div class="header-actions">
+                <button id="btnExportPDF" class="btn btn-secondary">Exporter en PDF</button>
+                <button id="btnExportExcel" class="btn btn-secondary">Exporter sur Excel</button>
+                <button id="btnPrint" class="btn btn-secondary">Imprimer</button>
+                <button class="btn btn-primary" id="btnSupprimerSelectionReglement">Supprimer Sélection</button>
                 </div>
             </div>
 

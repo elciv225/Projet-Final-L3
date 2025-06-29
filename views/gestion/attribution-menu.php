@@ -15,14 +15,11 @@
             <div class="section-content">
                 <!-- Sous-section pour la sélection du groupe -->
                 <div class="form-group-inline" style="margin-bottom: 32px;">
-                    <label for="userGroupSelect">Groupe utilisateur:</label>
+                    <label for="groupe_utilisateur_id">Groupe utilisateur:</label>
                     <div class="select-wrapper">
-                        <select id="userGroupSelect" class="custom-select">
+                        <select id="groupe_utilisateur_id" name="groupe_utilisateur_id" class="custom-select form-input" required>
                             <option value="">Sélectionner un groupe</option>
-                            <option value="admin">Administrateur</option>
-                            <option value="editor">Éditeur</option>
-                            <option value="viewer">Lecteur</option>
-                            <option value="guest">Invité</option>
+                            <!-- Options à peupler par PHP/JS depuis la table groupe_utilisateur -->
                         </select>
                     </div>
                 </div>

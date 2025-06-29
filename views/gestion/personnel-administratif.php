@@ -13,48 +13,93 @@
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <input type="text" name="personnelNumber" class="form-input" placeholder=" " id="personnel-number">
-                    <label class="form-label" for="personnel-number">Numéro Matricule</label>
+                    <input type="text" name="id" class="form-input" placeholder=" " id="personnel-number" required>
+                    <label class="form-label" for="personnel-number">Numéro Matricule (ID)</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="personnelLastname" class="form-input" placeholder=" " id="personnel-lastname">
+                    <input type="text" name="nom" class="form-input" placeholder=" " id="personnel-lastname" required>
                     <label class="form-label" for="personnel-lastname">Nom</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="personnelFirstname" class="form-input" placeholder=" " id="personnel-firstname">
+                    <input type="text" name="prenoms" class="form-input" placeholder=" " id="personnel-firstname" required>
                     <label class="form-label" for="personnel-firstname">Prénoms</label>
                 </div>
                 <div class="form-group">
-                    <input type="date" name="dateBirth" class="form-input" placeholder=" " id="birth-date">
+                    <input type="date" name="date_naissance" class="form-input" placeholder=" " id="birth-date">
                     <label class="form-label" for="birth-date">Date de Naissance</label>
                 </div>
-            </div>
-            <div class="form-grid" style=" margin-top: 20px;">
-                <div class="form-group" style=" padding-right: 300px;">
-                    <input type="mail" name="email" class="form-input" placeholder=" " id="email">
+                <div class="form-group">
+                    <input type="email" name="email" class="form-input" placeholder=" " id="email" required>
                     <label class="form-label" for="email">Email</label>
                 </div>
-                <div class="radio-group">
+                <div class="form-group radio-group">
                     <label>Genre:</label>
                     <div class="radio-option">
-                        <input  type="radio" id="genreM" name="genre" value="M">
+                        <input type="radio" id="genreM" name="genre" value="M">
                         <label for="genreM">M</label>
                     </div>
                     <div class="radio-option">
-                        <input class="radio-option" type="radio" id="genreF" name="genre" value="F">
+                        <input type="radio" id="genreF" name="genre" value="F">
                         <label for="genreF">F</label>
                     </div>
                     <div class="radio-option">
-                        <input class="radio-option" type="radio" id="genreND" name="genre" value="ND">
+                        <input type="radio" id="genreND" name="genre" value="ND">
                         <label for="genreND">N.D</label>
                     </div>
                 </div>
+                <div class="form-group">
+                    <input type="tel" name="telephone" class="form-input" placeholder=" " id="telephone">
+                    <label class="form-label" for="telephone">Téléphone</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="login" class="form-input" placeholder=" " id="login" required>
+                    <label class="form-label" for="login">Login</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="mot_de_passe" class="form-input" placeholder=" " id="mot_de_passe">
+                    <label class="form-label" for="mot_de_passe">Mot de passe (laisser vide pour ne pas changer)</label>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="photo">Photo</label>
+                    <input type="file" name="photo" class="form-input" id="photo">
+                </div>
             </div>
-
         </div>
     </div>
 
-    <!-- Informations carriere -->
+    <!-- Informations Administratives et Rôles -->
+    <div class="form-section">
+        <div class="section-header">
+            <h3 class="section-title">Information Administratives et Rôles</h3>
+        </div>
+        <div class="section-content">
+            <div class="form-grid">
+                <div class="form-group">
+                    <select name="groupe_utilisateur_id" id="groupe_utilisateur_id" class="form-input" required>
+                        <option value="">Sélectionnez un groupe</option>
+                        <!-- Options à peupler -->
+                    </select>
+                    <label class="form-label" for="groupe_utilisateur_id">Groupe Utilisateur</label>
+                </div>
+                <div class="form-group">
+                    <select name="type_utilisateur_id" id="type_utilisateur_id" class="form-input" required>
+                        <option value="">Sélectionnez un type</option>
+                        <!-- Options à peupler -->
+                    </select>
+                    <label class="form-label" for="type_utilisateur_id">Type Utilisateur</label>
+                </div>
+                <div class="form-group">
+                    <select name="niveau_acces_donnees_id" id="niveau_acces_donnees_id" class="form-input" required>
+                        <option value="">Sélectionnez un niveau d'accès</option>
+                        <!-- Options à peupler -->
+                    </select>
+                    <label class="form-label" for="niveau_acces_donnees_id">Niveau d'Accès Données</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informations sur la Carrière -->
     <div class="form-section">
         <div class="section-header">
             <h3 class="section-title">Information sur la Carrière</h3>
@@ -62,26 +107,19 @@
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <select class="form-input" id="poste" name="poste">
+                    <select class="form-input" id="poste_id" name="poste_id">
                         <option value="">Sélectionnez un poste</option>
-                        <option value="secretaire">Secrétaire</option>
-                        <option value="comptable">Comptable</option>
-                        <option value="rh">Ressources Humaines</option>
-                        <option value="informatique">Informatique</option>
+                        <!-- Options à peupler depuis une table poste_administratif -->
                     </select>
-                    <label class="form-label" for="poste">Poste occupé</label>
+                    <label class="form-label" for="poste_id">Poste occupé</label>
                 </div>
                 <div class="form-group">
-                    <input type="date" name="dateAffectation" class="form-input" placeholder=" " id="date-affectation">
-                    <label class="form-label" for="date-affectation">Date d'Affectation</label>
+                    <input type="date" name="date_affectation_poste" class="form-input" placeholder=" " id="date_affectation_poste">
+                    <label class="form-label" for="date_affectation_poste">Date d'Affectation au Poste</label>
                 </div>
                 <div class="form-group">
-                    <input type="date" name="dateEmbauche" class="form-input" placeholder=" " id="date-embauche">
-                    <label class="form-label" for="date-embauche">Date D'Embauche</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="contact" class="form-input" placeholder=" " id="contact">
-                    <label class="form-label" for="contact">contact</label>
+                    <input type="date" name="date_embauche" class="form-input" placeholder=" " id="date_embauche">
+                    <label class="form-label" for="date_embauche">Date D'Embauche</label>
                 </div>
             </div>
         </div>
