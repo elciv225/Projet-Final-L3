@@ -20,7 +20,8 @@
       "App\\Controllers\\Gestions\\\\": "app/Controllers/Gestions/",
       "App\\Controllers\\Commission\\\\": "app/Controllers/Commission/",
       "App\\Models\\": "app/Models/",
-      "App\\Dao\\": "app/Dao"
+      "App\\Dao\\": "app/Dao",
+      "App\\Services\\": "app/Services"
     }
   },
   "authors": [

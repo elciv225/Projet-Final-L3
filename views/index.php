@@ -1,3 +1,8 @@
+<?php
+
+use System\Http\Response;
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -7,7 +12,8 @@
     <link rel="stylesheet" href="/assets/css/menu.css">
     <link rel="stylesheet" href="/assets/css/gestion.css">
     <link rel="stylesheet" href="/assets/css/ajax.css">
-    <title><?= $title ?? 'Espace Commission' ?></title>
+    <link rel="icon" href="data:,">
+    <title><?= $title ?? 'Espace Administrateur' ?></title>
 </head>
 <body>
 <div id="main-container" class="main-container">
@@ -23,30 +29,44 @@
                 <div class="nav-section-title">Principal</div>
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <a href="/espace-commission"
+                        <a href="/index"
                            class="nav-link-ajax <?= (!isset($currentSection)) ? 'active' : '' ?>"
                            data-target="#content-area">
                             <span class="nav-icon">📊</span>
                             <span>Tableau de bord</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="/espace-commission/commission/discussion"
-                           class="nav-link-ajax <?= (!isset($currentSection)) ? 'active' : '' ?>"
-                           data-target="#content-area">
-                            <span class="nav-icon">👌</span>
-                            <span>Discussion</span>
-                        </a>
-                    </li>
                 </ul>
             </div>
+
+            <?php if (!empty($modules)): ?>
+                <?php foreach ($modules as $categoryName => $categoryModules): ?>
+                    <div class="nav-section">
+                        <div class="nav-section-title"><?= ucfirst($categoryName) ?></div>
+                        <ul class="nav-list">
+                            <?php foreach ($categoryModules as $moduleName => $moduleConfig): ?>
+                                <li class="nav-item">
+                                    <a href="/index/<?= $categoryName ?>/<?= $moduleName ?>"
+                                       class="nav-link-ajax <?= (isset($currentSection) && $currentSection === $moduleName && isset($currentCategory) && $currentCategory === $categoryName) ? 'active' : '' ?>"
+                                       data-target="#content-area"
+                                       data-module="<?= $moduleName ?>"
+                                       data-category="<?= $categoryName ?>">
+                                        <span class="nav-icon"><?= $moduleConfig['icone'] ?></span>
+                                        <span><?= $moduleConfig['label'] ?></span>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </nav>
 
         <div class="user-section">
             <div class="user-info">
                 <div class="user-avatar">KL</div>
                 <div class="user-details">
-                    <div class="username">Mr Wah</div>
+                    <div class="username">KOUAKOU Laurent</div>
                     <div class="user-role">Administrateur</div>
                 </div>
                 <div class="user-menu">⋯</div>
@@ -59,7 +79,7 @@
         <?php if (isset($moduleContent)): ?>
             <!-- Contenu d'un module spécifique -->
             <?php
-            if ($moduleContent instanceof \System\Http\Response) {
+            if ($moduleContent instanceof Response) {
                 // Si c'est une Response, on doit l'afficher
                 $moduleContent->send();
             } else {
@@ -68,7 +88,7 @@
             ?>
         <?php elseif (isset($heading)): ?>
             <!-- Contenu par défaut du dashboard -->
-            <?php include BASE_PATH . '/views/commission/main-content.php'; ?>
+            <?php include BASE_PATH . '/views/admin/main-content.php'; ?>
         <?php else: ?>
             <!-- Fallback si aucun contenu n'est défini -->
             <main class="main-content">
@@ -136,7 +156,7 @@
 
     // Fonction pour recharger un module spécifique
     function reloadModule(category, moduleName) {
-        const moduleUrl = `/espace-commission/${category}/${moduleName}`;
+        const moduleUrl = `/index/${category}/${moduleName}`;
         reloadSection(moduleUrl);
     }
 
@@ -158,7 +178,7 @@
             const newItem = document.createElement('li');
             newItem.className = 'nav-item';
             newItem.innerHTML = `
-                <a href="/espace-commission/${category}/${moduleName}"
+                <a href="/index/${category}/${moduleName}"
                    class="nav-link-ajax"
                    data-target="#content-area"
                    data-module="${moduleName}"

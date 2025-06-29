@@ -15,19 +15,22 @@ class Messagerie
     protected string $table = 'messagerie';
 
     /**
-     * @var string ID du membre de la commission (FK vers enseignant.utilisateur_id, partie de la CPK).
+     * Le membre de la commission (enseignant) ayant envoyé le message.
+     * @var Enseignant
      */
-    private string $membreCommissionId;
+    private Enseignant $membreCommission;
 
     /**
-     * @var string ID de l'étudiant concerné (FK vers etudiant.utilisateur_id, partie de la CPK).
+     * L'étudiant concerné par le message.
+     * @var Etudiant
      */
-    private string $etudiantConcerneId;
+    private Etudiant $etudiantConcerne;
 
     /**
-     * @var string ID de la discussion (FK vers discussion.id, partie de la CPK).
+     * La discussion à laquelle ce message appartient.
+     * @var Discussion
      */
-    private string $discussionId;
+    private Discussion $discussion;
 
     /**
      * @var string|null Contenu du message.
@@ -40,67 +43,72 @@ class Messagerie
     private string $dateMessage; // DDL spécifie DATETIME
 
     /**
-     * @param string $membreCommissionId
-     * @param string $etudiantConcerneId
-     * @param string $discussionId
+     * @param Enseignant $membreCommission
+     * @param Etudiant $etudiantConcerne
+     * @param Discussion $discussion
      * @param string|null $message
      * @param string $dateMessage
      */
-    public function __construct(string $membreCommissionId, string $etudiantConcerneId, string $discussionId, ?string $message, string $dateMessage)
-    {
-        $this->membreCommissionId = $membreCommissionId;
-        $this->etudiantConcerneId = $etudiantConcerneId;
-        $this->discussionId = $discussionId;
+    public function __construct(
+        Enseignant $membreCommission,
+        Etudiant $etudiantConcerne,
+        Discussion $discussion,
+        ?string $message,
+        string $dateMessage
+    ) {
+        $this->membreCommission = $membreCommission;
+        $this->etudiantConcerne = $etudiantConcerne;
+        $this->discussion = $discussion;
         $this->message = $message;
         $this->dateMessage = $dateMessage;
     }
 
     /**
-     * @return string
+     * @return Enseignant
      */
-    public function getMembreCommissionId(): string
+    public function getMembreCommission(): Enseignant
     {
-        return $this->membreCommissionId;
+        return $this->membreCommission;
     }
 
     /**
-     * @param string $membreCommissionId
+     * @param Enseignant $membreCommission
      */
-    public function setMembreCommissionId(string $membreCommissionId): void
+    public function setMembreCommission(Enseignant $membreCommission): void
     {
-        $this->membreCommissionId = $membreCommissionId;
+        $this->membreCommission = $membreCommission;
     }
 
     /**
-     * @return string
+     * @return Etudiant
      */
-    public function getEtudiantConcerneId(): string
+    public function getEtudiantConcerne(): Etudiant
     {
-        return $this->etudiantConcerneId;
+        return $this->etudiantConcerne;
     }
 
     /**
-     * @param string $etudiantConcerneId
+     * @param Etudiant $etudiantConcerne
      */
-    public function setEtudiantConcerneId(string $etudiantConcerneId): void
+    public function setEtudiantConcerne(Etudiant $etudiantConcerne): void
     {
-        $this->etudiantConcerneId = $etudiantConcerneId;
+        $this->etudiantConcerne = $etudiantConcerne;
     }
 
     /**
-     * @return string
+     * @return Discussion
      */
-    public function getDiscussionId(): string
+    public function getDiscussion(): Discussion
     {
-        return $this->discussionId;
+        return $this->discussion;
     }
 
     /**
-     * @param string $discussionId
+     * @param Discussion $discussion
      */
-    public function setDiscussionId(string $discussionId): void
+    public function setDiscussion(Discussion $discussion): void
     {
-        $this->discussionId = $discussionId;
+        $this->discussion = $discussion;
     }
 
     /**

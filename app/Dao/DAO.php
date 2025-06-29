@@ -3,6 +3,7 @@
 namespace App\Dao;
 
 use PDO;
+use System\Database\Database;
 
 abstract class DAO
 {
@@ -19,7 +20,7 @@ abstract class DAO
      */
     public function __construct(PDO $pdo, string $table, string $model, string $primaryKey = 'id')
     {
-        $this->pdo = $pdo;
+        $this->pdo = Database::getConnection();
         $this->table = $table;
         $this->model = $model;
         $this->primaryKey = $primaryKey;
@@ -121,28 +122,38 @@ abstract class DAO
      */
     public function rechercher(array $criteres, ?string $orderBy = null, ?string $orderType = null): array
     {
-        $where = "";
+        $whereClauses = [];
         $params = [];
 
         foreach ($criteres as $colonne => $valeur) {
-            if (!empty($where)) {
-                $where .= ' AND ';
-            }
+            $paramName = str_replace('.', '_', $colonne); // Eviter les points dans les noms de paramètres
 
-            // Gestion des valeurs NULL
             if ($valeur === null) {
-                $where .= "$colonne IS NULL";
+                $whereClauses[] = "$colonne IS NULL";
+            } elseif (is_array($valeur)) {
+                if (empty($valeur)) { // Gérer le cas d'un tableau vide pour IN() pour éviter une erreur SQL
+                    $whereClauses[] = "1=0"; // Condition toujours fausse
+                    continue;
+                }
+                // Clause IN pour les tableaux de valeurs
+                $inParams = [];
+                foreach ($valeur as $key => $v) {
+                    $pName = "{$paramName}_{$key}";
+                    $inParams[] = ":{$pName}";
+                    $params[$pName] = $v;
+                }
+                $whereClauses[] = "$colonne IN (" . implode(", ", $inParams) . ")";
             } else {
-                $paramName = str_replace('.', '_', $colonne);
-                $where .= "$colonne = :$paramName";
+                // Clause égale pour les valeurs simples
+                $whereClauses[] = "$colonne = :$paramName";
                 $params[$paramName] = $valeur;
             }
         }
 
         $sql = "SELECT * FROM $this->table";
 
-        if (!empty($where)) {
-            $sql .= " WHERE $where";
+        if (!empty($whereClauses)) {
+            $sql .= " WHERE " . implode(" AND ", $whereClauses);
         }
 
         if ($orderBy) {
@@ -150,12 +161,12 @@ abstract class DAO
         }
 
         $stmt = $this->pdo->prepare($sql);
-        foreach ($params as $key => $value) {
-            $stmt->bindValue(":$key", $value);
-        }
+        // PDOStatement::bindValue attend une référence pour le 3ème argument (type),
+        // il est plus sûr de binder dans la boucle ou directement dans execute() si les types sont simples.
+        // Ici, comme on a déjà construit $params, on peut les passer à execute().
 
         $stmt->setFetchMode(PDO::FETCH_CLASS, $this->model);
-        return $stmt->execute() ? $stmt->fetchAll() : [];
+        return $stmt->execute($params) ? $stmt->fetchAll() : [];
     }
 
     /**

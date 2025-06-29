@@ -15,14 +15,16 @@ class ApprobationRapport
     protected string $table = 'approbation_rapport';
 
     /**
-     * @var string ID de l'utilisateur approbateur (FK vers personnel_administratif.utilisateur_id, partie de la CPK).
+     * Le personnel administratif ayant approuvé le rapport.
+     * @var PersonnelAdministratif
      */
-    private string $utilisateurId;
+    private PersonnelAdministratif $personnelAdministratif;
 
     /**
-     * @var string ID du rapport étudiant (FK vers rapport_etudiant.id, partie de la CPK).
+     * Le rapport étudiant approuvé.
+     * @var RapportEtudiant
      */
-    private string $rapportEtudiantId;
+    private RapportEtudiant $rapportEtudiant;
 
     /**
      * @var string|null Date d'approbation.
@@ -30,47 +32,50 @@ class ApprobationRapport
     private ?string $dateApprobation; // DDL spécifie DATE
 
     /**
-     * @param string $utilisateurId
-     * @param string $rapportEtudiantId
+     * @param PersonnelAdministratif $personnelAdministratif
+     * @param RapportEtudiant $rapportEtudiant
      * @param string|null $dateApprobation
      */
-    public function __construct(string $utilisateurId, string $rapportEtudiantId, ?string $dateApprobation)
-    {
-        $this->utilisateurId = $utilisateurId;
-        $this->rapportEtudiantId = $rapportEtudiantId;
+    public function __construct(
+        PersonnelAdministratif $personnelAdministratif,
+        RapportEtudiant $rapportEtudiant,
+        ?string $dateApprobation
+    ) {
+        $this->personnelAdministratif = $personnelAdministratif;
+        $this->rapportEtudiant = $rapportEtudiant;
         $this->dateApprobation = $dateApprobation;
     }
 
     /**
-     * @return string
+     * @return PersonnelAdministratif
      */
-    public function getUtilisateurId(): string
+    public function getPersonnelAdministratif(): PersonnelAdministratif
     {
-        return $this->utilisateurId;
+        return $this->personnelAdministratif;
     }
 
     /**
-     * @param string $utilisateurId
+     * @param PersonnelAdministratif $personnelAdministratif
      */
-    public function setUtilisateurId(string $utilisateurId): void
+    public function setPersonnelAdministratif(PersonnelAdministratif $personnelAdministratif): void
     {
-        $this->utilisateurId = $utilisateurId;
+        $this->personnelAdministratif = $personnelAdministratif;
     }
 
     /**
-     * @return string
+     * @return RapportEtudiant
      */
-    public function getRapportEtudiantId(): string
+    public function getRapportEtudiant(): RapportEtudiant
     {
-        return $this->rapportEtudiantId;
+        return $this->rapportEtudiant;
     }
 
     /**
-     * @param string $rapportEtudiantId
+     * @param RapportEtudiant $rapportEtudiant
      */
-    public function setRapportEtudiantId(string $rapportEtudiantId): void
+    public function setRapportEtudiant(RapportEtudiant $rapportEtudiant): void
     {
-        $this->rapportEtudiantId = $rapportEtudiantId;
+        $this->rapportEtudiant = $rapportEtudiant;
     }
 
     /**

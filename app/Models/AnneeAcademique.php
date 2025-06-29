@@ -2,31 +2,11 @@
 
 namespace App\Models;
 
-/**
- * Class AnneeAcademique
- *
- * @package App\Models
- */
 class AnneeAcademique
 {
-    /**
-     * @var string
-     */
     protected string $table = 'annee_academique';
-
-    /**
-     * @var string L'ID de l'année académique.
-     */
     private string $id;
-
-    /**
-     * @var string La date de début de l'année académique.
-     */
     private string $dateDebut; // DDL spécifie DATE
-
-    /**
-     * @var string La date de fin de l'année académique.
-     */
     private string $dateFin; // DDL spécifie DATE
 
     /**

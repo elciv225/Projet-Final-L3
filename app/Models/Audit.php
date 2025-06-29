@@ -22,45 +22,45 @@ class Audit
     /**
      * @var string|null Description de l'audit.
      */
-    private ?string $description; // DDL spécifie TEXT
+    private ?string $description; // DDL spécifie VARCHAR(255)
 
     /**
-     * @var string|null Date et heure de l'action.
+     * @var string|null Date et heure du traitement.
      */
-    private ?string $dateAction; // DDL spécifie DATETIME
+    private ?string $dateTraitement; // DDL spécifie TIMESTAMP
 
     /**
-     * @var string L'ID de l'action (FK).
+     * Le traitement audité.
+     * @var Traitement
      */
-    private string $actionId;
+    private Traitement $traitement;
 
     /**
-     * @var string L'ID du traitement (FK).
+     * L'utilisateur ayant effectué le traitement.
+     * @var Utilisateur
      */
-    private string $traitementId;
-
-    /**
-     * @var string L'ID de l'utilisateur (FK).
-     */
-    private string $utilisateurId;
+    private Utilisateur $utilisateur;
 
 
     /**
-     * @param int|null $id
+     * @param Traitement $traitement
+     * @param Utilisateur $utilisateur
      * @param string|null $description
-     * @param string|null $dateAction
-     * @param string $actionId
-     * @param string $traitementId
-     * @param string $utilisateurId
+     * @param string|null $dateTraitement
+     * @param int|null $id
      */
-    public function __construct(?int $id, ?string $description, ?string $dateAction, string $actionId, string $traitementId, string $utilisateurId)
-    {
+    public function __construct(
+        Traitement $traitement,
+        Utilisateur $utilisateur,
+        ?string $description,
+        ?string $dateTraitement,
+        ?int $id = null // L'ID est généralement défini après l'insertion
+    ) {
         $this->id = $id;
         $this->description = $description;
-        $this->dateAction = $dateAction;
-        $this->actionId = $actionId;
-        $this->traitementId = $traitementId;
-        $this->utilisateurId = $utilisateurId;
+        $this->dateTraitement = $dateTraitement;
+        $this->traitement = $traitement;
+        $this->utilisateur = $utilisateur;
     }
 
     /**
@@ -98,65 +98,49 @@ class Audit
     /**
      * @return string|null
      */
-    public function getDateAction(): ?string
+    public function getDateTraitement(): ?string
     {
-        return $this->dateAction;
+        return $this->dateTraitement;
     }
 
     /**
-     * @param string|null $dateAction
+     * @param string|null $dateTraitement
      */
-    public function setDateAction(?string $dateAction): void
+    public function setDateTraitement(?string $dateTraitement): void
     {
-        $this->dateAction = $dateAction;
+        $this->dateTraitement = $dateTraitement;
     }
 
     /**
-     * @return string
+     * @return Traitement
      */
-    public function getActionId(): string
+    public function getTraitement(): Traitement
     {
-        return $this->actionId;
+        return $this->traitement;
     }
 
     /**
-     * @param string $actionId
+     * @param Traitement $traitement
      */
-    public function setActionId(string $actionId): void
+    public function setTraitement(Traitement $traitement): void
     {
-        $this->actionId = $actionId;
+        $this->traitement = $traitement;
     }
 
     /**
-     * @return string
+     * @return Utilisateur
      */
-    public function getTraitementId(): string
+    public function getUtilisateur(): Utilisateur
     {
-        return $this->traitementId;
+        return $this->utilisateur;
     }
 
     /**
-     * @param string $traitementId
+     * @param Utilisateur $utilisateur
      */
-    public function setTraitementId(string $traitementId): void
+    public function setUtilisateur(Utilisateur $utilisateur): void
     {
-        $this->traitementId = $traitementId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUtilisateurId(): string
-    {
-        return $this->utilisateurId;
-    }
-
-    /**
-     * @param string $utilisateurId
-     */
-    public function setUtilisateurId(string $utilisateurId): void
-    {
-        $this->utilisateurId = $utilisateurId;
+        $this->utilisateur = $utilisateur;
     }
 
     /**

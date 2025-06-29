@@ -15,14 +15,16 @@ class ValidationRapport
     protected string $table = 'validation_rapport';
 
     /**
-     * @var string L'ID de l'utilisateur validateur (FK vers enseignant.utilisateur_id, partie de la CPK).
+     * L'enseignant validateur.
+     * @var Enseignant
      */
-    private string $utilisateurId;
+    private Enseignant $enseignant;
 
     /**
-     * @var string L'ID du rapport étudiant (FK vers rapport_etudiant.id, partie de la CPK).
+     * Le rapport étudiant validé.
+     * @var RapportEtudiant
      */
-    private string $rapportEtudiantId;
+    private RapportEtudiant $rapportEtudiant;
 
     /**
      * @var string|null La date de validation.
@@ -35,49 +37,53 @@ class ValidationRapport
     private ?string $commentaire;     // DDL spécifie TEXT
 
     /**
-     * @param string $utilisateurId
-     * @param string $rapportEtudiantId
+     * @param Enseignant $enseignant
+     * @param RapportEtudiant $rapportEtudiant
      * @param string|null $dateValidation
      * @param string|null $commentaire
      */
-    public function __construct(string $utilisateurId, string $rapportEtudiantId, ?string $dateValidation, ?string $commentaire)
-    {
-        $this->utilisateurId = $utilisateurId;
-        $this->rapportEtudiantId = $rapportEtudiantId;
+    public function __construct(
+        Enseignant $enseignant,
+        RapportEtudiant $rapportEtudiant,
+        ?string $dateValidation,
+        ?string $commentaire
+    ) {
+        $this->enseignant = $enseignant;
+        $this->rapportEtudiant = $rapportEtudiant;
         $this->dateValidation = $dateValidation;
         $this->commentaire = $commentaire;
     }
 
     /**
-     * @return string
+     * @return Enseignant
      */
-    public function getUtilisateurId(): string
+    public function getEnseignant(): Enseignant
     {
-        return $this->utilisateurId;
+        return $this->enseignant;
     }
 
     /**
-     * @param string $utilisateurId
+     * @param Enseignant $enseignant
      */
-    public function setUtilisateurId(string $utilisateurId): void
+    public function setEnseignant(Enseignant $enseignant): void
     {
-        $this->utilisateurId = $utilisateurId;
+        $this->enseignant = $enseignant;
     }
 
     /**
-     * @return string
+     * @return RapportEtudiant
      */
-    public function getRapportEtudiantId(): string
+    public function getRapportEtudiant(): RapportEtudiant
     {
-        return $this->rapportEtudiantId;
+        return $this->rapportEtudiant;
     }
 
     /**
-     * @param string $rapportEtudiantId
+     * @param RapportEtudiant $rapportEtudiant
      */
-    public function setRapportEtudiantId(string $rapportEtudiantId): void
+    public function setRapportEtudiant(RapportEtudiant $rapportEtudiant): void
     {
-        $this->rapportEtudiantId = $rapportEtudiantId;
+        $this->rapportEtudiant = $rapportEtudiant;
     }
 
     /**

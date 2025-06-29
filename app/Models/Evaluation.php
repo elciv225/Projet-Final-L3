@@ -15,19 +15,22 @@ class Evaluation
     protected string $table = 'evaluation';
 
     /**
-     * @var string L'ID de l'enseignant (FK, partie de la CPK).
+     * L'enseignant qui a donné l'évaluation.
+     * @var Enseignant
      */
-    private string $enseignantId;
+    private Enseignant $enseignant;
 
     /**
-     * @var string L'ID de l'étudiant (FK, partie de la CPK).
+     * L'étudiant qui a été évalué.
+     * @var Etudiant
      */
-    private string $etudiantId;
+    private Etudiant $etudiant;
 
     /**
-     * @var string L'ID de l'ECUE (FK, partie de la CPK).
+     * L'ECUE pour laquelle l'évaluation a été donnée.
+     * @var Ecue
      */
-    private string $ecueId;
+    private Ecue $ecue;
 
     /**
      * @var string|null La date de l'évaluation.
@@ -37,70 +40,75 @@ class Evaluation
     /**
      * @var int|null La note de l'étudiant.
      */
-    private ?int $note; // DDL spécifie TINYINT UNSIGNED
+    private ?int $note; // DDL spécifie SMALLINT (SQL d'origine), le modèle PHP avait TINYINT UNSIGNED
 
     /**
-     * @param string $enseignantId
-     * @param string $etudiantId
-     * @param string $ecueId
+     * @param Enseignant $enseignant
+     * @param Etudiant $etudiant
+     * @param Ecue $ecue
      * @param string|null $dateEvaluation
      * @param int|null $note
      */
-    public function __construct(string $enseignantId, string $etudiantId, string $ecueId, ?string $dateEvaluation, ?int $note)
-    {
-        $this->enseignantId = $enseignantId;
-        $this->etudiantId = $etudiantId;
-        $this->ecueId = $ecueId;
+    public function __construct(
+        Enseignant $enseignant,
+        Etudiant $etudiant,
+        Ecue $ecue,
+        ?string $dateEvaluation,
+        ?int $note
+    ) {
+        $this->enseignant = $enseignant;
+        $this->etudiant = $etudiant;
+        $this->ecue = $ecue;
         $this->dateEvaluation = $dateEvaluation;
         $this->note = $note;
     }
 
     /**
-     * @return string
+     * @return Enseignant
      */
-    public function getEnseignantId(): string
+    public function getEnseignant(): Enseignant
     {
-        return $this->enseignantId;
+        return $this->enseignant;
     }
 
     /**
-     * @param string $enseignantId
+     * @param Enseignant $enseignant
      */
-    public function setEnseignantId(string $enseignantId): void
+    public function setEnseignant(Enseignant $enseignant): void
     {
-        $this->enseignantId = $enseignantId;
+        $this->enseignant = $enseignant;
     }
 
     /**
-     * @return string
+     * @return Etudiant
      */
-    public function getEtudiantId(): string
+    public function getEtudiant(): Etudiant
     {
-        return $this->etudiantId;
+        return $this->etudiant;
     }
 
     /**
-     * @param string $etudiantId
+     * @param Etudiant $etudiant
      */
-    public function setEtudiantId(string $etudiantId): void
+    public function setEtudiant(Etudiant $etudiant): void
     {
-        $this->etudiantId = $etudiantId;
+        $this->etudiant = $etudiant;
     }
 
     /**
-     * @return string
+     * @return Ecue
      */
-    public function getEcueId(): string
+    public function getEcue(): Ecue
     {
-        return $this->ecueId;
+        return $this->ecue;
     }
 
     /**
-     * @param string $ecueId
+     * @param Ecue $ecue
      */
-    public function setEcueId(string $ecueId): void
+    public function setEcue(Ecue $ecue): void
     {
-        $this->ecueId = $ecueId;
+        $this->ecue = $ecue;
     }
 
     /**

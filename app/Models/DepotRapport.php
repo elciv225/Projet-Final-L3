@@ -15,14 +15,16 @@ class DepotRapport
     protected string $table = 'depot_rapport';
 
     /**
-     * @var string L'ID de l'étudiant qui a soumis (FK vers etudiant.utilisateur_id, partie de la CPK).
+     * L'étudiant qui a soumis le rapport.
+     * @var Etudiant
      */
-    private string $utilisateurId;
+    private Etudiant $etudiant;
 
     /**
-     * @var string L'ID du rapport étudiant (FK vers rapport_etudiant.id, partie de la CPK).
+     * Le rapport étudiant soumis.
+     * @var RapportEtudiant
      */
-    private string $rapportEtudiantId;
+    private RapportEtudiant $rapportEtudiant;
 
     /**
      * @var string|null La date de soumission.
@@ -30,47 +32,50 @@ class DepotRapport
     private ?string $dateDepot; // DDL spécifie DATE
 
     /**
-     * @param string $utilisateurId
-     * @param string $rapportEtudiantId
+     * @param Etudiant $etudiant
+     * @param RapportEtudiant $rapportEtudiant
      * @param string|null $dateDepot
      */
-    public function __construct(string $utilisateurId, string $rapportEtudiantId, ?string $dateDepot)
-    {
-        $this->utilisateurId = $utilisateurId;
-        $this->rapportEtudiantId = $rapportEtudiantId;
+    public function __construct(
+        Etudiant $etudiant,
+        RapportEtudiant $rapportEtudiant,
+        ?string $dateDepot
+    ) {
+        $this->etudiant = $etudiant;
+        $this->rapportEtudiant = $rapportEtudiant;
         $this->dateDepot = $dateDepot;
     }
 
     /**
-     * @return string
+     * @return Etudiant
      */
-    public function getUtilisateurId(): string
+    public function getEtudiant(): Etudiant
     {
-        return $this->utilisateurId;
+        return $this->etudiant;
     }
 
     /**
-     * @param string $utilisateurId
+     * @param Etudiant $etudiant
      */
-    public function setUtilisateurId(string $utilisateurId): void
+    public function setEtudiant(Etudiant $etudiant): void
     {
-        $this->utilisateurId = $utilisateurId;
+        $this->etudiant = $etudiant;
     }
 
     /**
-     * @return string
+     * @return RapportEtudiant
      */
-    public function getRapportEtudiantId(): string
+    public function getRapportEtudiant(): RapportEtudiant
     {
-        return $this->rapportEtudiantId;
+        return $this->rapportEtudiant;
     }
 
     /**
-     * @param string $rapportEtudiantId
+     * @param RapportEtudiant $rapportEtudiant
      */
-    public function setRapportEtudiantId(string $rapportEtudiantId): void
+    public function setRapportEtudiant(RapportEtudiant $rapportEtudiant): void
     {
-        $this->rapportEtudiantId = $rapportEtudiantId;
+        $this->rapportEtudiant = $rapportEtudiant;
     }
 
     /**

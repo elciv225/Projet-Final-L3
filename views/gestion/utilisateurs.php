@@ -73,7 +73,7 @@
                     <span class="search-icon">🔍</span>
                     <input type="text" id="searchInput" class="search-input" placeholder="Rechercher par ...">
                 </div>
-                <button id="btnExportPDF" class="btn btn-secondary">🕐 Exporter en PDF</button>
+            </div> <div class="header-actions"> <button id="btnExportPDF" class="btn btn-secondary">🕐 Exporter en PDF</button>
                 <button id="btnExportExcel" class="btn btn-secondary">📤 Exporter sur Excel</button>
                 <button id="btnPrint" class="btn btn-secondary">📊 Imprimer</button>
                 <button class="btn btn-primary" id="btnSupprimerSelection">Supprimer</button>

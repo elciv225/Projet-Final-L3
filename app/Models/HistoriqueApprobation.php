@@ -15,62 +15,67 @@ class HistoriqueApprobation
     protected string $table = 'historique_approbation';
 
     /**
-     * @var string L'ID du niveau d'approbation (FK, partie de la CPK).
+     * Le niveau d'approbation.
+     * @var NiveauApprobation
      */
-    private string $niveauApprobationId;
+    private NiveauApprobation $niveauApprobation;
 
     /**
-     * @var string L'ID du compte rendu (FK, partie de la CPK).
+     * Le compte rendu concerné.
+     * @var CompteRendu
      */
-    private string $compteRenduId;
+    private CompteRendu $compteRendu;
 
     /**
-     * @var string|null La date d'approbation.
+     * @var string|null La date d'approbation (format TIMESTAMP).
      */
-    private ?string $dateApprobation; // DDL spécifie DATETIME
+    private ?string $dateApprobation;
 
     /**
-     * @param string $niveauApprobationId
-     * @param string $compteRenduId
+     * @param NiveauApprobation $niveauApprobation
+     * @param CompteRendu $compteRendu
      * @param string|null $dateApprobation
      */
-    public function __construct(string $niveauApprobationId, string $compteRenduId, ?string $dateApprobation)
-    {
-        $this->niveauApprobationId = $niveauApprobationId;
-        $this->compteRenduId = $compteRenduId;
+    public function __construct(
+        NiveauApprobation $niveauApprobation,
+        CompteRendu $compteRendu,
+        ?string $dateApprobation
+    ) {
+        $this->niveauApprobation = $niveauApprobation;
+        $this->compteRendu = $compteRendu;
         $this->dateApprobation = $dateApprobation;
     }
 
     /**
-     * @return string
+     * @return NiveauApprobation
      */
-    public function getNiveauApprobationId(): string
+    public function getNiveauApprobation(): NiveauApprobation
     {
-        return $this->niveauApprobationId;
+        return $this->niveauApprobation;
     }
 
     /**
-     * @param string $niveauApprobationId
+     * @param NiveauApprobation $niveauApprobation
      */
-    public function setNiveauApprobationId(string $niveauApprobationId): void
+    public function setNiveauApprobation(NiveauApprobation $niveauApprobation): void
     {
-        $this->niveauApprobationId = $niveauApprobationId;
+        $this->niveauApprobation = $niveauApprobation;
     }
 
     /**
-     * @return string
+     * @return CompteRendu
      */
-    public function getCompteRenduId(): string
+    public function getCompteRendu(): CompteRendu
     {
-        return $this->compteRenduId;
+        return $this->compteRendu;
     }
 
     /**
-     * @param string $compteRenduId
+     * @param CompteRendu $compteRendu
      */
-    public function setCompteRenduId(string $compteRenduId): void
+    public function setCompteRendu(CompteRendu $compteRendu): void
     {
-        $this->compteRenduId = $compteRenduId;
+        $this->compteRendu = $compteRendu;
     }
 
     /**

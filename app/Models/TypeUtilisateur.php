@@ -25,20 +25,24 @@ class TypeUtilisateur
     private string $libelle;
 
     /**
-     * @var string L'ID de la catégorie utilisateur à laquelle ce type appartient (FK).
+     * La catégorie utilisateur à laquelle ce type appartient.
+     * @var CategorieUtilisateur
      */
-    private string $categorieUtilisateurId; // DDL spécifie NOT NULL
+    private CategorieUtilisateur $categorieUtilisateur;
 
     /**
      * @param string $id
      * @param string $libelle
-     * @param string $categorieUtilisateurId
+     * @param CategorieUtilisateur $categorieUtilisateur
      */
-    public function __construct(string $id, string $libelle, string $categorieUtilisateurId)
-    {
+    public function __construct(
+        string $id,
+        string $libelle,
+        CategorieUtilisateur $categorieUtilisateur
+    ) {
         $this->id = $id;
         $this->libelle = $libelle;
-        $this->categorieUtilisateurId = $categorieUtilisateurId;
+        $this->categorieUtilisateur = $categorieUtilisateur;
     }
 
     /**
@@ -74,19 +78,19 @@ class TypeUtilisateur
     }
 
     /**
-     * @return string
+     * @return CategorieUtilisateur
      */
-    public function getCategorieUtilisateurId(): string
+    public function getCategorieUtilisateur(): CategorieUtilisateur
     {
-        return $this->categorieUtilisateurId;
+        return $this->categorieUtilisateur;
     }
 
     /**
-     * @param string $categorieUtilisateurId
+     * @param CategorieUtilisateur $categorieUtilisateur
      */
-    public function setCategorieUtilisateurId(string $categorieUtilisateurId): void
+    public function setCategorieUtilisateur(CategorieUtilisateur $categorieUtilisateur): void
     {
-        $this->categorieUtilisateurId = $categorieUtilisateurId;
+        $this->categorieUtilisateur = $categorieUtilisateur;
     }
 
     /**

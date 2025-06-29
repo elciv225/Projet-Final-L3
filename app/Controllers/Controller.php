@@ -3,16 +3,20 @@
 namespace App\Controllers;
 
 use Exception;
+use System\Database\Database;
 use System\Http\Request;
 use System\Http\Response;
+use PDO;
 
 class Controller
 {
     protected Request $request;
+    protected pdo $pdo;
 
     public function __construct()
     {
         $this->request = Request::create();
+        $this->pdo = Database::getConnection();
     }
 
 
