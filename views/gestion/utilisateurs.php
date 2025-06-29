@@ -78,6 +78,7 @@
                 <button id="btnPrint" class="btn btn-secondary">📊 Imprimer</button>
                 <button class="btn btn-primary" id="btnSupprimerSelection">Supprimer</button>
             </div>
+
         </div>
 
         <div style="padding: 0 24px; border-bottom: 1px solid #E5E7EB;">
