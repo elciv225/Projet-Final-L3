@@ -8,21 +8,58 @@
             <input placeholder="Rechercher un étudiant..." type="text"/>
         </div>
         <ul class="student-list">
-            <li class="student-item active" data-student-id="1">
+            <?php
+                // Example of how current user ID and name would be fetched in PHP.
+                // This is highly dependent on the actual authentication system.
+                // session_start(); // Ensure session is started
+                // $currentAuteurId = $_SESSION['user']['id'] ?? 'DEFAULT_USER_ID_IF_NOT_LOGGED_IN';
+                // $currentUserFullName = $_SESSION['user']['nom_complet'] ?? 'Utilisateur Anonyme';
+                // $websocketPort = $_ENV['WEBSOCKET_PORT'] ?? '8080';
+
+                // --- Fallback for when PHP session data isn't available in this context ---
+                $currentAuteurId = 'PHP_USER_ID_PLACEHOLDER'; // Replace with actual PHP variable
+                $currentUserFullName = 'PHP_USER_NAME_PLACEHOLDER'; // Replace with actual PHP variable
+                $websocketPort = '8080'; // Default, can be overridden by .env in websocket_server.php
+            ?>
+            <script>
+                // Pass PHP variables to JavaScript
+                window.currentAuteurId = <?php echo json_encode($currentAuteurId); ?>;
+                window.currentUserFullName = <?php echo json_encode($currentUserFullName); ?>;
+                window.websocketPort = <?php echo json_encode($websocketPort); ?>;
+            </script>
+
+            <li class="student-item active" data-student-id="1" data-discussion-id="discussion_rapport_E12345">
                 <div>
                     <div class="student-name">Dupont, Jean</div>
                     <div style="font-size: 0.8em; color: var(--text-secondary);">ID: E12345</div>
                 </div>
                 <span class="status-badge status-in-progress">En cours</span>
             </li>
-            <li class="student-item" data-student-id="2">
+            <?php
+                // PHP Example: Assume $students is an array of student objects/arrays
+                // Each student object should have a `discussion_id` property/key
+                // And an `id` for `data-student-id` (matching mock data keys if used)
+                // And the necessary fields like nom_complet, matricule, statut_css_class, statut_libelle
+                /*
+                foreach ($students as $student) {
+                    echo '<li class="student-item" data-student-id="' . htmlspecialchars($student->id_for_js_mock_data) . '" data-discussion-id="' . htmlspecialchars($student->discussion_id) . '">';
+                    echo '<div>';
+                    echo '<div class="student-name">' . htmlspecialchars($student->nom_complet) . '</div>';
+                    echo '<div style="font-size: 0.8em; color: var(--text-secondary);">ID: ' . htmlspecialchars($student->matricule) . '</div>';
+                    echo '</div>';
+                    echo '<span class="status-badge status-' . htmlspecialchars($student->statut_css_class) . '">' . htmlspecialchars($student->statut_libelle) . '</span>';
+                    echo '</li>';
+                }
+                */
+            ?>
+            <li class="student-item" data-student-id="2" data-discussion-id="discussion_rapport_E67890">
                 <div>
                     <div class="student-name">Martin, Alice</div>
                     <div style="font-size: 0.8em; color: var(--text-secondary);">ID: E67890</div>
                 </div>
                 <span class="status-badge status-upcoming">À venir</span>
             </li>
-            <li class="student-item" data-student-id="3">
+            <li class="student-item" data-student-id="3" data-discussion-id="discussion_rapport_E24680">
                 <div>
                     <div class="student-name">Bernard, Lucas</div>
                     <div style="font-size: 0.8em; color: var(--text-secondary);">ID: E24680</div>
@@ -35,14 +72,14 @@
             <span>Historique des rapports</span>
         </div>
         <ul class="student-list hidden" id="historyList">
-            <li class="student-item" data-student-id="4">
+            <li class="student-item" data-student-id="4" data-discussion-id="discussion_rapport_E13579_history">
                 <div>
                     <div class="student-name">Petit, Chloé</div>
                     <div style="font-size: 0.8em; color: var(--text-secondary);">ID: E13579</div>
                 </div>
                 <span class="status-badge status-validated">Validé</span>
             </li>
-            <li class="student-item" data-student-id="5">
+            <li class="student-item" data-student-id="5" data-discussion-id="discussion_rapport_E97531_history">
                 <div>
                     <div class="student-name">Leroy, Tom</div>
                     <div style="font-size: 0.8em; color: var(--text-secondary);">ID: E97531</div>
@@ -52,9 +89,14 @@
         </ul>
     </aside>
     <main class="central-section">
-        <div class="discussion-header">
-            <h2>Discussion: Rapport de Jean Dupont</h2>
-            <button class="close-session-btn" disabled="" id="closeSessionBtn">Clôturer la session</button>
+        <div class="page-header discussion-page-header"> <!-- Adapted class -->
+            <div class="header-left"> <!-- Mimic structure from main-content.php -->
+                <h2 id="discussionTitle">Discussion: Rapport de Jean Dupont</h2>
+                <!-- Optional: <p class="header-subtitle">Session de discussion en temps réel</p> -->
+            </div>
+            <div class="header-right">
+                 <button class="btn btn-primary close-session-btn" disabled id="closeSessionBtn">Clôturer la session</button> <!-- Added btn classes -->
+            </div>
         </div>
         <div class="chat-container">
             <div class="discussion-area" id="discussionArea">

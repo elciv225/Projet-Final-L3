@@ -431,3 +431,142 @@
 .hidden {
     display: none !important;
 }
+
+/* ============================================= */
+/* General Button Styles (if not in main.css) */
+/* ============================================= */
+.btn {
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-variation-settings: "wght" 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none; /* For <a> tags styled as buttons */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: var(--button-primary);
+    color: white;
+    border-color: var(--button-primary);
+}
+.btn-primary:hover {
+    background-color: var(--button-primary-hover);
+    border-color: var(--button-primary-hover);
+    box-shadow: var(--shadow-sm);
+}
+.btn-primary:disabled,
+.btn-primary.disabled { /* Added .disabled class for <a> tags */
+    background-color: var(--button-disabled);
+    color: var(--text-disabled);
+    border-color: var(--button-disabled);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background-color: var(--button-secondary);
+    color: var(--text-primary); /* Ensure contrast with yellow */
+    border-color: var(--button-secondary);
+}
+.btn-secondary:hover {
+    background-color: var(--button-secondary-hover);
+    border-color: var(--button-secondary-hover);
+    box-shadow: var(--shadow-sm);
+}
+.btn-secondary:disabled,
+.btn-secondary.disabled {
+    background-color: var(--background-input); /* Lighter disabled for secondary */
+    color: var(--text-disabled);
+    border-color: var(--border-light);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+
+/* --- Adapted Page Header for Discussions --- */
+.discussion-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px; /* Similar to .page-header in main-content if it had padding */
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-medium); /* Common separator style */
+    flex-shrink: 0;
+}
+
+.discussion-page-header .header-left h2 {
+    font-size: 1.6rem; /* Match .discussion-header h2 old style, or h1 from main-content */
+    font-variation-settings: "wght" 700;
+    color: var(--text-primary);
+    margin: 0; /* Remove default margins */
+}
+
+.discussion-page-header .header-left .header-subtitle { /* If subtitle is added */
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+/* Ensure the close-session-btn (which now also has .btn .btn-primary) uses these new styles */
+.close-session-btn {
+    /* Specific overrides if .btn .btn-primary is not enough, but should be fine now */
+    /* Example: min-width for consistency if needed */
+}
+
+/* Ensure message send button looks like a .btn */
+.message-input-area button {
+    /* background-color: var(--button-primary); - already there */
+    /* color: white; - already there */
+    /* border: none; - already there */
+    padding: 10px 14px; /* Adjusted padding to match .btn more closely */
+    /* cursor: pointer; - already there */
+    /* display: flex; - already there */
+    /* align-items: center; - already there */
+    /* justify-content: center; - already there */
+    /* transition: background-color 0.2s ease; - already there */
+    font-size: 0.9rem; /* Added */
+    font-variation-settings: "wght" 600; /* Added */
+}
+/* .message-input-area button:hover { background-color: var(--button-primary-hover); } - already there */
+.message-input-area button .material-icons-outlined {
+    font-size: 1.5rem; /* Slightly adjusted for new padding */
+}
+
+/* Styling for student-item active state already exists and is distinct, can keep as is */
+/* Styling for chat-container and voting-area already defines background, shadow, border. */
+/* Check if they need adjustment to match stat-card or table-container */
+
+/* For example, main-content.php .stat-card and .table-container might not have explicit borders */
+/* but rely on box-shadow and background. */
+/* .chat-container and .voting-area already have:
+    background-color: var(--background-primary);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light); -> This border might be the difference.
+   Let's try removing the explicit border if main-content cards don't have it, relying on shadow.
+*/
+.chat-container {
+    /* border: none; */ /* Optional: if cards in main-content.php don't have borders */
+}
+.voting-area {
+    /* border: none; */ /* Optional */
+}
+
+/* Adjusting search bar for consistency if needed */
+.search-bar {
+    /* padding: 10px 14px; - already there */
+    border-radius: 0; /* Common style for inputs in table-header, etc. */
+}
+.search-bar input {
+    /* font-size: 0.9rem; - already there */
+}
+
+/* Adjusting text areas for consistency */
+.message-input-area textarea,
+.comment-box textarea {
+    border-radius: 0; /* Common style for inputs */
+}

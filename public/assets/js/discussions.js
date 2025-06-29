@@ -107,28 +107,141 @@
     const messageInput = document.getElementById('messageInput');
     const sendMessageBtn = document.getElementById('sendMessageBtn');
     const discussionArea = document.getElementById('discussionArea');
+
+    // WebSocket variables - These should be initialized by PHP
+    let websocket = null;
+    let currentDiscussionId = null; // Will be set when a student is selected
+    let currentAuteurId = window.currentAuteurId || 'UNKNOWN_AUTEUR_ID'; // Provided by PHP
+    const websocketPort = window.websocketPort || '8080';
+    const websocketUrl = `ws://${window.location.hostname}:${websocketPort}`;
+
+    function initWebSocket() {
+        console.log(`Attempting to connect to WebSocket: ${websocketUrl}`);
+        websocket = new WebSocket(websocketUrl);
+
+        websocket.onopen = function(e) {
+            console.log("WebSocket connection established!");
+            // If a discussion is already selected, maybe inform the server
+            // For now, server handles room association on first message with discussion_id
+        };
+
+        websocket.onmessage = function(e) {
+            console.log("Message from server: ", e.data);
+            try {
+                const data = JSON.parse(e.data);
+                if (data.error) {
+                    console.error("Server error:", data.error);
+                    // Optionally display error to user in a less intrusive way
+                    alert(`Server error: ${data.error}`);
+                    return;
+                }
+                if (data.discussion_id && data.discussion_id === currentDiscussionId) {
+                    displayMessage(data);
+                } else if (data.discussion_id) {
+                    console.log(`Message for a different discussion room (${data.discussion_id}), ignoring.`);
+                }
+            } catch (error) {
+                console.error("Failed to parse server message or invalid format:", e.data, error);
+            }
+        };
+
+        websocket.onclose = function(e) {
+            console.log("WebSocket connection closed. Code:", e.code, "Reason:", e.reason);
+            // Optional: Attempt to reconnect
+            // setTimeout(initWebSocket, 5000); // Reconnect after 5 seconds
+        };
+
+        websocket.onerror = function(e) {
+            console.error("WebSocket error observed:", e);
+        };
+    }
+
+    function displayMessage(data) {
+        const messageDiv = document.createElement('div');
+        const isSentByCurrentUser = data.auteur_id === currentAuteurId;
+        messageDiv.classList.add('message', isSentByCurrentUser ? 'sent' : 'received');
+
+        let senderName = isSentByCurrentUser ? 'Vous' : data.auteur_nom || 'Utilisateur Inconnu';
+        // Example: if logged in user is "Prof. Durand", and message comes from "Prof. Durand"
+        // this logic might need refinement based on how `currentAuteurId` and `auteur_nom` are structured.
+        // The mock HTML had "Vous (Prof. Durand)". We'll use the name from the server for others.
+        if (isSentByCurrentUser && window.currentUserFullName) {
+             senderName = `Vous (${window.currentUserFullName})`;
+        } else if (data.auteur_nom) {
+            senderName = data.auteur_nom;
+        }
+
+
+        messageDiv.innerHTML = `<div class="message-sender">${senderName}</div>${data.message.replace(/\n/g, '<br>')}`;
+        discussionArea.appendChild(messageDiv);
+        discussionArea.scrollTop = discussionArea.scrollHeight;
+    }
+
     sendMessageBtn.addEventListener('click', sendMessage);
     messageInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-}
-});
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
 
     function sendMessage() {
-    const messageText = messageInput.value.trim();
-    if (messageText) {
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', 'sent');
-    messageDiv.innerHTML = `<div class="message-sender">Vous (Prof. Durand)</div>${messageText.replace(/\n/g, '<br>')}`;
-    discussionArea.appendChild(messageDiv);
-    messageInput.value = '';
-    discussionArea.scrollTop = discussionArea.scrollHeight;
-    // Auto-resize textarea
-    messageInput.style.height = 'auto';
-    messageInput.style.height = messageInput.scrollHeight + 'px';
-}
-}
+        const messageText = messageInput.value.trim();
+        if (messageText && websocket && websocket.readyState === WebSocket.OPEN) {
+            if (!currentDiscussionId) {
+                alert("Veuillez sélectionner une discussion avant d'envoyer un message.");
+                return;
+            }
+            if (!currentAuteurId || currentAuteurId === 'UNKNOWN_AUTEUR_ID') {
+                alert("Erreur: Identifiant de l'auteur non défini. Veuillez rafraîchir la page.");
+                console.error("currentAuteurId is not set.");
+                return;
+            }
+
+            const messagePayload = {
+                discussion_id: currentDiscussionId,
+                auteur_id: currentAuteurId,
+                message: messageText
+            };
+            websocket.send(JSON.stringify(messagePayload));
+            console.log("Message sent to server:", messagePayload);
+            messageInput.value = '';
+            // Auto-resize textarea
+            messageInput.style.height = 'auto';
+            messageInput.style.height = (messageInput.scrollHeight) + 'px';
+        } else if (!websocket || websocket.readyState !== WebSocket.OPEN) {
+            alert("La connexion WebSocket n'est pas établie. Tentative de reconnexion...");
+            initWebSocket(); // Try to reconnect
+        }
+    }
+
+    // Initialize WebSocket on page load
+    initWebSocket();
+
+    // Update currentDiscussionId when a student is selected
+    // And clear the discussion area for the new student
+    studentItems.forEach(item => {
+        item.addEventListener('click', () => {
+            // Existing student selection logic...
+            const studentId = item.dataset.studentId; // This is '1', '2', etc.
+            // IMPORTANT: We need a proper discussion_id.
+            // For now, let's assume the rapport_etudiant_id or a similar unique ID for the discussion context.
+            // This mock studentId might not be the actual discussion_id.
+            // This needs to be provided by PHP, e.g., as another data attribute.
+            // Let's assume for now `item.dataset.discussionId` will be added in the PHP.
+            const newDiscussionId = item.dataset.discussionId || `discussion_rapport_${studentsData[studentId]?.report.title.replace(/\s+/g, '_') || studentId}`;
+
+            if (currentDiscussionId !== newDiscussionId) {
+                currentDiscussionId = newDiscussionId;
+                console.log(`Switched to discussion ID: ${currentDiscussionId}`);
+                // Clear previous messages and add a system message
+                discussionArea.innerHTML = `<div class="message received"><div class="message-sender">Système</div>Bienvenue dans la discussion pour ${studentsData[studentId]?.name || 'cet étudiant'}. ID Discussion: ${currentDiscussionId}</div>`;
+                 // If websocket is open, we could inform the server about the room change if needed,
+                // but current server logic handles this per message.
+            }
+            // ... rest of the existing student selection logic from the original file
+        });
+    });
 
     messageInput.addEventListener('input', () => {
     messageInput.style.height = 'auto';

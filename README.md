@@ -240,6 +240,25 @@ Ces contrôleurs sont responsables de la logique métier CRUD pour chaque entit�
 3. Configurer le fichier `.env` avec les informations de votre base de données
 4. Configurer un serveur web pour pointer vers le dossier `public/`
 
+### Running Additional Services
+
+#### Real-time Chat Server (WebSocket)
+
+This application includes a real-time chat feature for discussions, powered by a WebSocket server built with ReactPHP.
+
+To run the WebSocket server:
+1.  Ensure all Composer dependencies are installed: `composer install`
+2.  Make sure your `.env` file is configured, especially if you need a specific `WEBSOCKET_PORT` (defaults to 8080 if not set). The server also uses the database credentials from `.env`.
+3.  Open a new terminal window, navigate to the project root.
+4.  Execute the following command:
+    ```bash
+    php bin/websocket_server.php
+    ```
+5.  You should see output indicating the server has started, established a database connection, and is listening on the configured port (e.g., "WebSocket server listening on port 8080").
+6.  Keep this terminal window open while you need the chat functionality. If you close it, the real-time chat will stop working.
+
+The chat client is integrated into the `views/commission/discussions.php` page and its associated JavaScript.
+
 ## Utilisation
 
 ### Créer un nouveau contrôleur
