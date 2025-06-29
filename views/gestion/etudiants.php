@@ -13,45 +13,10 @@
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <input type="text" name="studentNumber" class="form-input" placeholder=" " id="student-number">
-                    <label class="form-label" for="student-number">Numéro Carte d'Etudiant</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="studentLastname" class="form-input" placeholder=" " id="student-lastname">
-                    <label class="form-label" for="student-lastname">Nom</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="studentFirstname" class="form-input" placeholder=" "
-                           id="student-firstname">
-                    <label class="form-label" for="student-firstname">Prénoms</label>
-                </div>
-                <div class="form-group">
-                    <input type="date" name="dateBirth" class="form-input" placeholder=" " id="birth-date">
-                    <label class="form-label" for="birth-date">Date de Naissance</label>
+                    <input type="text" name="id-utilisateur" class="form-input" placeholder=" " id="id-utilisateur">
+                    <label class="form-label" for="id-utilisateur">Numéro Carte d'Etudiant</label>
                 </div>
             </div>
-            <div class="form-grid" style=" margin-top: 20px;">
-                <div class="form-group" >
-                    <input type="mail" name="email" class="form-input" placeholder=" " id="email">
-                    <label class="form-label" for="email">Email</label>
-                </div>
-                <div class="radio-group">
-                    <label>Genre:</label>
-                    <div class="radio-option">
-                        <input type="radio" id="genreM" name="genre" value="M">
-                        <label for="genreM">M</label>
-                    </div>
-                    <div class="radio-option">
-                        <input class="radio-option" type="radio" id="genreF" name="genre" value="F">
-                        <label for="genreF">F</label>
-                    </div>
-                    <div class="radio-option">
-                        <input class="radio-option" type="radio" id="genreND" name="genre" value="ND">
-                        <label for="genreND">N.D</label>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -70,10 +35,6 @@
                 <div class="form-group">
                     <input type="text" name="annee-academique" class="form-input" placeholder=" " id="annee-academique">
                     <label class="form-label" for="annee-academique">Annee-Academique</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="contact" class="form-input" placeholder=" " id="contact">
-                    <label class="form-label" for="contact">contact</label>
                 </div>
             </div>
         </div>
@@ -125,7 +86,6 @@
                 <th>Email</th>
                 <th>Niveau d'Etude</th>
                 <th>Annee-Academique</th>
-                <th>Contact</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -139,7 +99,6 @@
                 <td>fatoumata.kone@example.com</td>
                 <td>Licence 3</td>
                 <td>2024-2025</td>
-                <td>0700000001</td>
                 <td></td>
             </tr>
             <tr>
@@ -151,7 +110,6 @@
                 <td>moussa.traore@example.com</td>
                 <td>Master 1</td>
                 <td>2024-2025</td>
-                <td>0700000002</td>
                 <td></td>
             </tr>
             <tr>
@@ -163,7 +121,6 @@
                 <td>aicha.diaby@example.com</td>
                 <td>Licence 2</td>
                 <td>2024-2025</td>
-                <td>0700000003</td>
                 <td></td>
             </tr>
             <tr>
@@ -175,7 +132,6 @@
                 <td>jeanluc.kouassi@example.com</td>
                 <td>Master 2</td>
                 <td>2024-2025</td>
-                <td>0700000004</td>
                 <td></td>
             </tr>
             <tr>
@@ -187,7 +143,6 @@
                 <td>marie.yao@example.com</td>
                 <td>Licence 1</td>
                 <td>2024-2025</td>
-                <td>0700000005</td>
                 <td></td>
             </tr>
             <tr>
@@ -199,7 +154,6 @@
                 <td>bakary.doumbia@example.com</td>
                 <td>Licence 3</td>
                 <td>2024-2025</td>
-                <td>0700000006</td>
                 <td></td>
             </tr>
             <tr>
@@ -211,7 +165,6 @@
                 <td>fanta.adjoua@example.com</td>
                 <td>Master 1</td>
                 <td>2024-2025</td>
-                <td>0700000007</td>
                 <td></td>
             </tr>
             <tr>
@@ -223,7 +176,6 @@
                 <td>serge.koffi@example.com</td>
                 <td>Licence 2</td>
                 <td>2024-2025</td>
-                <td>0700000008</td>
                 <td></td>
             </tr>
             <tr>
@@ -235,7 +187,7 @@
                 <td>aminata.sanogo@example.com</td>
                 <td>Master 2</td>
                 <td>2024-2025</td>
-                <td>0700000009</td>
+
                 <td></td>
             </tr>
             <tr>
@@ -247,7 +199,6 @@
                 <td>marc.nguessan@example.com</td>
                 <td>Licence 1</td>
                 <td>2024-2025</td>
-                <td>0700000010</td>
                 <td></td>
             </tr>
             </tbody>

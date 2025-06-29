@@ -16,46 +16,16 @@
                     <label for="idUeInput" class="form-label">ID UE</label>
                 </div>
                 <div class="form-group">
-                    <div class="select-wrapper">
-                        <select id="niveauSelect" class="custom-select" required>
-                            <option value="">Niveau</option>
-                            <option value="L1">Licence 1</option>
-                            <option value="L2">Licence 2</option>
-                            <option value="L3">Licence 3</option>
-                            <option value="M1">Master 1</option>
-                            <option value="M2">Master 2</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="select-wrapper">
-                        <select id="semestreSelect" class="custom-select" required>
-                            <option value="">Semestre</option>
-                            <option value="S1">Semestre 1</option>
-                            <option value="S2">Semestre 2</option>
-                            <option value="S3">Semestre 3</option>
-                            <option value="S4">Semestre 4</option>
-                            <option value="S5">Semestre 5</option>
-                            <option value="S6">Semestre 6</option>
-                            <option value="S7">Semestre 7</option>
-                            <option value="S8">Semestre 8</option>
-                            <option value="S9">Semestre 9</option>
-                            <option value="S10">Semestre 10</option>
-                        </select>
-                    </div>
+                    <input type="text" id="libelleUe" class="form-input" placeholder=" " required>
+                    <label for="libelleUe" class="form-label">Libelle de l'UE</label>
                 </div>
                 <div class="form-group">
                     <input type="number" id="creditInput" class="form-input" placeholder=" " required>
                     <label for="creditInput" class="form-label">Crédit</label>
                 </div>
                 <div class="form-group">
-                    <div class="select-wrapper">
-                        <select id="anneeAcadSelect" class="custom-select" required>
-                            <option value="">Année Académique</option>
-                            <option value="2023-2024">2023-2024</option>
-                            <option value="2024-2025">2024-2025</option>
-                        </select>
-                    </div>
+                    <input type="text" id="idEcueInput" class="form-input" placeholder=" " required>
+                    <label for="idEcueInput" class="form-label">ID ECUE</label>
                 </div>
             </div>
         </div>
@@ -92,27 +62,27 @@
             <thead>
             <tr>
                 <th><input type="checkbox" class="checkbox"></th>
-                <th>Semestre</th>
                 <th>ID UE</th>
-                <th>Niveau</th>
+                <th>Libelle</th>
                 <th>Crédit</th>
+                <th>ID ECUE</th>
             </tr>
             </thead>
             <tbody id="ueTableBody">
             <!-- Sample data rows -->
             <tr>
                 <td><input type="checkbox" class="checkbox"></td>
-                <td>S1</td>
                 <td>INF201</td>
-                <td>L2</td>
+                <td>INF201</td>
                 <td>6</td>
+                <td>S1</td>
             </tr>
             <tr>
                 <td><input type="checkbox" class="checkbox"></td>
-                <td>S1</td>
                 <td>INF201</td>
                 <td>L2</td>
                 <td>6</td>
+                <td>S1</td>
             </tr>
 
             </tbody>

@@ -13,45 +13,10 @@
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <input type="text" name="teacherNumber" class="form-input" placeholder=" " id="teacher-number">
-                    <label class="form-label" for="teacher-number">Numéro Matricule</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="teacherLastname" class="form-input" placeholder=" " id="teacher-lastname">
-                    <label class="form-label" for="teacher-lastname">Nom</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="teacherFirstname" class="form-input" placeholder=" "
-                           id="teacher-firstname">
-                    <label class="form-label" for="teacher-firstname">Prénoms</label>
-                </div>
-                <div class="form-group">
-                    <input type="date" name="dateBirth" class="form-input" placeholder=" " id="birth-date">
-                    <label class="form-label" for="birth-date">Date de Naissance</label>
+                    <input type="text" name="id-utilisateur" class="form-input" placeholder=" " id="id-utilisateur">
+                    <label class="form-label" for="id-utilisateur">Numéro Matricule</label>
                 </div>
             </div>
-            <div class="form-grid" style=" margin-top: 20px;">
-                <div class="form-group" style=" padding-right: 300px;">
-                    <input type="email" name="email" class="form-input" placeholder=" " id="email">
-                    <label class="form-label" for="email">Email</label>
-                </div>
-                <div class="radio-group">
-                    <label>Genre:</label>
-                    <div class="radio-option">
-                        <input type="radio" id="genreM" name="genre" value="M">
-                        <label for="genreM">M</label>
-                    </div>
-                    <div class="radio-option">
-                        <input class="radio-option" type="radio" id="genreF" name="genre" value="F">
-                        <label for="genreF">F</label>
-                    </div>
-                    <div class="radio-option">
-                        <input class="radio-option" type="radio" id="genreND" name="genre" value="ND">
-                        <label for="genreND">N.D</label>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -63,13 +28,13 @@
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <input type="text" name="Grade" class="form-input" placeholder=" " id="grade">
-                    <label class="form-label" for="grade">Grade</label>
+                    <input type="text" name="id-grade" class="form-input" placeholder=" " id="id-grade">
+                    <label class="form-label" for="id-grade">Grade</label>
                 </div>
 
                 <div class="form-group">
-                    <input type="text" name="fonction" class="form-input" placeholder=" " id="fonction">
-                    <label class="form-label" for="fonction">Fonction</label>
+                    <input type="text" name="id-fonction" class="form-input" placeholder=" " id="id-fonction">
+                    <label class="form-label" for="id-fonction">Fonction</label>
                 </div>
                 <div class="form-group">
                     <input type="date" name="dategrade" class="form-input" placeholder=" " id="dategrade">
@@ -78,10 +43,6 @@
                 <div class="form-group">
                     <input type="date" name="datefonction" class="form-input" placeholder=" " id="datefonction">
                     <label class="form-label" for="datefonction">Date de la Fonction</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="contact" class="form-input" placeholder=" " id="contact">
-                    <label class="form-label" for="contact">contact</label>
                 </div>
             </div>
         </div>
@@ -133,7 +94,6 @@
                 <th>Email</th>
                 <th>Grade</th>
                 <th>Fonction</th>
-                <th>Contact</th>
                 <th>Actions</th>
             </tr>
             </thead>

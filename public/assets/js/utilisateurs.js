@@ -1,43 +1,34 @@
 let rowToEdit = null;
 
 document.getElementById('btnValider').addEventListener('click', function () {
-    const nom = document.getElementById('user-lastname').value.trim();
-    const groupe = document.getElementById('groupe-utilisateur').value.trim();
-    const type = document.getElementById('type-utilisateur').value.trim();
-    const fonction = document.getElementById('fonction').value.trim();
-    const niveauAcces = document.getElementById('niveau-acces').value.trim();
+    const idUtilisateur = document.getElementById('id-utilisateur').value.trim();
+    const nom = document.getElementById('nom-utilisateur').value.trim();
+    const prenom = document.getElementById('prenom-utilisateur').value.trim();
+    const email = document.getElementById('email-utilisateur').value.trim();
+    const dateNaissance = document.getElementById('date-naissance').value;
+    const idTypeUtilisateur = document.getElementById('id-type-utilisateur').value.trim();
+    const photo = document.getElementById('photo-utilisateur').value.trim();
+    const groupe = document.getElementById('id-groupe-utilisateur').value.trim();
+    const niveauAcces = document.getElementById('id-niveau-acces').value.trim();
     const login = document.getElementById('login').value.trim();
-    const password = document.getElementById('password').value.trim();
-    const email = document.getElementById('user-mail').value.trim();
-    const nomutil = document.getElementById('userName').value.trim();
-    const dateNaissance = document.getElementById('birth-date').value;
+    const password = document.getElementById('mot-de-passe').value.trim();
 
-    if (!nom || !groupe || !type || !fonction || !niveauAcces || !login || !password || !email || !nomutil || !dateNaissance) {
+    if (!idUtilisateur || !nom || !prenom || !email || !dateNaissance || !idTypeUtilisateur || !photo || !groupe || !niveauAcces || !login || !password) {
         alert("Veuillez remplir tous les champs !");
         return;
     }
 
-
-// Validation email
+    // Validation email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email) {
-        alert("Veuillez entrer une adresse email.");
-        return;
-    }
     if (!emailRegex.test(email)) {
         alert("Adresse email invalide.");
         return;
     }
 
-// Validation date de naissance
-    if (!dateNaissance) {
-        alert("Veuillez saisir une date de naissance.");
-        return;
-    }
+    // Validation date de naissance
     const dateNaiss = new Date(dateNaissance);
     const aujourdHui = new Date();
     const age = aujourdHui.getFullYear() - dateNaiss.getFullYear();
-
     if (dateNaiss > aujourdHui) {
         alert("La date de naissance ne peut pas être dans le futur.");
         return;
@@ -47,36 +38,43 @@ document.getElementById('btnValider').addEventListener('click', function () {
         return;
     }
 
+    const tbody = document.querySelector('.table tbody');
 
     if (rowToEdit) {
-        rowToEdit.cells[1].textContent = nom;
-        rowToEdit.cells[2].textContent = groupe;
-        rowToEdit.cells[3].textContent = type;
-        rowToEdit.cells[4].textContent = fonction;
-        rowToEdit.cells[5].textContent = niveauAcces;
-        rowToEdit.cells[6].textContent = login;
-        rowToEdit.cells[7].textContent = password;
+        const cells = rowToEdit.cells;
+        cells[1].textContent = nom;
+        cells[2].textContent = prenom;
+        cells[3].textContent = email;
+        cells[4].textContent = dateNaissance;
+        cells[5].textContent = idTypeUtilisateur;
+        cells[6].textContent = photo;
+        cells[7].textContent = groupe;
+        cells[8].textContent = niveauAcces;
+        cells[9].textContent = login;
+        cells[10].textContent = password;
         rowToEdit = null;
         document.getElementById('btnValider').textContent = 'Valider';
     } else {
-        const tbody = document.querySelector('.table tbody');
         const newRow = document.createElement('tr');
         newRow.innerHTML = `
-                <td><input type="checkbox" class="checkbox"></td>
-                <td>${nom}</td>
-                <td>${groupe}</td>
-                <td>${type}</td>
-                <td>${fonction}</td>
-                <td>${niveauAcces}</td>
-                <td>${login}</td>
-                <td>${password}</td>
-                <td>
-                    <div class="table-actions">
-                       <button class="action-btn edit-btn">✏️</button>
-                       <button class="action-btn delete-btn">🗑️</button>
-                    </div>
-                </td>
-            `;
+            <td><input type="checkbox" class="checkbox"></td>
+            <td>${nom}</td>
+            <td>${prenom}</td>
+            <td>${email}</td>
+            <td>${dateNaissance}</td>
+            <td>${idTypeUtilisateur}</td>
+            <td>${photo}</td>
+            <td>${groupe}</td>
+            <td>${niveauAcces}</td>
+            <td>${login}</td>
+            <td>${password}</td>
+            <td>
+                <div class="table-actions">
+                    <button class="action-btn edit-btn">✏️</button>
+                    <button class="action-btn delete-btn">🗑️</button>
+                </div>
+            </td>
+        `;
         tbody.appendChild(newRow);
     }
 
@@ -87,16 +85,22 @@ document.querySelector('.table tbody').addEventListener('click', function (e) {
     if (e.target.classList.contains('delete-btn')) {
         e.target.closest('tr').remove();
     }
+
     if (e.target.classList.contains('edit-btn')) {
         const row = e.target.closest('tr');
         rowToEdit = row;
-        document.getElementById('user-lastname').value = row.cells[1].textContent;
-        document.getElementById('groupe-utilisateur').value = row.cells[2].textContent;
-        document.getElementById('type-utilisateur').value = row.cells[3].textContent;
-        document.getElementById('fonction').value = row.cells[4].textContent;
-        document.getElementById('niveau-acces').value = row.cells[5].textContent;
-        document.getElementById('login').value = row.cells[6].textContent;
-        document.getElementById('password').value = row.cells[7].textContent;
+
+        document.getElementById('nom-utilisateur').value = row.cells[1].textContent;
+        document.getElementById('prenom-utilisateur').value = row.cells[2].textContent;
+        document.getElementById('email-utilisateur').value = row.cells[3].textContent;
+        document.getElementById('date-naissance').value = row.cells[4].textContent;
+        document.getElementById('id-type-utilisateur').value = row.cells[5].textContent;
+        document.getElementById('photo-utilisateur').value = row.cells[6].textContent;
+        document.getElementById('id-groupe-utilisateur').value = row.cells[7].textContent;
+        document.getElementById('id-niveau-acces').value = row.cells[8].textContent;
+        document.getElementById('login').value = row.cells[9].textContent;
+        document.getElementById('mot-de-passe').value = row.cells[10].textContent;
+
         document.getElementById('btnValider').textContent = 'Mettre à jour';
     }
 });
@@ -116,9 +120,8 @@ document.getElementById('searchInput').addEventListener('keyup', function () {
     });
 });
 
-
 document.getElementById("btnExportPDF").addEventListener("click", async function () {
-    const {jsPDF} = window.jspdf;
+    const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const table = document.querySelector(".table");
     let y = 10;
@@ -137,14 +140,14 @@ document.getElementById("btnExportPDF").addEventListener("click", async function
 
 document.getElementById("btnExportExcel").addEventListener("click", function () {
     const table = document.querySelector(".table");
-    const wb = XLSX.utils.table_to_book(table, {sheet: "Utilisateurs"});
+    const wb = XLSX.utils.table_to_book(table, { sheet: "Utilisateurs" });
     XLSX.writeFile(wb, "utilisateurs.xlsx");
 });
 
 document.getElementById("btnPrint").addEventListener("click", function () {
     const printWindow = window.open('', '', 'height=700,width=900');
     printWindow.document.write('<html><head><title>Impression</title>');
-    printWindow.document.write('</head><body >');
+    printWindow.document.write('</head><body>');
     printWindow.document.write('<h1>Liste des utilisateurs</h1>');
     printWindow.document.write(document.querySelector(".table").outerHTML);
     printWindow.document.write('</body></html>');

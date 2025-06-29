@@ -1,44 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const idUeInput = document.getElementById('idUeInput');
-    const niveauSelect = document.getElementById('niveauSelect');
-    const semestreSelect = document.getElementById('semestreSelect');
+    const libelleInput = document.getElementById('libelleUe');
     const creditInput = document.getElementById('creditInput');
-    const anneeAcadSelect = document.getElementById('anneeAcadSelect');
-    // Mappage entre semestre et niveau
-    const semestreToNiveau = {
-        S1: 'L1', S2: 'L1',
-        S3: 'L2', S4: 'L2',
-        S5: 'L3', S6: 'L3',
-        S7: 'M1', S8: 'M1',
-        S9: 'M2', S10: 'M2'
-    };
-
-    const niveauToSemestres = {
-        L1: ['S1', 'S2'],
-        L2: ['S3', 'S4'],
-        L3: ['S5', 'S6'],
-        M1: ['S7', 'S8'],
-        M2: ['S9', 'S10']
-    };
-
-// Lorsque le semestre change → remplir automatiquement le niveau
-    semestreSelect.addEventListener('change', () => {
-        const semestre = semestreSelect.value;
-        if (semestreToNiveau[semestre]) {
-            niveauSelect.value = semestreToNiveau[semestre];
-        }
-    });
-
-// Lorsque le niveau change → vérifier que le semestre est cohérent
-    niveauSelect.addEventListener('change', () => {
-        const niveau = niveauSelect.value;
-        const semestre = semestreSelect.value;
-        if (niveau && semestre && !niveauToSemestres[niveau].includes(semestre)) {
-            alert(`Ce semestre ne correspond pas au niveau selectionné.`);
-            semestreSelect.value = ''; // Réinitialise le semestre
-        }
-    });
-
+    const idEcueInput = document.getElementById('idEcueInput');
 
     const addButton = document.getElementById('addButton');
     const modifyButton = document.getElementById('modifyButton');
@@ -56,11 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = document.createElement('tr');
             if (index === selectedRowIndex) row.classList.add('selected');
             row.innerHTML = `
-          <td>${ue.semestre}</td>
-          <td>${ue.idEcue}</td>
-          <td>${ue.niveau}</td>
-          <td>${ue.credit}</td>
-        `;
+                <td>${ue.idUe}</td>
+                <td>${ue.libelle}</td>
+                <td>${ue.credit}</td>
+                <td>${ue.idEcue}</td>
+            `;
             row.addEventListener('click', () => {
                 selectedRowIndex = index;
                 fillFormWithSelected(index);
@@ -72,32 +36,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function clearInputs() {
         idUeInput.value = '';
-        niveauSelect.value = '';
-        semestreSelect.value = '';
+        libelleInput.value = '';
         creditInput.value = '';
-        anneeAcadSelect.value = '';
+        idEcueInput.value = '';
+        selectedRowIndex = null;
     }
 
     function fillFormWithSelected(index) {
         const ue = ueData[index];
         idUeInput.value = ue.idUe;
-        niveauSelect.value = ue.niveau;
-        semestreSelect.value = ue.semestre;
+        libelleInput.value = ue.libelle;
         creditInput.value = ue.credit;
+        idEcueInput.value = ue.idEcue;
     }
 
     addButton.addEventListener('click', () => {
         const ue = {
             idUe: idUeInput.value.trim(),
-            niveau: niveauSelect.value,
-            semestre: semestreSelect.value,
-            credit: parseInt(creditInput.value)
+            libelle: libelleInput.value.trim(),
+            credit: parseInt(creditInput.value),
+            idEcue: idEcueInput.value.trim()
         };
-        if (!ue.idUe || !ue.niveau || !ue.semestre || isNaN(ue.credit)) {
+
+        if (!ue.idUe || !ue.libelle || isNaN(ue.credit) || !ue.idEcue) {
             alert('Veuillez remplir tous les champs.');
             return;
         }
-        if (isNaN(ue.credit) || ue.credit <= 0) {
+
+        if (ue.credit <= 0) {
             alert('Le champ "Crédit" doit être un nombre strictement positif.');
             creditInput.focus();
             return;
@@ -113,14 +79,28 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Sélectionnez une ligne à modifier.');
             return;
         }
-        ueData[selectedRowIndex] = {
+
+        const ue = {
             idUe: idUeInput.value.trim(),
-            niveau: niveauSelect.value,
-            semestre: semestreSelect.value,
-            credit: parseInt(creditInput.value)
+            libelle: libelleInput.value.trim(),
+            credit: parseInt(creditInput.value),
+            idEcue: idEcueInput.value.trim()
         };
-        renderUeTable();
+
+        if (!ue.idUe || !ue.libelle || isNaN(ue.credit) || !ue.idEcue) {
+            alert('Veuillez remplir tous les champs.');
+            return;
+        }
+
+        if (ue.credit <= 0) {
+            alert('Le champ "Crédit" doit être un nombre strictement positif.');
+            creditInput.focus();
+            return;
+        }
+
+        ueData[selectedRowIndex] = ue;
         clearInputs();
+        renderUeTable();
     });
 
     deleteButton.addEventListener('click', () => {
@@ -128,10 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Sélectionnez une ligne à supprimer.');
             return;
         }
+
         ueData.splice(selectedRowIndex, 1);
         selectedRowIndex = null;
-        renderUeTable();
         clearInputs();
+        renderUeTable();
     });
 
     printButton.addEventListener('click', () => {

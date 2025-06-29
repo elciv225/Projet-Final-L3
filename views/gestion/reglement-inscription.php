@@ -5,9 +5,9 @@
         </div>
     </div>
 
-
+    <!-- Sélection de l'année académique -->
     <div class="form-group small-width right-align  mb-20">
-        <select class="form-input" id="annee-academique" name="annee-academique">
+        <select class="form-input" id="id-annee-academique" name="id-annee-academique">
             <option value="">Année-Académique</option>
             <option value=""></option>
             <option value=""></option>
@@ -21,21 +21,12 @@
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <input type="text" name="studentNumber" class="form-input" placeholder=" " id="student-number">
-                    <label class="form-label" for="student-number">Numero Carte d'Etudiant</label>
+                    <input type="text" name="id-utilisateur" class="form-input" placeholder=" " id="id-utilisateur">
+                    <label class="form-label" for="id-utilisateur">Numero Carte d'Etudiant</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="studentLastname" class="form-input" placeholder=" " id="student-lastname">
-                    <label class="form-label" for="student-lastname">Nom</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="studentFirstname" class="form-input" placeholder=" "
-                           id="student-firstname">
-                    <label class="form-label" for="student-firstname">Prénoms</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="niveauEtude" class="form-input" placeholder=" " id="niveauEtude">
-                    <label class="form-label" for="niveauEtude">Niveau d'Etude</label>
+                    <input type="text" name="id-niveau-etude" class="form-input" placeholder=" " id="id-niveau-etude">
+                    <label class="form-label" for="id-niveau-etude">Niveau d'Etude</label>
                 </div>
             </div>
 
@@ -50,24 +41,23 @@
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <input type="montantpaye" name="montantpaye" class="form-input" placeholder=" " id="montantpaye">
-                    <label class="form-label" for="montantpaye">Montant Payé</label>
-                </div>
-
-                <div class="form-group">
-                    <input type="date" name="datereglement" class="form-input" placeholder=" " id="datereglement">
-                    <label class="form-label" for="datereglement">Date de reglement</label>
+                    <input type="date" name="date-inscription" class="form-input" placeholder=" " id="date-inscription">
+                    <label class="form-label" for="date-inscription">Date d'inscription</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="totalpaye" class="form-input" placeholder=" " id="totalpaye">
+                    <input type="number" name="montant" class="form-input" placeholder=" " id="montant">
+                    <label class="form-label" for="montant">Montant</label>
+                </div>
+                <div class="form-group">
+                    <input type="number" name="totalpaye" class="form-input" placeholder=" " id="totalpaye">
                     <label class="form-label" for="totalpaye">Total Payé</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="restepaye" class="form-input" placeholder=" " id="restepaye">
+                    <input type="number" name="restepaye" class="form-input" placeholder=" " id="restepaye">
                     <label class="form-label" for="restepaye">Reste à Payé</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="montantapaye" class="form-input" placeholder=" " id="montantapaye">
+                    <input type="number" name="montantapaye" class="form-input" placeholder=" " id="montantapaye">
                     <label class="form-label" for="montantapaye">Montant à Payé</label>
                 </div>
             </div>
@@ -114,11 +104,9 @@
             <tr>
                 <th><input type="checkbox" class="checkbox"></th>
                 <th>Numero Carte d'Etudiant</th>
-                <th>Nom</th>
-                <th>Prenom</th>
                 <th>Niveau D'Etude</th>
-                <th>Montant Payé</th>
-                <th>Date de Règlement</th>
+                <th>Date d'inscription</th>
+                <th>Montant</th>
                 <th>Actions</th>
             </tr>
             </thead>
