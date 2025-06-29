@@ -21,7 +21,7 @@
                     <p>Info</p>
                 </div>
 
-                <form action="/authentification-universite" method="post" class="ajax-form">
+                <form action="/authentification-administration" method="post" class="ajax-form">
                     <div class="form-group">
                         <input type="text" name="login" class="form-input" placeholder=" " id="ip" required>
                         <label class="form-label" for="ip">Login</label>

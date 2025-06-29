@@ -253,7 +253,7 @@ $routes = [
     /* === Routes des pages publiques === */
     ['GET', '/', [AccueilController::class, 'index']],
     ['GET', '/authentification', [AuthentificationPublicController::class, 'index']],
-    ['GET', '/authentification-universite', [AuthentificationController::class, 'index']],
+    ['GET', '/authentification-administration', [AuthentificationController::class, 'index']],
     ['GET', '/soumission-rapport', [SoumissionRapportController::class, 'index']],
     ['GET', '/test-animations', [AccueilController::class, 'testAnimations']],
     ['GET', '/espace-commission', [CommissionController::class, 'index']],
@@ -298,7 +298,7 @@ foreach ($configurationModules as $categorie => $modulesParCategorie) {
 $routes = array_merge($routes, [
     /* === Routes des traitements (formulaires) === */
     ['POST', '/authentification', [AuthentificationPublicController::class, 'authentification']],
-    ['POST', '/authentification-universite', [AuthentificationController::class, 'authentification']],
+    ['POST', '/authentification-administration', [AuthentificationController::class, 'authentification']],
 ]);
 
 

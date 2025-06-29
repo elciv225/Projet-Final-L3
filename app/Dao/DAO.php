@@ -3,6 +3,7 @@
 namespace App\Dao;
 
 use PDO;
+use System\Database\Database;
 
 abstract class DAO
 {
@@ -19,7 +20,7 @@ abstract class DAO
      */
     public function __construct(PDO $pdo, string $table, string $model, string $primaryKey = 'id')
     {
-        $this->pdo = $pdo;
+        $this->pdo = Database::getConnection();
         $this->table = $table;
         $this->model = $model;
         $this->primaryKey = $primaryKey;

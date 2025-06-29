@@ -9,6 +9,10 @@ class Kernel
 {
     public function handle(Request $request): Response
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $dispatcher = simpleDispatcher(function (RouteCollector $routeCollector) {
             $routes = include BASE_PATH . '/routes/web.php';
             foreach ($routes as $route) {

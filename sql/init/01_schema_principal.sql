@@ -133,14 +133,14 @@ CREATE TABLE menu
     libelle VARCHAR(50),
     vue     VARCHAR(50),
     PRIMARY KEY (id)
-)
+);
 
 -- Table: menu_traitement
 -- Description: Associe un menu à son traitement
 CREATE TABLE menu_traitement
 (
     menu_id       VARCHAR(20),
-    traitement_id       VARCHAR(20),
+    traitement_id VARCHAR(20),
     PRIMARY KEY (menu_id, traitement_id),
     FOREIGN KEY (menu_id) REFERENCES menu (id),
     FOREIGN KEY (traitement_id) REFERENCES traitement (id)
