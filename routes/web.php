@@ -252,8 +252,18 @@ if (!defined('MODULES_CONFIG')) {
 $routes = [
     /* === Routes des pages publiques === */
     ['GET', '/', [AccueilController::class, 'index']],
-    ['GET', '/authentification', [AuthentificationPublicController::class, 'index']],
+    // Route for multi-step registration process start
+    ['GET', '/register', [AuthentificationPublicController::class, 'index']],
+    // Standard Login routes
+    ['GET', '/login', [AuthentificationPublicController::class, 'loginForm']],
+    ['POST', '/login', [AuthentificationPublicController::class, 'handleLogin']],
+    ['GET', '/logout', [AuthentificationPublicController::class, 'logout']],
+
+    // Kept for university-specific auth if different from public/general auth
     ['GET', '/authentification-universite', [AuthentificationController::class, 'index']],
+    ['POST', '/authentification-universite', [AuthentificationController::class, 'authentification']],
+
+
     ['GET', '/soumission-rapport', [SoumissionRapportController::class, 'index']],
     ['GET', '/test-animations', [AccueilController::class, 'testAnimations']],
     ['GET', '/espace-commission', [CommissionController::class, 'index']],

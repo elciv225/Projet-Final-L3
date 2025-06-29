@@ -29,8 +29,8 @@ use System\Http\Response;
                 <div class="nav-section-title">Principal</div>
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <a href="/index"
-                           class="nav-link-ajax <?= (!isset($currentSection)) ? 'active' : '' ?>"
+                    <a href="/index" <!-- Assuming /index is the dashboard route -->
+                       class="nav-link-ajax <?= (!isset($currentSection) && empty($_SERVER['REQUEST_URI']) || $_SERVER['REQUEST_URI'] === '/index' || $_SERVER['REQUEST_URI'] === '/') ? 'active' : '' ?>"
                            data-target="#content-area">
                             <span class="nav-icon">📊</span>
                             <span>Tableau de bord</span>
@@ -39,35 +39,75 @@ use System\Http\Response;
                 </ul>
             </div>
 
-            <?php if (!empty($modules)): ?>
-                <?php foreach ($modules as $categoryName => $categoryModules): ?>
-                    <div class="nav-section">
-                        <div class="nav-section-title"><?= ucfirst($categoryName) ?></div>
-                        <ul class="nav-list">
-                            <?php foreach ($categoryModules as $moduleName => $moduleConfig): ?>
-                                <li class="nav-item">
-                                    <a href="/index/<?= $categoryName ?>/<?= $moduleName ?>"
-                                       class="nav-link-ajax <?= (isset($currentSection) && $currentSection === $moduleName && isset($currentCategory) && $currentCategory === $categoryName) ? 'active' : '' ?>"
-                                       data-target="#content-area"
-                                       data-module="<?= $moduleName ?>"
-                                       data-category="<?= $categoryName ?>">
-                                        <span class="nav-icon"><?= $moduleConfig['icone'] ?></span>
-                                        <span><?= $moduleConfig['label'] ?></span>
-                                    </a>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+        <?php
+        // Instantiate services
+        $authService = new \App\Services\AuthService();
+        $menuService = new \App\Services\MenuService();
+        $userMenuItems = [];
+        $currentUser = $authService->getCurrentUser(); // Get full user data
+
+        if ($authService->isAuthenticated()) {
+            $groupeUtilisateurId = $authService->getUserGroupId();
+            if ($groupeUtilisateurId) {
+                $userMenuItems = $menuService->getMenuItemsForGroup($groupeUtilisateurId);
+            }
+        }
+        // else: $userMenuItems remains empty, or you could load a default public menu if desired.
+
+        // The MenuService returns a tree. We might need to adapt its output or this loop
+        // if the old $modules structure was significantly different (e.g. explicit categories vs. parent_id).
+        // For now, assuming $userMenuItems is a flat list of root items, each with a 'children' array.
+        // Or, if menu items themselves represent categories, we iterate through them.
+        // Let's assume the service returns menu items that can be categories (parent_id IS NULL)
+        // and these categories have children.
+
+        foreach ($userMenuItems as $menuItem): // $menuItem is a root menu item (category)
+            if (empty($menuItem['children']) && empty($menuItem['url'])) continue; // Skip empty categories without direct link
+        ?>
+            <div class="nav-section">
+                <div class="nav-section-title"><?= htmlspecialchars($menuItem['libelle']) ?></div>
+                <ul class="nav-list">
+                    <?php if (!empty($menuItem['url']) && empty($menuItem['children'])): // Root item itself is a link ?>
+                         <li class="nav-item">
+                            <a href="<?= htmlspecialchars($menuItem['url']) ?>"
+                               class="nav-link-ajax <?= (isset($currentPath) && $currentPath === $menuItem['url']) ? 'active' : '' ?>"
+                               data-target="#content-area">
+                                <?php if (!empty($menuItem['icon'])): ?><span class="nav-icon"><?= $menuItem['icon'] ?></span><?php endif; ?>
+                                <span><?= htmlspecialchars($menuItem['libelle']) ?></span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
+                    <?php foreach ($menuItem['children'] as $childItem): ?>
+                        <li class="nav-item">
+                            <a href="<?= htmlspecialchars($childItem['url']) ?>"
+                               class="nav-link-ajax <?= (isset($currentPath) && $currentPath === $childItem['url']) ? 'active' : '' ?>"
+                               data-target="#content-area">
+                                <?php if (!empty($childItem['icon'])): ?><span class="nav-icon"><?= $childItem['icon'] ?></span><?php endif; ?>
+                                <span><?= htmlspecialchars($childItem['libelle']) ?></span>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endforeach; ?>
         </nav>
 
         <div class="user-section">
             <div class="user-info">
-                <div class="user-avatar">KL</div>
+            <div class="user-avatar"><?= $currentUser ? strtoupper(substr($currentUser['prenoms'], 0, 1) . substr($currentUser['nom'], 0, 1)) : 'GU' ?></div>
                 <div class="user-details">
-                    <div class="username">KOUAKOU Laurent</div>
-                    <div class="user-role">Administrateur</div>
+                <div class="username"><?= $currentUser ? htmlspecialchars($currentUser['prenoms'] . ' ' . $currentUser['nom']) : 'Guest User' ?></div>
+                <div class="user-role">
+                    <?php
+                        if ($currentUser && $currentUser['groupe_utilisateur_id']) {
+                            // In a real app, you'd fetch the group libelle from GroupeUtilisateurDAO
+                            echo htmlspecialchars($currentUser['groupe_utilisateur_id']);
+                        } else {
+                            echo 'Non connecté';
+                        }
+                    ?>
+                </div>
                 </div>
                 <div class="user-menu">⋯</div>
             </div>
