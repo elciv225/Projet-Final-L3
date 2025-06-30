@@ -16,7 +16,8 @@
         </div>
     </div>
 
-    <div class="form-section">
+    <form class="form-section  ajax-form" method="post" action="/traitement-utilisateur" data-target=".table-scroll-wrapper" data-warning="AAA">
+        <input name="operation" value="ajouter" type="hidden">
         <div class="section-header">
             <h3 class="section-title">Informations Générales de l'utilisateur</h3>
         </div>
@@ -71,7 +72,13 @@
                 </div>
             </div>
         </div>
-    </div>
+        <div class="section-bottom">
+            <h3 class="section-title">Action</h3>
+            <div style="display: flex">
+                <button class="btn btn-primary" type="submit">Créer</button>
+            </div>
+        </div>
+    </form>
 
     <div id="zone-dynamique">
         <div class="table-container">

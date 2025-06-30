@@ -375,13 +375,27 @@ function reloadContainerScripts(container) {
 // -------------------------------------------------------------------
 
 function bindAjaxForms() {
-    document.addEventListener('submit', function (e) {
-        const form = e.target;
-        if (!form.classList.contains('ajax-form')) return;
-        e.preventDefault();
-        submitAjaxForm(form);
+    document.querySelectorAll('form.ajax-form').forEach(form => {
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Vérifier si le formulaire a un attribut warning
+            const warningMessage = form.dataset.warning || form.getAttribute('warning');
+            if (warningMessage && !form.dataset.warningConfirmed) {
+                // Afficher la card de warning
+                showWarningCard(warningMessage, () => {
+                    // Si l'utilisateur confirme, marquer comme confirmé et soumettre
+                    form.dataset.warningConfirmed = 'true';
+                    submitAjaxForm(form);
+                });
+                return;
+            }
+
+            await submitAjaxForm(this);
+        });
     });
 }
+
 
 let isSubmitting = false;
 
@@ -401,7 +415,7 @@ async function submitAjaxForm(form) {
 
     if (target) {
         showLoader(target);
-    } else if (target === 'global'){
+    } else if (target === 'global') {
         showLoader();
     }
 

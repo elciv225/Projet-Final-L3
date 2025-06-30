@@ -161,6 +161,14 @@
     align-items: center;
 }
 
+.section-bottom{
+    padding: 10px 24px;
+    border-top: 1px solid var(--border-medium);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .section-title {
     font-size: 16px;
     font-weight: 600;

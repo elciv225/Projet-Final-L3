@@ -215,6 +215,7 @@ $routes = array_merge($routes, [
     ['POST', '/authentification-administration', [AuthentificationController::class, 'authentification']],
     ['POST', '/charger-formulaire-categorie', [UtilisateursController::class, 'chargerFormulaireCategorie']],
     ['POST', '/charger-formulaire-paramatre-specifique', [ParametreGenerauxController::class, 'chargerFormulaireParametreGeneraux']],
+    ['POST', '/traitement-utilisateur', [UtilisateursController::class, 'executerAction']],
 
 ]);
 
