@@ -299,6 +299,36 @@
     }
 }
 
+.container-loader-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: var(--overlay, rgba(20, 20, 20, 0.5));
+    backdrop-filter: blur(2px);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: inherit;
+    animation: fade-in 0.3s ease;
+}
+
+.container-loader-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border-medium, #444);
+    border-top-color: var(--primary-color, #29d);
+    border-radius: 50%;
+    animation: loader-spin 0.8s linear infinite;
+}
+
+/* Style des container dynamique */
+#zone-dynamique{
+    min-height: 100%;
+    width:  100%;
+    transition: background-color 0.3s ease;
+    border-radius: 12px;
+}
+
 /* Amélioration des boutons de formulaire en cours de chargement */
 .ajax-form button[type="submit"] {
     position: relative;
@@ -355,7 +385,6 @@
     border-top-color: var(--primary-color);
     animation: loader-spin 0.8s infinite linear;
 }
-
 
 /* ========================================= */
 

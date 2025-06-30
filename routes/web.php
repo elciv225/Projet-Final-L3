@@ -299,6 +299,8 @@ $routes = array_merge($routes, [
     /* === Routes des traitements (formulaires) === */
     ['POST', '/authentification', [AuthentificationPublicController::class, 'authentification']],
     ['POST', '/authentification-administration', [AuthentificationController::class, 'authentification']],
+    ['POST', '/charger-formulaire-categorie', [UtilisateursController::class, 'chargerFormulaireCategorie']]
+
 ]);
 
 

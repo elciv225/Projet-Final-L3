@@ -24,7 +24,7 @@ use System\Http\Response;
             <input type="text" class="sidebar-search" placeholder="Rechercher...">
         </div>
 
-        <nav class="sidebar-nav">
+        <nav class="sidebar-nav scroll-custom">
             <div class="nav-section">
                 <div class="nav-section-title">Principal</div>
                 <ul class="nav-list">
@@ -76,7 +76,9 @@ use System\Http\Response;
 
     <!-- Zone de contenu principal - Mise à jour dynamiquement -->
     <div id="content-area">
+
         <?php if (isset($moduleContent)): ?>
+
             <!-- Contenu d'un module spécifique -->
             <?php
             if ($moduleContent instanceof Response) {

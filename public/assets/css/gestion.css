@@ -366,6 +366,15 @@
     box-shadow: var(--shadow-sm);
 }
 
+.table-scroll-wrapper {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.table-scroll-wrapper .table {
+    min-width: max-content; /* Force la largeur naturelle de la table */
+}
+
 .table-header {
     padding: 20px 14px;
     border-bottom: 1px solid var(--border-medium);
@@ -414,7 +423,6 @@
     color: var(--text-disabled);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-bottom: 1px solid var(--border-medium);
 }
 
 .table td {

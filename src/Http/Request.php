@@ -13,7 +13,9 @@ class Request
         private array $files,
         private array $cookie,
         private array $env,
-    ) {}
+    )
+    {
+    }
 
 
     public static function create(): static
@@ -45,5 +47,10 @@ class Request
     public function getPostParams(string $name): string
     {
         return $this->post[$name];
+    }
+
+    public function getGetParams(string $name): string
+    {
+        return $this->get[$name];
     }
 }
