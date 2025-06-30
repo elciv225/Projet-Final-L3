@@ -13,12 +13,18 @@
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <input type="text" id="id-enseignant" class="form-input" placeholder=" ">
-                    <label class="form-label" for="id-enseignant">ID Enseignant</label>
+                    <select class="form-input" id="id-utilisateur" name="id-utilisateur">
+                        <option value="">Numero Matricule</option>
+                        <option value=""></option>
+                        <option value=""></option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <input type="text" id="id-etudiant" class="form-input" placeholder=" ">
-                    <label class="form-label" for="id-etudiant">ID Étudiant</label>
+                    <select class="form-input" id="id-utilisateur" name="id-utilisatuer">
+                        <option value="">Numero Carte Etudiant</option>
+                        <option value=""></option>
+                        <option value=""></option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <input type="text" id="idEcueInput" class="form-input" placeholder=" ">
