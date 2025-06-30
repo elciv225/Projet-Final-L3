@@ -5,48 +5,14 @@
         </div>
         <div class="form-group small-width right-align  mb-20">
             <form action="/charger-formulaire-categorie" method="post" class="ajax-form" data-target="#zone-dynamique">
-                <select class="form-input" id="id-categorie-utilisateur" name="categorie-utilisateur">
+                <select class="form-input select-submit" id="categorie-utilisateur" name="categorie-utilisateur">
                     <option value="">Catégorie Utilisateur</option>
                     <option value="enseignant">Enseignant</option>
                     <option value="administratif">Personnel Administratif</option>
                     <option value="etudiant">Etudiant</option>
                 </select>
-
+                <label class="form-label" for="categorie-utilisateur">Personnel Administratif</label>
             </form>
-            <script>
-                function bindCategorieFormAutoSubmit() {
-                    const select = document.querySelector('form.ajax-form select[name="categorie-utilisateur"]');
-                    const tableContainer = document.querySelector('.table-container.default')
-                    if (select) {
-                        select.addEventListener('change', function () {
-                            const value = this.value;
-
-
-                            // Masquer ou afficher la table selon la sélection
-                            if (tableContainer) {
-                                tableContainer.style.display = value === '' ? 'block' : 'none';
-                            }
-
-
-                            // Déclencher la soumission AJAX
-                            const form = this.closest('form');
-                            if (form) {
-                                form.dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}));
-                            }
-                        });
-
-                        // Initialiser au chargement : afficher la table uniquement si vide
-                        if (tableContainer) {
-                            tableContainer.style.display = select.value === '' ? 'block' : 'none';
-                        }
-                    }
-                }
-
-                window.ajaxRebinders = window.ajaxRebinders || [];
-                window.ajaxRebinders.push(bindCategorieFormAutoSubmit);
-            </script>
-
-
         </div>
     </div>
 
@@ -171,8 +137,3 @@
         </div>
     </div>
 </main>
-
-<!-- Scripts -->
-<script src="assets/js/utilisateurs.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

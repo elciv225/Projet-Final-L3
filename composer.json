@@ -17,8 +17,8 @@
       "App\\": "app/",
       "App\\Controllers\\": "app/Controllers/",
       "App\\Controllers\\Public\\": "app/Controllers/Public/",
-      "App\\Controllers\\Gestions\\\\": "app/Controllers/Gestions/",
       "App\\Controllers\\Commission\\\\": "app/Controllers/Commission/",
+      "App\\Controllers\\MenuViews\\\\": "app/Controllers/MenuViews/",
       "App\\Models\\": "app/Models/",
       "App\\Dao\\": "app/Dao",
       "App\\Services\\": "app/Services"

@@ -5,11 +5,15 @@
     <div class="section-content">
         <div class="form-grid">
             <div class="form-group">
-                <input type="text" name="id-grade" class="form-input" placeholder=" " id="id-grade">
+                <select name="id-grade" class="form-input" id="id-grade">
+                    <option value="">Choisir</option>
+                </select>
                 <label class="form-label" for="id-grade">Grade</label>
             </div>
             <div class="form-group">
-                <input type="text" name="id-fonction" class="form-input" placeholder=" " id="id-fonction">
+                <select name="id-fonction" class="form-input" id="id-fonction">
+                    <option value="">Choisir</option>
+                </select>
                 <label class="form-label" for="id-fonction">Fonction</label>
             </div>
             <div class="form-group">
@@ -20,6 +24,15 @@
                 <input type="date" name="datefonction" class="form-input" placeholder=" " id="datefonction">
                 <label class="form-label" for="datefonction">Date de la Fonction</label>
             </div>
+            <?php if ($categorieUtilisateur === "Enseignant") : ?>
+                <div class="form-group">
+                    <select name="specialite" class="form-input" id="specialite">
+                        <option value="">Choisir</option>
+                    </select>
+                    <label class="form-label" for="specialite">Spécialités</label>
+                </div>
+            <?php endif ?>
+
         </div>
     </div>
 </div>
@@ -44,7 +57,6 @@
             <button id="btnExportPDF" class="btn btn-secondary">🕐 Exporter en PDF</button>
             <button id="btnExportExcel" class="btn btn-secondary">📤 Exporter sur Excel</button>
             <button id="btnPrint" class="btn btn-secondary">📊 Imprimer</button>
-
             <button class="btn btn-primary" id="btnSupprimerSelection">Supprimer</button>
         </div>
     </div>
@@ -58,26 +70,26 @@
             <div class="tab"></div>
         </div>
     </div>
+    <div class="table-scroll-wrapper scroll-custom">
+        <table class="table">
+            <thead>
+            <tr>
+                <th><input type="checkbox" class="checkbox"></th>
+                <th>Numero Matricule</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Date de naissance</th>
+                <th>Email</th>
+                <th>Grade</th>
+                <th>Fonction</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th><input type="checkbox" class="checkbox"></th>
-            <th>Numero Matricule</th>
-            <th>Nom</th>
-            <th>Prenom</th>
-            <th>Date de naissance</th>
-            <th>Email</th>
-            <th>Grade</th>
-            <th>Fonction</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-
-        </tbody>
-    </table>
-
+            </tbody>
+        </table>
+    </div>
     <div class="table-footer">
         <div class="results-info">
             Showing 1-9 of 240 entries

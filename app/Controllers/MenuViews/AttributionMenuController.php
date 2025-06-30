@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controllers\Gestions;
+namespace App\Controllers\MenuViews;
 
 use System\Http\Response;
 
-class EnseignantsController
+class AttributionMenuController
 {
     public function index(): Response
     {
@@ -14,7 +14,7 @@ class EnseignantsController
             'content' => 'Gestion du corps enseignant de l\'établissement.'
         ];
 
-        // Toujours retourner la vue de gestion, jamais la page complète
-        return Response::view('gestion/enseignants', $data);
+        // Toujours retourner la vue de menu_views, jamais la page complète
+        return Response::view('menu_views/attribution-menu', $data);
     }
 }

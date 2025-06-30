@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Gestions;
+namespace App\Controllers\MenuViews;
 
 use App\Controllers\Controller;
 use System\Http\Response;
@@ -16,8 +16,8 @@ class UtilisateursController extends Controller
             'content' => 'Gestion des étudiants de l\'établissement.',
         ];
 
-        // Toujours retourner la vue de gestion, jamais la page complète
-        return Response::view('gestion/utilisateurs', $data);
+        // Toujours retourner la vue de menu_views, jamais la page complète
+        return Response::view('menu_views/utilisateurs', $data);
     }
 
     public function chargerFormulaireCategorie(): Response
@@ -26,7 +26,7 @@ class UtilisateursController extends Controller
         $categorie = $this->request->getPostParams('categorie-utilisateur');
 
         if (!$categorie) {
-            return Response::view('gestion/utilisateurs',
+            return Response::view('menu_views/utilisateurs',
                 json: [
                     'statut' => 'succes',
                     'message' => 'Aucune catégorie selectionnée.'
@@ -34,9 +34,9 @@ class UtilisateursController extends Controller
         }
 
         $viewName = match ($categorie) {
-            'etudiant' => 'gestion/etudiants',
-            'enseignant' => 'gestion/personnel-universite',
-            'administratif' => 'gestion/personnel-universite',
+            'etudiant' => 'data_views/etudiants',
+            'enseignant' => 'data_views/personnel-universite',
+            'administratif' => 'data_views/personnel-universite',
         };
 
         return Response::view(
