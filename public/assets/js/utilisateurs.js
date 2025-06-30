@@ -7,13 +7,12 @@ document.getElementById('btnValider').addEventListener('click', function () {
     const email = document.getElementById('email-utilisateur').value.trim();
     const dateNaissance = document.getElementById('date-naissance').value;
     const idTypeUtilisateur = document.getElementById('id-type-utilisateur').value.trim();
-    const photo = document.getElementById('photo-utilisateur').value.trim();
     const groupe = document.getElementById('id-groupe-utilisateur').value.trim();
     const niveauAcces = document.getElementById('id-niveau-acces').value.trim();
     const login = document.getElementById('login').value.trim();
     const password = document.getElementById('mot-de-passe').value.trim();
 
-    if (!idUtilisateur || !nom || !prenom || !email || !dateNaissance || !idTypeUtilisateur || !photo || !groupe || !niveauAcces || !login || !password) {
+    if (!idUtilisateur || !nom || !prenom || !email || !dateNaissance || !idTypeUtilisateur || !groupe || !niveauAcces || !login || !password) {
         alert("Veuillez remplir tous les champs !");
         return;
     }
@@ -47,11 +46,10 @@ document.getElementById('btnValider').addEventListener('click', function () {
         cells[3].textContent = email;
         cells[4].textContent = dateNaissance;
         cells[5].textContent = idTypeUtilisateur;
-        cells[6].textContent = photo;
-        cells[7].textContent = groupe;
-        cells[8].textContent = niveauAcces;
-        cells[9].textContent = login;
-        cells[10].textContent = password;
+        cells[6].textContent = groupe;
+        cells[7].textContent = niveauAcces;
+        cells[8].textContent = login;
+        cells[9].textContent = password;
         rowToEdit = null;
         document.getElementById('btnValider').textContent = 'Valider';
     } else {
@@ -63,7 +61,6 @@ document.getElementById('btnValider').addEventListener('click', function () {
             <td>${email}</td>
             <td>${dateNaissance}</td>
             <td>${idTypeUtilisateur}</td>
-            <td>${photo}</td>
             <td>${groupe}</td>
             <td>${niveauAcces}</td>
             <td>${login}</td>
@@ -95,7 +92,6 @@ document.querySelector('.table tbody').addEventListener('click', function (e) {
         document.getElementById('email-utilisateur').value = row.cells[3].textContent;
         document.getElementById('date-naissance').value = row.cells[4].textContent;
         document.getElementById('id-type-utilisateur').value = row.cells[5].textContent;
-        document.getElementById('photo-utilisateur').value = row.cells[6].textContent;
         document.getElementById('id-groupe-utilisateur').value = row.cells[7].textContent;
         document.getElementById('id-niveau-acces').value = row.cells[8].textContent;
         document.getElementById('login').value = row.cells[9].textContent;

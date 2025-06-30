@@ -33,8 +33,11 @@
                 </div>
 
                 <div class="form-group">
-                    <input type="text" name="annee-academique" class="form-input" placeholder=" " id="annee-academique">
-                    <label class="form-label" for="annee-academique">Annee-Academique</label>
+                    <select class="form-input" id="id-annee-academique" name="id-annee-academique">
+                        <option value=""></option>
+                        <option value=""></option>
+                        <option value=""></option>
+                    </select>
                 </div>
             </div>
         </div>

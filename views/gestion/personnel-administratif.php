@@ -13,20 +13,11 @@
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <input type="text" name="personnelNumber" class="form-input" placeholder=" " id="personnel-number">
-                    <label class="form-label" for="personnel-number">Numéro Matricule</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="personnelLastname" class="form-input" placeholder=" " id="personnel-lastname">
-                    <label class="form-label" for="personnel-lastname">Nom</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="personnelFirstname" class="form-input" placeholder=" " id="personnel-firstname">
-                    <label class="form-label" for="personnel-firstname">Prénoms</label>
-                </div>
-                <div class="form-group">
-                    <input type="date" name="dateBirth" class="form-input" placeholder=" " id="birth-date">
-                    <label class="form-label" for="birth-date">Date de Naissance</label>
+                    <select class="form-input" id="id-utilisateur" name="id-utilisatuer">
+                        <option value="">Numero Matricule</option>
+                        <option value=""></option>
+                        <option value=""></option>
+                    </select>
                 </div>
             </div>
             <div class="form-grid" style=" margin-top: 20px;">

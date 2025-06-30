@@ -32,28 +32,36 @@
                     <label class="form-label" for="date-naissance">Date de naissance</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="id-type-utilisateur" id="id-type-utilisateur" class="form-input" placeholder=" ">
-                    <label class="form-label" for="id-type-utilisateur">ID Type d'utilisateur</label>
+                    <select class="form-input" id="id-type-utilisateur" name="id-type-utilisateur">
+                        <option value=""></option>
+                        <option value=""></option>
+                        <option value=""></option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="photo-utilisateur" id="photo-utilisateur" class="form-input" placeholder=" ">
-                    <label class="form-label" for="photo-utilisateur">Photo (URL ou nom)</label>
+                    <select class="form-input" id="id-groupe-utilisateur" name="id-groupe-utilisateur">
+                        <option value=""></option>
+                        <option value=""></option>
+                        <option value=""></option>
+                    </select>
                 </div>
-                <div class="form-group">
-                    <input type="text" name="id-groupe-utilisateur" id="id-groupe-utilisateur" class="form-input" placeholder=" ">
-                    <label class="form-label" for="id-groupe-utilisateur">ID Groupe utilisateur</label>
-                </div>
+            </div>
+            <!--Information liés a l'utilisateur-->
+            <div class="section-header">
+                <h3 class="section-title">Informations liées à l'utilisateur</h3>
             </div>
             <div class="form-grid" style="margin-top: 20px;">
                 <div class="form-group">
-                    <input type="text" name="id-niveau-acces" id="id-niveau-acces" class="form-input" placeholder=" ">
-                    <label class="form-label" for="id-niveau-acces">ID Niveau d'accès</label>
+                    <select class="form-input" id="id-niveau-acces" name="id-niveau-acces">
+                        <option value=""></option>
+                        <option value=""></option>
+                        <option value=""></option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="login" id="login" class="form-input" placeholder=" ">
+                    <input type="text" name="login" id="login" class="form-input" placeholder=" " disabled>
                     <label class="form-label" for="login">Login</label>
-                </div>
-                <div class="form-group">
+                </div><div class="form-group">
                     <input type="password" name="mot-de-passe" id="mot-de-passe" class="form-input" placeholder=" ">
                     <label class="form-label" for="mot-de-passe">Mot de passe</label>
                 </div>

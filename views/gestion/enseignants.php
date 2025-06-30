@@ -13,8 +13,13 @@
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <input type="text" name="id-utilisateur" class="form-input" placeholder=" " id="id-utilisateur">
-                    <label class="form-label" for="id-utilisateur">Numéro Matricule</label>
+                    <div class="form-group">
+                        <select class="form-input" id="id-utilisateur" name="id-utilisateur">
+                            <option value=""></option>
+                            <option value=""></option>
+                            <option value=""></option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
