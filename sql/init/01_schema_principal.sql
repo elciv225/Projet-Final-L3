@@ -134,6 +134,15 @@ CREATE TABLE action
     PRIMARY KEY (id)
 );
 
+-- Table: categorie_menu
+-- Description: Définit les lib des bouton des menu ainsi la vue associé, son icone
+CREATE TABLE categorie_menu
+(
+    id      VARCHAR(20),
+    libelle VARCHAR(50),
+    PRIMARY KEY (id)
+);
+
 -- Table: menu
 -- Description: Définit les lib des bouton des menu ainsi la vue associé, son icone
 CREATE TABLE menu
@@ -144,16 +153,6 @@ CREATE TABLE menu
     vue               VARCHAR(50),
     PRIMARY KEY (id),
     FOREIGN KEY (categorie_menu_id) REFERENCES categorie_menu (id)
-);
-
--- Table: categorie_menu
--- Description: Définit les lib des bouton des menu ainsi la vue associé, son icone
-CREATE TABLE categorie_menu
-(
-    id      VARCHAR(20),
-    libelle VARCHAR(50),
-    PRIMARY KEY (id),
-    FOREIGN KEY (traitement_id) REFERENCES traitement (id)
 );
 
 -- Table: menu_traitement
@@ -215,7 +214,6 @@ CREATE TABLE utilisateur
     email                   VARCHAR(255) UNIQUE,
     login                   VARCHAR(50) UNIQUE,
     mot_de_passe            VARCHAR(255),
-    photo                   VARCHAR(255),
     date_naissance          DATE,
     groupe_utilisateur_id   VARCHAR(20) NOT NULL, -- ex: 'GRP_VALID_RAPPORT'
     type_utilisateur_id     VARCHAR(25) NOT NULL, -- ex: 'TYPE_ETUDIANT_L1'
@@ -249,6 +247,7 @@ CREATE TABLE enseignant
 CREATE TABLE etudiant
 (
     utilisateur_id VARCHAR(30), -- ex: '24INF001'
+    numero_carte VARCHAR(20),
     PRIMARY KEY (utilisateur_id),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -391,6 +390,18 @@ CREATE TABLE historique_fonction
     PRIMARY KEY (utilisateur_id, fonction_id),
     FOREIGN KEY (utilisateur_id) REFERENCES enseignant (utilisateur_id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (fonction_id) REFERENCES fonction (id) ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- Table: historique_spécialité
+-- Description: Historise les spécialités occupées par les enseignants.
+CREATE TABLE historique_specialite
+(
+    utilisateur_id  VARCHAR(30), -- ex: 'ENS012'
+    specialite_id     VARCHAR(20), -- ex: 'FCT_CHEF_DEPT'
+    date_occupation DATE,
+    PRIMARY KEY (utilisateur_id, specialite_id),
+    FOREIGN KEY (utilisateur_id) REFERENCES enseignant (utilisateur_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (specialite_id) REFERENCES specialite (id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- Table: historique_grade

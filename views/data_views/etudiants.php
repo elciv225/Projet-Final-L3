@@ -10,7 +10,11 @@
             </div>
             <div class="form-group">
                 <input type="text" name="niveauEtude" class="form-input" placeholder=" " id="niveauEtude">
-                <label class="form-label" for="niveauEtude">Niveau d'Etude</label>
+                <label class="form-label" for="niveauEtude">Niveau d'Etude Actuel</label>
+            </div>
+            <div class="form-group">
+                <input type="text" name="niveauEtude" class="form-input" placeholder=" " id="niveauEtude">
+                <label class="form-label" for="niveauEtude">Année Académique Concernée</label>
             </div>
         </div>
     </div>
