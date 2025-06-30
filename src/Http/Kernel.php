@@ -22,7 +22,7 @@ class Kernel
 
         $routeInfo = $dispatcher->dispatch(
             $request->getMethod(),
-            $request->getUri()
+            parse_url($request->getUri(), PHP_URL_PATH)
         );
 
         switch ($routeInfo[0]) {

@@ -36,11 +36,11 @@ class IndexController extends Controller
     }
 
     /**
-     * Gère les traitements spécifiques des modules (ajouter, modifier, supprimer, etc.).
+     * Gère les menu_views spécifiques des modules (ajouter, modifier, supprimer, etc.).
      * @param string $category
      * @param string $moduleName
      * @param string $traitementName
-     * @param string $endpoint L'endpoint de la requête (e.g., 'index/gestion/etudiants/ajouter').
+     * @param string $endpoint L'endpoint de la requête (e.g., 'index/menu_views/etudiants/ajouter').
      * @return Response
      */
     public function gererTraitementModule( string $category, string $moduleName, string $traitementName, string $endpoint = 'index'): Response

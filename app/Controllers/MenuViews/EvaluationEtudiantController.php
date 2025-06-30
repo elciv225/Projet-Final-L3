@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Gestions;
+namespace App\Controllers\MenuViews;
 use System\Http\Response;
 
 class EvaluationEtudiantController
@@ -13,7 +13,7 @@ class EvaluationEtudiantController
             'content' => 'Gestion du corps enseignant de l\'établissement.'
         ];
 
-        // Toujours retourner la vue de gestion, jamais la page complète
-        return Response::view('gestion/evaluation-etudiant', $data);
+        // Toujours retourner la vue de menu_views, jamais la page complète
+        return Response::view('menu_views/evaluation-etudiant', $data);
     }
 }

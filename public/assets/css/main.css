@@ -101,3 +101,59 @@ body {
     width: 100%;
     background: var(--background-secondary);
 }
+
+/* Par défaut, le conteneur est scrollable mais la barre est invisible */
+.scroll-custom {
+    overflow: auto;
+    position: relative;
+    scrollbar-width: none; /* Firefox – caché par défaut */
+    transition: scrollbar-color 0.3s ease; /* effet lissé */
+    border-radius: 8px;
+}
+
+/* Au survol : scrollbars réactivées (Firefox) */
+.scroll-custom:hover {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-light) transparent;
+}
+
+/* WebKit (Chrome, Safari, Edge) */
+.scroll-custom::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.scroll-custom::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 8px;
+}
+
+/* Thumb invisible par défaut, visible progressivement au hover */
+.scroll-custom::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 8px;
+    transition:
+            background-color 0.3s ease,
+            width 0.3s ease,
+            height 0.3s ease;
+}
+
+.scroll-custom:hover::-webkit-scrollbar-thumb {
+    background-color: var(--border-light);
+}
+
+/* Focus clavier : visible même sans hover */
+.scroll-custom:focus-visible::-webkit-scrollbar-thumb {
+    background-color: var(--border-medium);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .scroll-custom:hover::-webkit-scrollbar-thumb {
+        background-color: var(--border-medium);
+    }
+
+    .scroll-custom:focus-visible::-webkit-scrollbar-thumb {
+        background-color: var(--border-light);
+    }
+}

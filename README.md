@@ -135,13 +135,14 @@ Pour chaque module défini dans ce tableau, les routes suivantes sont automatiqu
 -   Des routes d'API directes pour les traitements (par exemple `/gestion/etudiants/ajouter`).
 
 **Extrait de la configuration des modules (`routes/web.php`) :**
+
 ```php
 \$configurationModules = [
-    'gestion' => [
+    'menu_views' => [
         'etudiants' => [
-            'controleur' => App\Controllers\Gestions\EtudiantsController::class,
+            'controleur' => App\Controllers\Traitements\EtudiantsController::class,
             'methodePrincipale' => 'index',
-            'traitements' => [
+            'menu_views' => [
                 'ajouter' => ['methodeHttp' => 'POST', /* ... */],
                 'modifier' => ['methodeHttp' => 'POST', /* ... */],
                 'supprimer' => ['methodeHttp' => 'POST', /* ... */]

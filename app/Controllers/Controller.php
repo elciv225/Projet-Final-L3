@@ -152,9 +152,9 @@ class Controller
     }
 
     /**
-     * Gère les traitements spécifiques des modules (ajouter, modifier, supprimer, etc.).
+     * Gère les menu_views spécifiques des modules (ajouter, modifier, supprimer, etc.).
      * @param string $endpoint
-     * @param string $category La catégorie du module (e.g., 'gestion').
+     * @param string $category La catégorie du module (e.g., 'menu_views').
      * @param string $moduleName Le nom du module (e.g., 'etudiants').
      * @param string $traitementName Le nom du traitement (e.g., 'ajouter').
      * @return Response
@@ -167,7 +167,7 @@ class Controller
             return $this->error("Module '$moduleName' dans la catégorie '$category' non trouvé pour le traitement '$traitementName'.");
         }
 
-        $traitementsConfig = $moduleConfig['traitements'][$traitementName] ?? null;
+        $traitementsConfig = $moduleConfig['menu_views'][$traitementName] ?? null;
 
         if (!$traitementsConfig) {
             return $this->error("Traitement '$traitementName' non configuré pour le module '$moduleName'.");

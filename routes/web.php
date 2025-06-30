@@ -3,15 +3,11 @@
 use App\Controllers\AuthentificationController;
 use App\Controllers\Commission\DiscussionController;
 use App\Controllers\CommissionController;
-use App\Controllers\Gestions\AttributionMenuController;
-use App\Controllers\Gestions\EcueController;
-use App\Controllers\Gestions\EnseignantsController;
-use App\Controllers\Gestions\EtudiantsController;
-use App\Controllers\Gestions\EvaluationEtudiantController;
-use App\Controllers\Gestions\PersonnelAdministratifController;
-use App\Controllers\Gestions\ReglementInscriptionController;
-use App\Controllers\Gestions\UeController;
-use App\Controllers\Gestions\UtilisateursController;
+use App\Controllers\MenuViews\AttributionMenuController;
+use App\Controllers\MenuViews\EvaluationEtudiantController;
+use App\Controllers\MenuViews\ReglementInscriptionController;
+use App\Controllers\MenuViews\ParametreGenerauxController;
+use App\Controllers\MenuViews\UtilisateursController;
 use App\Controllers\IndexController;
 use App\Controllers\Public\AccueilController;
 use App\Controllers\Public\AuthentificationPublicController;
@@ -24,70 +20,6 @@ use App\Controllers\Public\SoumissionRapportController;
  */
 $configurationModules = [
     'gestion' => [
-        'personnel-administratif' => [
-            'controleur' => PersonnelAdministratifController::class,
-            'methodePrincipale' => 'index',
-            'label' => 'Personnel Administratif',
-            'icone' => '👨‍💼',
-            'description' => 'Gestion du personnel administratif de l\'établissement',
-            'traitements' => [
-                'ajouter' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Ajouter un nouvel élément de personnel administratif'
-                ],
-                'modifier' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Modifier un élément de personnel administratif existant'
-                ],
-                'supprimer' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Supprimer un élément de personnel administratif',
-                    // 'action' => 'supprimerPersonnel'
-                ]
-            ]
-        ],
-        'enseignants' => [
-            'controleur' => EnseignantsController::class,
-            'methodePrincipale' => 'index',
-            'label' => 'Enseignants',
-            'icone' => '👨‍🏫', // Correction: L'icône était incomplète '👨‍'
-            'description' => 'Gestion du corps enseignant',
-            'traitements' => [
-                'ajouter' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Ajouter un nouvel enseignant',
-                ],
-                'modifier' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Modifier les informations d\'un enseignant existant',
-                ],
-                'supprimer' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Supprimer un enseignant',
-                ]
-            ]
-        ],
-        'etudiants' => [
-            'controleur' => EtudiantsController::class,
-            'methodePrincipale' => 'index',
-            'label' => 'Étudiants',
-            'icone' => '👨‍',
-            'description' => 'Gestion des étudiants de l\'établissement',
-            'traitements' => [
-                'ajouter' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Ajouter un nouvel étudiant',
-                ],
-                'modifier' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Modifier les informations d\'un étudiant existant',
-                ],
-                'supprimer' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Supprimer un étudiant',
-                ]
-            ]
-        ],
         'utilisateurs' => [
             'controleur' => UtilisateursController::class,
             'methodePrincipale' => 'index',
@@ -109,6 +41,29 @@ $configurationModules = [
                 ]
             ]
         ],
+        'parametres-generaux' => [
+            'controleur' => ParametreGenerauxController::class,
+            'methodePrincipale' => 'index',
+            'label' => 'Paramètres Généraux',
+            'icone' => '💁🏾‍',
+            'description' => 'Gestion des étudiants de l\'établissement',
+            'traitements' => [
+                'ajouter' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Ajouter un nouvel étudiant',
+                ],
+                'modifier' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Modifier les informations d\'un étudiant existant',
+                ],
+                'supprimer' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Supprimer un étudiant',
+                ]
+            ]
+        ],
+        ],
+    'autres'=>[
         'evaluation-etudiant' => [
             'controleur' => EvaluationEtudiantController::class,
             'methodePrincipale' => 'index',
@@ -151,48 +106,6 @@ $configurationModules = [
                 ]
             ]
         ],
-        'ue' => [
-            'controleur' => UeController::class,
-            'methodePrincipale' => 'index',
-            'label' => 'UE',
-            'icone' => '💁🏾‍',
-            'description' => 'Gestion des étudiants de l\'établissement',
-            'traitements' => [
-                'ajouter' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Ajouter un nouvel étudiant',
-                ],
-                'modifier' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Modifier les informations d\'un étudiant existant',
-                ],
-                'supprimer' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Supprimer un étudiant',
-                ]
-            ]
-        ],
-        'ecue' => [
-            'controleur' => EcueController::class,
-            'methodePrincipale' => 'index',
-            'label' => 'ECUE',
-            'icone' => '💁🏾‍',
-            'description' => 'Gestion des étudiants de l\'établissement',
-            'traitements' => [
-                'ajouter' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Ajouter un nouvel étudiant',
-                ],
-                'modifier' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Modifier les informations d\'un étudiant existant',
-                ],
-                'supprimer' => [
-                    'methodeHttp' => 'POST',
-                    'description' => 'Supprimer un étudiant',
-                ]
-            ]
-        ],
         'reglement-inscription' => [
             'controleur' => ReglementInscriptionController::class,
             'methodePrincipale' => 'index',
@@ -214,6 +127,8 @@ $configurationModules = [
                 ]
             ]
         ],
+        ],
+    'commission'=>[
         'messagerie-commission' => [
             'controleur' => DiscussionController::class,
             'methodePrincipale' => 'index',
@@ -235,7 +150,6 @@ $configurationModules = [
                 ]
             ]
         ],
-
     ]
 ];
 
@@ -299,6 +213,9 @@ $routes = array_merge($routes, [
     /* === Routes des traitements (formulaires) === */
     ['POST', '/authentification', [AuthentificationPublicController::class, 'authentification']],
     ['POST', '/authentification-administration', [AuthentificationController::class, 'authentification']],
+    ['POST', '/charger-formulaire-categorie', [UtilisateursController::class, 'chargerFormulaireCategorie']],
+    ['POST', '/charger-formulaire-paramatre-specifique', [ParametreGenerauxController::class, 'chargerFormulaireParametreGeneraux']],
+
 ]);
 
 

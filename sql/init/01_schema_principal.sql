@@ -39,6 +39,15 @@ CREATE TABLE grade
     PRIMARY KEY (id)
 );
 
+-- Table: spécialité
+-- Description: Répertorie les spécialités des enseignants.
+CREATE TABLE specialite
+(
+    id      VARCHAR(20), -- ex: 'SPE_INFO'
+    libelle VARCHAR(50),
+    PRIMARY KEY (id)
+);
+
 -- Table: fonction
 -- Description: Liste les fonctions administratives ou académiques possibles.
 CREATE TABLE fonction
@@ -129,10 +138,22 @@ CREATE TABLE action
 -- Description: Définit les lib des bouton des menu ainsi la vue associé, son icone
 CREATE TABLE menu
 (
+    id                VARCHAR(20),
+    categorie_menu_id VARCHAR(20),
+    libelle           VARCHAR(50),
+    vue               VARCHAR(50),
+    PRIMARY KEY (id),
+    FOREIGN KEY (categorie_menu_id) REFERENCES categorie_menu (id)
+);
+
+-- Table: categorie_menu
+-- Description: Définit les lib des bouton des menu ainsi la vue associé, son icone
+CREATE TABLE categorie_menu
+(
     id      VARCHAR(20),
     libelle VARCHAR(50),
-    vue     VARCHAR(50),
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FOREIGN KEY (traitement_id) REFERENCES traitement (id)
 );
 
 -- Table: menu_traitement
@@ -398,7 +419,7 @@ CREATE TABLE stage_effectue
 );
 
 -- Table: autorisation_action
--- Description: Gère les permissions sur les actions des traitements pour les groupes.
+-- Description: Gère les permissions sur les actions des menu_views pour les groupes.
 CREATE TABLE autorisation_action
 (
     groupe_utilisateur_id VARCHAR(20), -- ex: 'GRP_VALID_RAPPORT'

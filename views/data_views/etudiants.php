@@ -1,83 +1,50 @@
-<main class="main-content">
-    <div class="page-header">
-        <div class="header-left">
-            <h1>Etudiants</h1>
-        </div>
+<div class="form-section">
+    <div class="section-header">
+        <h3 class="section-title">Informations liées aux <?php echo $typeUtilisateur ?? "Etudiants" ?></h3>
     </div>
-
-    <!-- Informations Generales -->
-    <div class="form-section">
-        <div class="section-header">
-            <h3 class="section-title">Information Generales</h3>
-        </div>
-        <div class="section-content">
-            <div class="form-grid">
-                <div class="form-group">
-                    <input type="text" name="id-utilisateur" class="form-input" placeholder=" " id="id-utilisateur">
-                    <label class="form-label" for="id-utilisateur">Numéro Carte d'Etudiant</label>
-                </div>
+    <div class="section-content">
+        <div class="form-grid">
+            <div class="form-group">
+                <input type="text" name="id-utilisateur" class="form-input" placeholder=" " id="id-utilisateur">
+                <label class="form-label" for="id-utilisateur">Numéro Carte d'Etudiant</label>
+            </div>
+            <div class="form-group">
+                <input type="text" name="niveauEtude" class="form-input" placeholder=" " id="niveauEtude">
+                <label class="form-label" for="niveauEtude">Niveau d'Etude</label>
             </div>
         </div>
     </div>
-
-    <!-- Informations carriere -->
-    <div class="form-section">
-        <div class="section-header">
-            <h3 class="section-title">Information Academique</h3>
-        </div>
-        <div class="section-content">
-            <div class="form-grid">
-                <div class="form-group">
-                    <input type="text" name="niveauEtude" class="form-input" placeholder=" " id="niveauEtude">
-                    <label class="form-label" for="niveauEtude">Niveau d'Etude</label>
-                </div>
-
-                <div class="form-group">
-                    <select class="form-input" id="id-annee-academique" name="id-annee-academique">
-                        <option value=""></option>
-                        <option value=""></option>
-                        <option value=""></option>
-                    </select>
-                </div>
+</div>
+<!-- Orders Table -->
+<div class="table-container">
+    <div class="table-header">
+        <h3 class="table-title">Liste des <?php echo $typeUtilisateur ?? "Etudiants" ?></h3>
+        <div class="header-actions">
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="Rechercher par ...">
             </div>
+
+
+        </div>
+        <div class="header-actions">
+            <button id="btnExportPDF" class="btn btn-secondary">🕐 Exporter en PDF</button>
+            <button id="btnExportExcel" class="btn btn-secondary">📤 Exporter sur Excel</button>
+            <button id="btnPrint" class="btn btn-secondary">📊 Imprimer</button>
+            <button class="btn btn-primary" id="btnSupprimerSelection">Supprimer</button>
         </div>
     </div>
 
-    <div style="display: flex; justify-content: flex-end; padding: 20px 0;">
-        <button class="btn btn-primary" id="btnValider">Valider</button>
+    <div>
+        <div class="table-tabs">
+            <div class="tab active">Tout selectioner</div>
+            <div class="tab"></div>
+            <div class="tab"></div>
+            <div class="tab"></div>
+            <div class="tab"></div>
+        </div>
     </div>
-
-
-    <!-- Orders Table -->
-    <div class="table-container">
-        <div class="table-header">
-            <h3 class="table-title">Liste des Etudiants</h3>
-            <div class="header-actions">
-                <div class="search-container">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" id="searchInput" class="search-input" placeholder="Rechercher par ...">
-                </div>
-
-
-            </div>
-            <div class="header-actions">
-                <button id="btnExportPDF" class="btn btn-secondary">🕐 Exporter en PDF</button>
-                <button id="btnExportExcel" class="btn btn-secondary">📤 Exporter sur Excel</button>
-                <button id="btnPrint" class="btn btn-secondary">📊 Imprimer</button>
-                <button class="btn btn-primary" id="btnSupprimerSelection">Supprimer</button>
-            </div>
-        </div>
-
-        <div>
-            <div class="table-tabs">
-                <div class="tab active">Tout selectioner</div>
-                <div class="tab"></div>
-                <div class="tab"></div>
-                <div class="tab"></div>
-                <div class="tab"></div>
-            </div>
-        </div>
-
+    <div class="table-scroll-wrapper scroll-custom">
         <table class="table">
             <thead>
             <tr>
@@ -206,23 +173,19 @@
             </tr>
             </tbody>
         </table>
-
-        <div class="table-footer">
-            <div class="results-info">
-                Showing 1-9 of 240 entries
-            </div>
-            <div class="pagination">
-                <button class="pagination-btn">‹</button>
-                <button class="pagination-btn active">1</button>
-                <button class="pagination-btn">2</button>
-                <button class="pagination-btn">3</button>
-                <span>...</span>
-                <button class="pagination-btn">12</button>
-                <button class="pagination-btn">›</button>
-            </div>
+    </div>
+    <div class="table-footer">
+        <div class="results-info">
+            Showing 1-9 of 240 entries
+        </div>
+        <div class="pagination">
+            <button class="pagination-btn">‹</button>
+            <button class="pagination-btn active">1</button>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn">3</button>
+            <span>...</span>
+            <button class="pagination-btn">12</button>
+            <button class="pagination-btn">›</button>
         </div>
     </div>
-</main>
-<script src="/assets/js/etudiants.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</div>
