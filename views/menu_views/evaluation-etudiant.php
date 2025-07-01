@@ -13,26 +13,61 @@
         <div class="section-content">
             <div class="form-grid">
                 <div class="form-group">
-                    <select class="form-input" id="id-utilisateur" name="id-utilisateur">
-                        <option value="">Numero Matricule</option>
-                        <option value=""></option>
-                        <option value=""></option>
+                    <select class="form-input" id="id_etudiant" name="id_etudiant" required>
+                        <option value="">Sélectionnez un Étudiant</option>
+                        <?php if (isset($etudiants) && !empty($etudiants)): ?>
+                            <?php foreach ($etudiants as $etudiant): ?>
+                                <?php // Assuming $etudiant object has methods like getId() and a way to get nom/prenom, possibly via a joined utilisateur object or a dedicated method in Etudiant model ?>
+                                <option value="<?= htmlspecialchars($etudiant->getUtilisateurId()) // ou $etudiant->getId() if it's the direct PK ?>">
+                                    <?= htmlspecialchars($etudiant->getUtilisateurId()) ?> - (<?= htmlspecialchars($etudiant->getNomComplet() ?? 'N/A') ?>)  <?php // TODO: Adjust to actual methods for student name/identifier ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </select>
+                    <label class="form-label" for="id_etudiant">Étudiant</label>
                 </div>
                 <div class="form-group">
-                    <select class="form-input" id="id-utilisateur" name="id-utilisatuer">
-                        <option value="">Numero Carte Etudiant</option>
-                        <option value=""></option>
-                        <option value=""></option>
+                    <select class="form-input" id="id_annee_academique" name="id_annee_academique" required>
+                        <option value="">Sélectionnez Année Académique</option>
+                         <?php if (isset($anneesAcademiques) && !empty($anneesAcademiques)): ?>
+                            <?php foreach ($anneesAcademiques as $annee): ?>
+                                <option value="<?= htmlspecialchars($annee->getId()) ?>">
+                                    <?= htmlspecialchars($annee->getId()) ?> (<?= htmlspecialchars(date('d/m/Y', strtotime($annee->getDateDebut()))) ?> - <?= htmlspecialchars(date('d/m/Y', strtotime($annee->getDateFin()))) ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </select>
+                    <label class="form-label" for="id_annee_academique">Année Académique</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" id="idEcueInput" class="form-input" placeholder=" ">
-                    <label class="form-label" for="idEcueInput">ID ECUE</label>
+                     <select class="form-input" id="id_ue" name="id_ue">
+                        <option value="">Sélectionnez une UE (optionnel)</option>
+                         <?php if (isset($ues) && !empty($ues)): ?>
+                            <?php foreach ($ues as $ue): ?>
+                                <option value="<?= htmlspecialchars($ue->getId()) ?>">
+                                    <?= htmlspecialchars($ue->getLibelle()) ?> (<?= htmlspecialchars($ue->getCredit()) ?> crédits)
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                    <label class="form-label" for="id_ue">Unité d'Enseignement (UE)</label>
                 </div>
                 <div class="form-group">
-                    <input type="date" id="date-evaluation" class="form-input" placeholder=" ">
-                    <label class="form-label" for="date-evaluation">Date d'Évaluation</label>
+                    <select class="form-input" id="id_ecue" name="id_ecue" required>
+                        <option value="">Sélectionnez un ECUE</option>
+                         <?php if (isset($ecues) && !empty($ecues)): ?>
+                            <?php foreach ($ecues as $ecue): ?>
+                                <option value="<?= htmlspecialchars($ecue->getId()) ?>">
+                                     <?= htmlspecialchars($ecue->getLibelle()) ?> (UE: <?= htmlspecialchars($ecue->getUeId()) ?>) <?php // TODO: Get UE Libelle if possible ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                    <label class="form-label" for="id_ecue">Élément Constitutif (ECUE)</label>
+                </div>
+                <div class="form-group">
+                    <input type="date" id="date_evaluation" name="date_evaluation" class="form-input" placeholder=" " required value="<?= date('Y-m-d') ?>">
+                    <label class="form-label" for="date_evaluation">Date d'Évaluation</label>
                 </div>
                 <div class="form-group">
                     <input type="number" id="note" class="form-input" placeholder=" " min="0" max="20">

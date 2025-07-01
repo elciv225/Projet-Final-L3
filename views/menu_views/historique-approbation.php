@@ -14,11 +14,18 @@
             <div class="form-grid">
                 <div class="form-group">
                     <div class="select-wrapper">
-                        <select id="niveauApprobationSelect" class="custom-select" required>
+                        <select id="niveauApprobationSelect" name="id_niveau_approbation" class="custom-select form-input" required>
                             <option value="">Sélectionner un Niveau d'Approbation</option>
-                            <!-- Options populées par JS -->
+                            <?php if (isset($niveauxApprobation) && !empty($niveauxApprobation)): ?>
+                                <?php foreach ($niveauxApprobation as $niveau): ?>
+                                    <option value="<?= htmlspecialchars($niveau->getId()) ?>">
+                                        <?= htmlspecialchars($niveau->getLibelle()) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
+                    <label class="form-label" for="niveauApprobationSelect">Niveau d'Approbation</label>
                 </div>
                 <div class="form-group">
                     <div class="select-wrapper">

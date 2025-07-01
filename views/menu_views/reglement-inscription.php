@@ -6,31 +6,96 @@
     </div>
 
     <!-- Sélection de l'année académique -->
-    <div class="form-group small-width right-align  mb-20">
-        <select class="form-input" id="id-annee-academique" name="id-annee-academique">
-            <option value="">Année-Académique</option>
-            <option value=""></option>
-            <option value=""></option>
-        </select>
+    <div class="filters-bar mb-20" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: #f9f9f9; border-radius: 8px;">
+        <div class="form-group small-width">
+            <select class="form-input" id="id_annee_academique_filtre" name="id_annee_academique_filtre">
+                <option value="">Filtrer par Année Académique</option>
+                <?php if (isset($anneesAcademiques) && !empty($anneesAcademiques)): ?>
+                    <?php foreach ($anneesAcademiques as $annee): ?>
+                        <option value="<?= htmlspecialchars($annee->getId()) ?>">
+                            <?= htmlspecialchars($annee->getId()) ?>
+                        </option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
+            <label class="form-label" for="id_annee_academique_filtre">Année Académique</label>
+        </div>
+         <div class="form-group small-width">
+            <select class="form-input" id="id_etudiant_filtre" name="id_etudiant_filtre">
+                <option value="">Filtrer par Étudiant</option>
+                 <?php if (isset($etudiants) && !empty($etudiants)): ?>
+                    <?php foreach ($etudiants as $etudiant): ?>
+                        <option value="<?= htmlspecialchars($etudiant->getUtilisateurId()) ?>">
+                           <?= htmlspecialchars($etudiant->getUtilisateurId()) ?> - (<?= htmlspecialchars($etudiant->getNomComplet() ?? 'N/A') ?>) <?php // TODO: Adjust to actual methods ?>
+                        </option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
+            <label class="form-label" for="id_etudiant_filtre">Étudiant</label>
+        </div>
+        <div class="form-group small-width">
+            <select class="form-input" id="id_niveau_etude_filtre" name="id_niveau_etude_filtre">
+                <option value="">Filtrer par Niveau d'Étude</option>
+                <?php if (isset($niveauxEtude) && !empty($niveauxEtude)): ?>
+                    <?php foreach ($niveauxEtude as $niveau): ?>
+                        <option value="<?= htmlspecialchars($niveau->getId()) ?>">
+                            <?= htmlspecialchars($niveau->getLibelle()) ?>
+                        </option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
+            <label class="form-label" for="id_niveau_etude_filtre">Niveau d'Étude</label>
+        </div>
+        <button class="btn btn-primary" id="btnFiltrerReglements">Filtrer</button>
     </div>
-    <!-- Informations de l'etudiant -->
+
+    <!-- Informations de l'etudiant (pour nouvelle saisie de règlement) -->
     <div class="form-section">
         <div class="section-header">
-            <h3 class="section-title">Information Etudiant</h3>
+            <h3 class="section-title">Saisie Nouveau Règlement</h3>
         </div>
         <div class="section-content">
             <div class="form-grid">
-                <div class="form-group">
-                    <input type="text" name="id-utilisateur" class="form-input" placeholder=" " id="id-utilisateur">
-                    <label class="form-label" for="id-utilisateur">Numero Carte d'Etudiant</label>
+                 <div class="form-group">
+                    <select class="form-input" id="id_etudiant_saisie" name="id_etudiant_saisie" required>
+                        <option value="">Sélectionnez un Étudiant</option>
+                         <?php if (isset($etudiants) && !empty($etudiants)): ?>
+                            <?php foreach ($etudiants as $etudiant): ?>
+                                <option value="<?= htmlspecialchars($etudiant->getUtilisateurId()) ?>">
+                                   <?= htmlspecialchars($etudiant->getUtilisateurId()) ?> - (<?= htmlspecialchars($etudiant->getNomComplet() ?? 'N/A') ?>) <?php // TODO: Adjust to actual methods ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                    <label class="form-label" for="id_etudiant_saisie">Étudiant</label>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="id-niveau-etude" class="form-input" placeholder=" " id="id-niveau-etude">
-                    <label class="form-label" for="id-niveau-etude">Niveau d'Etude</label>
+                     <select class="form-input" id="id_niveau_etude_saisie" name="id_niveau_etude_saisie" required>
+                        <option value="">Sélectionnez Niveau d'Étude</option>
+                        <?php if (isset($niveauxEtude) && !empty($niveauxEtude)): ?>
+                            <?php foreach ($niveauxEtude as $niveau): ?>
+                                <option value="<?= htmlspecialchars($niveau->getId()) ?>">
+                                    <?= htmlspecialchars($niveau->getLibelle()) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                    <label class="form-label" for="id_niveau_etude_saisie">Niveau d'Étude</label>
+                </div>
+                 <div class="form-group">
+                    <select class="form-input" id="id_annee_academique_saisie" name="id_annee_academique_saisie" required>
+                        <option value="">Sélectionnez Année Académique</option>
+                        <?php if (isset($anneesAcademiques) && !empty($anneesAcademiques)): ?>
+                            <?php foreach ($anneesAcademiques as $annee): ?>
+                                <option value="<?= htmlspecialchars($annee->getId()) ?>">
+                                    <?= htmlspecialchars($annee->getId()) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                    <label class="form-label" for="id_annee_academique_saisie">Année Académique</label>
                 </div>
             </div>
-
-        </div>
     </div>
 
     <!-- Reglements des frais d'inscription -->

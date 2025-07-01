@@ -1,193 +1,52 @@
-<div class="form-section">
+<?php
+// $utilisateur is the base user object (optional, for modification)
+// $detailsUtilisateur is the Etudiant object (optional, for modification)
+// $niveaux_etude is the list of all NiveauEtude objects
+// $categorieUtilisateur is the label like "Étudiant"
+// $categorieId is the ID like 'CAT_ETUD'
+
+$num_matricule_val = isset($detailsUtilisateur) ? htmlspecialchars($detailsUtilisateur->getNumMatricule()) : '';
+// date_naissance is in the main form, but if needed here:
+// $date_naissance_val = isset($utilisateur) ? htmlspecialchars($utilisateur->getDateNaissance()) : '';
+$lieu_naissance_val = isset($detailsUtilisateur) ? htmlspecialchars($detailsUtilisateur->getLieuNaissance()) : '';
+$id_niveau_etude_val = isset($detailsUtilisateur) ? htmlspecialchars($detailsUtilisateur->getIdNiveauEtude()) : '';
+
+?>
+<div class="form-section specific-fields-etudiant">
     <div class="section-header">
-        <h3 class="section-title">Informations liées aux <?php echo $typeUtilisateur ?? "Etudiants" ?></h3>
+        <h3 class="section-title">Informations Spécifiques <?= htmlspecialchars($categorieUtilisateur ?? "Étudiant") ?></h3>
     </div>
     <div class="section-content">
         <div class="form-grid">
             <div class="form-group">
-                <input type="text" name="id-utilisateur" class="form-input" placeholder=" " id="id-utilisateur">
-                <label class="form-label" for="id-utilisateur">Numéro Carte d'Etudiant</label>
+                <input type="text" name="num_matricule" class="form-input" placeholder=" " id="num_matricule" value="<?= $num_matricule_val ?>" required>
+                <label class="form-label" for="num_matricule">Numéro Matricule</label>
             </div>
             <div class="form-group">
-                <input type="text" name="niveauEtude" class="form-input" placeholder=" " id="niveauEtude">
-                <label class="form-label" for="niveauEtude">Niveau d'Etude Actuel</label>
+                <input type="text" name="lieu_naissance" class="form-input" placeholder=" " id="lieu_naissance" value="<?= $lieu_naissance_val ?>">
+                <label class="form-label" for="lieu_naissance">Lieu de Naissance</label>
             </div>
             <div class="form-group">
-                <input type="text" name="niveauEtude" class="form-input" placeholder=" " id="niveauEtude">
-                <label class="form-label" for="niveauEtude">Année Académique Concernée</label>
+                <select class="form-input" id="id_niveau_etude" name="id_niveau_etude" required>
+                    <option value="">Sélectionnez Niveau d'Étude</option>
+                    <?php if (isset($niveaux_etude) && !empty($niveaux_etude)): ?>
+                        <?php foreach ($niveaux_etude as $niveau): ?>
+                            <option value="<?= htmlspecialchars($niveau->getId()) ?>" <?= ($id_niveau_etude_val == $niveau->getId()) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($niveau->getLibelle()) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+                <label class="form-label" for="id_niveau_etude">Niveau d'Étude Actuel</label>
             </div>
+            <!-- Note: Date de naissance is typically in the main user form -->
+            <!-- Année Académique Concernée is part of inscription, not the student entity itself usually -->
         </div>
     </div>
 </div>
-<!-- Orders Table -->
-<div class="table-container">
-    <div class="table-header">
-        <h3 class="table-title">Liste des <?php echo $typeUtilisateur ?? "Etudiants" ?></h3>
-        <div class="header-actions">
-            <div class="search-container">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" class="search-input" placeholder="Rechercher par ...">
-            </div>
-        </div>
-        <div class="header-actions">
-            <button id="btnExportPDF" class="btn btn-secondary">🕐 Exporter en PDF</button>
-            <button id="btnExportExcel" class="btn btn-secondary">📤 Exporter sur Excel</button>
-            <button id="btnPrint" class="btn btn-secondary">📊 Imprimer</button>
-            <button class="btn btn-primary" id="btnSupprimerSelection">Supprimer</button>
-        </div>
-    </div>
 
-    <div>
-        <div class="table-tabs">
-            <div class="tab active">Tout selectioner</div>
-            <div class="tab"></div>
-            <div class="tab"></div>
-            <div class="tab"></div>
-            <div class="tab"></div>
-        </div>
-    </div>
-    <div class="table-scroll-wrapper scroll-custom">
-        <table class="table">
-            <thead>
-            <tr>
-                <th><input type="checkbox" class="checkbox"></th>
-                <th>Numero Carte d'Etudiant</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Date de naissance</th>
-                <th>Email</th>
-                <th>Niveau d'Etude</th>
-                <th>Annee-Academique</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td><input type="checkbox" class="checkbox"></td>
-                <td>ETU001</td>
-                <td>Koné</td>
-                <td>Fatoumata</td>
-                <td>15/03/2002</td>
-                <td>fatoumata.kone@example.com</td>
-                <td>Licence 3</td>
-                <td>2024-2025</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="checkbox"></td>
-                <td>ETU002</td>
-                <td>Traoré</td>
-                <td>Moussa</td>
-                <td>22/07/2001</td>
-                <td>moussa.traore@example.com</td>
-                <td>Master 1</td>
-                <td>2024-2025</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="checkbox"></td>
-                <td>ETU003</td>
-                <td>Diaby</td>
-                <td>Aïcha</td>
-                <td>01/11/2003</td>
-                <td>aicha.diaby@example.com</td>
-                <td>Licence 2</td>
-                <td>2024-2025</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="checkbox"></td>
-                <td>ETU004</td>
-                <td>Kouassi</td>
-                <td>Jean-Luc</td>
-                <td>05/09/2000</td>
-                <td>jeanluc.kouassi@example.com</td>
-                <td>Master 2</td>
-                <td>2024-2025</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="checkbox"></td>
-                <td>ETU005</td>
-                <td>Yao</td>
-                <td>Marie</td>
-                <td>10/01/2004</td>
-                <td>marie.yao@example.com</td>
-                <td>Licence 1</td>
-                <td>2024-2025</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="checkbox"></td>
-                <td>ETU006</td>
-                <td>Doumbia</td>
-                <td>Bakary</td>
-                <td>18/04/2002</td>
-                <td>bakary.doumbia@example.com</td>
-                <td>Licence 3</td>
-                <td>2024-2025</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="checkbox"></td>
-                <td>ETU007</td>
-                <td>Adjoua</td>
-                <td>Fanta</td>
-                <td>29/08/2001</td>
-                <td>fanta.adjoua@example.com</td>
-                <td>Master 1</td>
-                <td>2024-2025</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="checkbox"></td>
-                <td>ETU008</td>
-                <td>Koffi</td>
-                <td>Serge</td>
-                <td>03/12/2003</td>
-                <td>serge.koffi@example.com</td>
-                <td>Licence 2</td>
-                <td>2024-2025</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="checkbox"></td>
-                <td>ETU009</td>
-                <td>Sanogo</td>
-                <td>Aminata</td>
-                <td>25/06/2000</td>
-                <td>aminata.sanogo@example.com</td>
-                <td>Master 2</td>
-                <td>2024-2025</td>
-
-                <td></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" class="checkbox"></td>
-                <td>ETU010</td>
-                <td>N'Guessan</td>
-                <td>Marc</td>
-                <td>12/02/2004</td>
-                <td>marc.nguessan@example.com</td>
-                <td>Licence 1</td>
-                <td>2024-2025</td>
-                <td></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="table-footer">
-        <div class="results-info">
-            Showing 1-9 of 240 entries
-        </div>
-        <div class="pagination">
-            <button class="pagination-btn">‹</button>
-            <button class="pagination-btn active">1</button>
-            <button class="pagination-btn">2</button>
-            <button class="pagination-btn">3</button>
-            <span>...</span>
-            <button class="pagination-btn">12</button>
-            <button class="pagination-btn">›</button>
-        </div>
-    </div>
-</div>
+<!-- The table for listing users is usually part of the main view (utilisateurs.php) -->
+<!-- or loaded separately. This partial should focus on the form fields. -->
+<!-- If a list of students needs to be displayed here based on the selected category, -->
+<!-- that logic would be separate from this form. -->
+<!-- For now, removing the static table from this partial form view. -->

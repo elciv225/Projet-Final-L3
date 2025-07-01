@@ -541,5 +541,35 @@
     });
 </script>
 
+<script>
+    // Pass PHP data to JavaScript
+    const phpAnneeCourante = <?= isset($anneeCourante) && $anneeCourante ? json_encode(['id' => $anneeCourante->getId(), 'date_debut' => $anneeCourante->getDateDebut(), 'date_fin' => $anneeCourante->getDateFin()]) : 'null' ?>;
+    const phpUes = <?= isset($ues) ? json_encode(array_map(function($ue){ return ['id' => $ue->getId(), 'libelle' => $ue->getLibelle(), 'credit' => $ue->getCredit()]; }, $ues)) : '[]' ?>;
+
+    // Example of how JS might use this (actual usage would be in the main script above)
+    document.addEventListener('DOMContentLoaded', function() {
+        if (phpAnneeCourante) {
+            console.log("Année Courante:", phpAnneeCourante);
+            // Example: Pre-fill "Formation / Année" if it's just the year ID
+            const formationYearInput = document.getElementById('formation-year');
+            if (formationYearInput && !formationYearInput.value) { // Only if not already filled
+                 // formationYearInput.value = `Année ${phpAnneeCourante.id}`; // Or some other formatting
+            }
+        }
+        if (phpUes.length > 0) {
+            console.log("UEs Disponibles:", phpUes);
+            // Example: Populate a hypothetical UE select dropdown
+            // const ueSelect = document.getElementById('ue-select'); // Assuming it exists
+            // if (ueSelect) {
+            //     phpUes.forEach(ue => {
+            //         const option = document.createElement('option');
+            //         option.value = ue.id;
+            //         option.textContent = ue.libelle;
+            //         ueSelect.appendChild(option);
+            //     });
+            // }
+        }
+    });
+</script>
 </body>
 </html>
