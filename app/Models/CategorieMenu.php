@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-class Action {
+class CategorieMenu {
     private string $id;
     private ?string $libelle = null;
     public function __construct() {}

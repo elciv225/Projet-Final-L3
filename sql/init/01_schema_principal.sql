@@ -16,7 +16,7 @@ CREATE TABLE annee_academique
 -- Description: Liste des entreprises où les étudiants peuvent effectuer des stages.
 CREATE TABLE entreprise
 (
-    id      VARCHAR(20), -- ex: 'ENT_GOOGLE'
+    id      VARCHAR(30), -- ex: 'ENT_GOOGLE'
     libelle VARCHAR(50),
     PRIMARY KEY (id)
 );
@@ -25,7 +25,7 @@ CREATE TABLE entreprise
 -- Description: Définit les différents niveaux d'étude (Licence, Master, etc.).
 CREATE TABLE niveau_etude
 (
-    id      VARCHAR(20), -- ex: 'NIVEAU_LICENCE3'
+    id      VARCHAR(30), -- ex: 'NIVEAU_LICENCE3'
     libelle VARCHAR(50),
     PRIMARY KEY (id)
 );
@@ -34,7 +34,7 @@ CREATE TABLE niveau_etude
 -- Description: Répertorie les grades académiques des enseignants.
 CREATE TABLE grade
 (
-    id      VARCHAR(20), -- ex: 'GRD_MAITRE_CONF'
+    id      VARCHAR(30), -- ex: 'GRD_MAITRE_CONF'
     libelle VARCHAR(50),
     PRIMARY KEY (id)
 );
@@ -43,7 +43,7 @@ CREATE TABLE grade
 -- Description: Répertorie les spécialités des enseignants.
 CREATE TABLE specialite
 (
-    id      VARCHAR(20), -- ex: 'SPE_INFO'
+    id      VARCHAR(30), -- ex: 'SPE_INFO'
     libelle VARCHAR(50),
     PRIMARY KEY (id)
 );
@@ -52,7 +52,7 @@ CREATE TABLE specialite
 -- Description: Liste les fonctions administratives ou académiques possibles.
 CREATE TABLE fonction
 (
-    id      VARCHAR(20), -- ex: 'FCT_CHEF_DEPT'
+    id      VARCHAR(30), -- ex: 'FCT_CHEF_DEPT'
     libelle VARCHAR(50),
     PRIMARY KEY (id)
 );
@@ -61,7 +61,7 @@ CREATE TABLE fonction
 -- Description: Définit les unités d'enseignement.
 CREATE TABLE ue
 (
-    id      VARCHAR(15), -- ex: 'UE_MATHS1'
+    id      VARCHAR(30), -- ex: 'UE_MATHS1'
     libelle VARCHAR(50),
     credit  SMALLINT,
     PRIMARY KEY (id)
@@ -71,7 +71,7 @@ CREATE TABLE ue
 -- Description: Catégorise les utilisateurs en grands groupes (Étudiant, Enseignant, etc.).
 CREATE TABLE categorie_utilisateur
 (
-    id      VARCHAR(20), -- ex: 'CAT_ETUDIANT'
+    id      VARCHAR(30), -- ex: 'CAT_ETUDIANT'
     libelle VARCHAR(50),
     PRIMARY KEY (id)
 );
@@ -80,16 +80,7 @@ CREATE TABLE categorie_utilisateur
 -- Description: Définit les groupes de permissions ou de travail.
 CREATE TABLE groupe_utilisateur
 (
-    id      VARCHAR(20), -- ex: 'GRP_VALID_RAPPORT'
-    libelle VARCHAR(50),
-    PRIMARY KEY (id)
-);
-
--- Table: niveau_acces_donnees
--- Description: Définit le niveau de confidentialité des données accessibles.
-CREATE TABLE niveau_acces_donnees
-(
-    id      VARCHAR(20), -- ex: 'ACCES_DEPT_INFO'
+    id      VARCHAR(30), -- ex: 'GRP_VALID_RAPPORT'
     libelle VARCHAR(50),
     PRIMARY KEY (id)
 );
@@ -120,7 +111,7 @@ CREATE TABLE niveau_approbation
 -- Description: Définit un processus métier (ex: Inscription, Validation de rapport).
 CREATE TABLE traitement
 (
-    id      VARCHAR(20), -- ex: 'TRT_INSCRIPTION'
+    id      VARCHAR(30), -- ex: 'TRT_INSCRIPTION'
     libelle VARCHAR(50),
     PRIMARY KEY (id)
 );
@@ -129,7 +120,7 @@ CREATE TABLE traitement
 -- Description: Définit une étape atomique d'un traitement (ex: Vérifier paiement).
 CREATE TABLE action
 (
-    id      VARCHAR(20), -- ex: 'ACT_VERIF_PAIE'
+    id      VARCHAR(30), -- ex: 'ACT_VERIF_PAIE'
     libelle VARCHAR(50),
     PRIMARY KEY (id)
 );
@@ -138,7 +129,7 @@ CREATE TABLE action
 -- Description: Définit les lib des bouton des menu ainsi la vue associé, son icone
 CREATE TABLE categorie_menu
 (
-    id      VARCHAR(20),
+    id      VARCHAR(30),
     libelle VARCHAR(50),
     PRIMARY KEY (id)
 );
@@ -147,8 +138,8 @@ CREATE TABLE categorie_menu
 -- Description: Définit les lib des bouton des menu ainsi la vue associé, son icone
 CREATE TABLE menu
 (
-    id                VARCHAR(20),
-    categorie_menu_id VARCHAR(20),
+    id                VARCHAR(30),
+    categorie_menu_id VARCHAR(30),
     libelle           VARCHAR(50),
     vue               VARCHAR(50),
     PRIMARY KEY (id),
@@ -159,8 +150,8 @@ CREATE TABLE menu
 -- Description: Associe un menu à son traitement
 CREATE TABLE menu_traitement
 (
-    menu_id       VARCHAR(20),
-    traitement_id VARCHAR(20),
+    menu_id       VARCHAR(30),
+    traitement_id VARCHAR(30),
     PRIMARY KEY (menu_id, traitement_id),
     FOREIGN KEY (menu_id) REFERENCES menu (id),
     FOREIGN KEY (traitement_id) REFERENCES traitement (id)
@@ -170,8 +161,8 @@ CREATE TABLE menu_traitement
 -- Description: Associe des actions à un traitement.
 CREATE TABLE traitement_action
 (
-    traitement_id VARCHAR(20) NOT NULL, -- ex: 'TRT_INSCRIPTION'
-    action_id     VARCHAR(20) NOT NULL, -- ex: 'ACT_VERIF_PAIE'
+    traitement_id VARCHAR(30) NOT NULL, -- ex: 'TRT_INSCRIPTION'
+    action_id     VARCHAR(30) NOT NULL, -- ex: 'ACT_VERIF_PAIE'
     PRIMARY KEY (traitement_id, action_id),
     FOREIGN KEY (traitement_id) REFERENCES traitement (id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (action_id) REFERENCES action (id) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -185,10 +176,10 @@ CREATE TABLE traitement_action
 -- Description: Définit les matières (ECUE) qui composent une UE.
 CREATE TABLE ecue
 (
-    id      VARCHAR(15),          -- ex: 'ECUE_ALGEBRE1'
+    id      VARCHAR(30),          -- ex: 'ECUE_ALGEBRE1'
     libelle VARCHAR(50),
     credit  SMALLINT,
-    ue_id   VARCHAR(15) NOT NULL, -- ex: 'UE_MATHS1'
+    ue_id   VARCHAR(30) NOT NULL, -- ex: 'UE_MATHS1'
     PRIMARY KEY (id),
     FOREIGN KEY (ue_id) REFERENCES ue (id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -199,7 +190,7 @@ CREATE TABLE type_utilisateur
 (
     id                       VARCHAR(25),          -- ex: 'TYPE_ETUDIANT_L1'
     libelle                  VARCHAR(50),
-    categorie_utilisateur_id VARCHAR(20) NOT NULL, -- ex: 'CAT_ETUDIANT'
+    categorie_utilisateur_id VARCHAR(30) NOT NULL, -- ex: 'CAT_ETUDIANT'
     PRIMARY KEY (id),
     FOREIGN KEY (categorie_utilisateur_id) REFERENCES categorie_utilisateur (id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -215,13 +206,11 @@ CREATE TABLE utilisateur
     login                   VARCHAR(50) UNIQUE,
     mot_de_passe            VARCHAR(255),
     date_naissance          DATE,
-    groupe_utilisateur_id   VARCHAR(20) NOT NULL, -- ex: 'GRP_VALID_RAPPORT'
+    groupe_utilisateur_id   VARCHAR(30) NOT NULL, -- ex: 'GRP_VALID_RAPPORT'
     type_utilisateur_id     VARCHAR(25) NOT NULL, -- ex: 'TYPE_ETUDIANT_L1'
-    niveau_acces_donnees_id VARCHAR(20) NOT NULL, -- ex: 'ACCES_DEPT_INFO'
     PRIMARY KEY (id),
     FOREIGN KEY (groupe_utilisateur_id) REFERENCES groupe_utilisateur (id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (type_utilisateur_id) REFERENCES type_utilisateur (id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (niveau_acces_donnees_id) REFERENCES niveau_acces_donnees (id) ON DELETE RESTRICT ON UPDATE CASCADE
+    FOREIGN KEY (type_utilisateur_id) REFERENCES type_utilisateur (id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- Table: personnel_administratif
@@ -247,7 +236,7 @@ CREATE TABLE enseignant
 CREATE TABLE etudiant
 (
     utilisateur_id VARCHAR(30), -- ex: '24INF001'
-    numero_carte VARCHAR(20),
+    numero_carte VARCHAR(30),
     PRIMARY KEY (utilisateur_id),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -257,7 +246,7 @@ CREATE TABLE etudiant
 CREATE TABLE inscription_etudiant
 (
     utilisateur_id      VARCHAR(30), -- ex: '24INF001'
-    niveau_etude_id     VARCHAR(20), -- ex: 'NIVEAU_LICENCE3'
+    niveau_etude_id     VARCHAR(30), -- ex: 'NIVEAU_LICENCE3'
     annee_academique_id VARCHAR(10), -- ex: '2023-2024'
     date_inscription    DATE,
     montant             INT,
@@ -371,7 +360,7 @@ CREATE TABLE evaluation
 (
     enseignant_id   VARCHAR(30), -- ex: 'ENS012'
     etudiant_id     VARCHAR(30), -- ex: '24INF001'
-    ecue_id         VARCHAR(15), -- ex: 'ECUE_ALGEBRE1'
+    ecue_id         VARCHAR(30), -- ex: 'ECUE_ALGEBRE1'
     date_evaluation DATE,
     note            SMALLINT,
     PRIMARY KEY (enseignant_id, etudiant_id, ecue_id),
@@ -385,7 +374,7 @@ CREATE TABLE evaluation
 CREATE TABLE historique_fonction
 (
     utilisateur_id  VARCHAR(30), -- ex: 'ENS012'
-    fonction_id     VARCHAR(20), -- ex: 'FCT_CHEF_DEPT'
+    fonction_id     VARCHAR(30), -- ex: 'FCT_CHEF_DEPT'
     date_occupation DATE,
     PRIMARY KEY (utilisateur_id, fonction_id),
     FOREIGN KEY (utilisateur_id) REFERENCES enseignant (utilisateur_id) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -397,7 +386,7 @@ CREATE TABLE historique_fonction
 CREATE TABLE historique_specialite
 (
     utilisateur_id  VARCHAR(30), -- ex: 'ENS012'
-    specialite_id     VARCHAR(20), -- ex: 'FCT_CHEF_DEPT'
+    specialite_id     VARCHAR(30), -- ex: 'FCT_CHEF_DEPT'
     date_occupation DATE,
     PRIMARY KEY (utilisateur_id, specialite_id),
     FOREIGN KEY (utilisateur_id) REFERENCES enseignant (utilisateur_id) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -409,7 +398,7 @@ CREATE TABLE historique_specialite
 CREATE TABLE historique_grade
 (
     utilisateur_id VARCHAR(30), -- ex: 'ENS012'
-    grade_id       VARCHAR(20), -- ex: 'GRD_MAITRE_CONF'
+    grade_id       VARCHAR(30), -- ex: 'GRD_MAITRE_CONF'
     date_grade     DATE,
     PRIMARY KEY (utilisateur_id, grade_id),
     FOREIGN KEY (utilisateur_id) REFERENCES enseignant (utilisateur_id) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -421,7 +410,7 @@ CREATE TABLE historique_grade
 CREATE TABLE stage_effectue
 (
     utilisateur_id VARCHAR(30), -- ex: '24INF001'
-    entreprise_id  VARCHAR(20), -- ex: 'ENT_GOOGLE'
+    entreprise_id  VARCHAR(30), -- ex: 'ENT_GOOGLE'
     date_debut     DATE,
     date_fin       DATE,
     PRIMARY KEY (utilisateur_id, entreprise_id),
@@ -433,9 +422,9 @@ CREATE TABLE stage_effectue
 -- Description: Gère les permissions sur les actions des menu_views pour les groupes.
 CREATE TABLE autorisation_action
 (
-    groupe_utilisateur_id VARCHAR(20), -- ex: 'GRP_VALID_RAPPORT'
-    traitement_id         VARCHAR(20), -- ex: 'TRT_INSCRIPTION'
-    action_id             VARCHAR(20), -- ex: 'ACT_VERIF_PAIE'
+    groupe_utilisateur_id VARCHAR(30), -- ex: 'GRP_VALID_RAPPORT'
+    traitement_id         VARCHAR(30), -- ex: 'TRT_INSCRIPTION'
+    action_id             VARCHAR(30), -- ex: 'ACT_VERIF_PAIE'
     PRIMARY KEY (groupe_utilisateur_id, traitement_id, action_id),
     FOREIGN KEY (groupe_utilisateur_id) REFERENCES groupe_utilisateur (id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (traitement_id) REFERENCES traitement (id) ON DELETE RESTRICT ON UPDATE CASCADE,

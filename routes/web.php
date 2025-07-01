@@ -258,7 +258,7 @@ $routes = array_merge($routes, [
     ['POST', '/authentification', [AuthentificationPublicController::class, 'authentification']],
     ['POST', '/authentification-administration', [AuthentificationController::class, 'authentification']],
     ['POST', '/charger-formulaire-categorie', [UtilisateursController::class, 'chargerFormulaireCategorie']],
-    ['POST', '/charger-formulaire-paramatre-specifique', [ParametreGenerauxController::class, 'chargerFormulaireParametreGeneraux']],
+    ['POST', '/charger-formulaire-paramatre-specifique', [ParametreGenerauxController::class, 'chargerFormulaireCategorie']],
     ['POST', '/traitement-utilisateur', [UtilisateursController::class, 'executerAction']],
     ['POST', '/charger-donnee-historique-utilisateur', [HistoriquePersonnelController::class, 'chargerPersonnelPourDonneeHistorique']],
     ['POST', '/charger-historique-personnel', [HistoriquePersonnelController::class, 'chargerDonneeHistoriquePersonnel']],

@@ -3,7 +3,8 @@
 namespace App\Dao;
 
 use PDO;
-use System\Database\Database;
+use ReflectionObject;
+use ReflectionProperty;
 
 abstract class DAO
 {
@@ -12,130 +13,103 @@ abstract class DAO
     protected string $model;
     protected string $primaryKey;
 
-    /**
-     * Constructeur de la classe DAO
-     * @param PDO $pdo Instance de PDO pour la connexion à la base de données
-     * @param string $table Nom de la table
-     * @param string $model Nom du modèle associé
-     */
     public function __construct(PDO $pdo, string $table, string $model, string $primaryKey = 'id')
     {
-        $this->pdo = Database::getConnection();
+        $this->pdo = $pdo;
         $this->table = $table;
         $this->model = $model;
         $this->primaryKey = $primaryKey;
     }
 
-    /**
-     * Trouver un enregistremet avec son Identifiant
-     * @param string $id Identitifiant de l'enregistrement
-     * @return object|null Le Model de l'enregistrement
-     */
+    protected function hydrater(array $data): object
+    {
+        $object = new $this->model();
+        foreach ($data as $column => $value) {
+            $setterMethod = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $column)));
+            if (method_exists($object, $setterMethod)) {
+                $object->$setterMethod($value);
+            }
+        }
+        return $object;
+    }
+
     public function recupererParId(string $id): ?object
     {
-        $query = "SELECT * FROM $this->table WHERE $this->primaryKey = :id";
+        $query = "SELECT * FROM {$this->table} WHERE {$this->primaryKey} = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':id', $id);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, $this->model);
-        return $stmt->execute() ? $stmt->fetch() : null;
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $this->hydrater($row) : null;
     }
 
-    /**
-     * Récupérer tous les enregistrements de la table
-     * @param string|null $orderBy Order par une colonne spécifique
-     * @param string|null $orderType Type de tri (ASC ou DESC)
-     * @return array Un tableau d'objets du modèle
-     */
-    public function recupererTous(?string $orderBy = null, ?string $orderType = null): array
+    public function recupererTous(?string $orderBy = null, ?string $orderType = 'ASC'): array
     {
-        $query = "SELECT * FROM $this->table";
-
-        if ($orderBy && $orderType) {
+        $query = "SELECT * FROM {$this->table}";
+        if ($orderBy) {
             $query .= " ORDER BY $orderBy $orderType";
         }
-
-        $stmt = $this->pdo->prepare($query);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, $this->model);
-        return $stmt->execute() ? $stmt->fetchAll() : [];
+        $stmt = $this->pdo->query($query);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $objects = [];
+        foreach ($rows as $row) {
+            $objects[] = $this->hydrater($row);
+        }
+        return $objects;
     }
 
-    /**
-     * Créer un nouvel enregistrement
-     * @param array $data Données à insérer
-     * @return bool True si l'insertion a réussi, sinon false
-     */
-    public function creer(array $data): bool
+    public function creer(object $model): bool
     {
+        $data = $this->extractDataFromModel($model);
         $colonnes = implode(", ", array_keys($data));
         $valeurs = ":" . implode(", :", array_keys($data));
-
-        $sql = "INSERT INTO $this->table ($colonnes) VALUES ($valeurs)";
+        $sql = "INSERT INTO {$this->table} ($colonnes) VALUES ($valeurs)";
         $stmt = $this->pdo->prepare($sql);
-        foreach ($data as $key => $value) {
-            $stmt->bindValue(":$key", $value);
-        }
-        return $stmt->execute();
+        return $stmt->execute($data);
     }
 
-    /**
-     * Mettre à jour un enregistrement
-     * @param string $id Identifiant de l'enregistrement
-     * @param array $data Données à mettre à jour
-     * @return bool True si la mise à jour a réussi, sinon false
-     */
-    public function mettreAJour(string $id, array $data): bool
+    public function mettreAJour(string $id, object $model): bool
     {
-        $set = "";
+        $data = $this->extractDataFromModel($model);
+        $set = [];
         foreach ($data as $key => $value) {
-            $set .= "$key = :$key, ";
+            if ($key === $this->primaryKey) continue;
+            $set[] = "$key = :$key";
         }
-        $set = rtrim($set, ", ");
-
-        $sql = "UPDATE $this->table SET $set WHERE $this->primaryKey = :id";
+        $setClause = implode(", ", $set);
+        $sql = "UPDATE {$this->table} SET $setClause WHERE {$this->primaryKey} = :id";
         $stmt = $this->pdo->prepare($sql);
-        foreach ($data as $key => $value) {
-            $stmt->bindValue(":$key", $value);
-        }
-        $stmt->bindValue(':id', $id);
-        return $stmt->execute();
+        $data['id'] = $id;
+        return $stmt->execute($data);
     }
 
-    /**
-     * Supprimer un enregistrement
-     * @param string $id Identifiant de l'enregistrement
-     * @return bool True si la suppression a réussi, sinon false
-     */
+    public function persister(object $model): bool
+    {
+        $getter = 'get' . ucfirst($this->primaryKey);
+        if (method_exists($model, $getter) && !empty($model->$getter())) {
+            return $this->mettreAJour($model->$getter(), $model);
+        }
+        return $this->creer($model);
+    }
+
     public function supprimer(string $id): bool
     {
-        $sql = "DELETE FROM $this->table WHERE $this->primaryKey = :id";
+        $sql = "DELETE FROM {$this->table} WHERE {$this->primaryKey} = :id";
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':id', $id);
         return $stmt->execute();
     }
 
-    /**
-     * Rechercher des enregistrements
-     * @param array $criteres Critères de recherche
-     * @param string|null $orderBy Order par une colonne spécifique
-     * @param string|null $orderType Type de tri (ASC ou DESC)
-     * @return array Un tableau d'objets du modèle
-     */
-    public function rechercher(array $criteres, ?string $orderBy = null, ?string $orderType = null): array
+    public function rechercher(array $criteres, ?string $orderBy = null, ?string $orderType = 'ASC'): array
     {
         $whereClauses = [];
         $params = [];
-
         foreach ($criteres as $colonne => $valeur) {
-            $paramName = str_replace('.', '_', $colonne); // Eviter les points dans les noms de paramètres
-
+            $paramName = str_replace('.', '_', $colonne);
             if ($valeur === null) {
                 $whereClauses[] = "$colonne IS NULL";
             } elseif (is_array($valeur)) {
-                if (empty($valeur)) { // Gérer le cas d'un tableau vide pour IN() pour éviter une erreur SQL
-                    $whereClauses[] = "1=0"; // Condition toujours fausse
-                    continue;
-                }
-                // Clause IN pour les tableaux de valeurs
+                if (empty($valeur)) { $whereClauses[] = "1=0"; continue; }
                 $inParams = [];
                 foreach ($valeur as $key => $v) {
                     $pName = "{$paramName}_{$key}";
@@ -144,77 +118,64 @@ abstract class DAO
                 }
                 $whereClauses[] = "$colonne IN (" . implode(", ", $inParams) . ")";
             } else {
-                // Clause égale pour les valeurs simples
                 $whereClauses[] = "$colonne = :$paramName";
                 $params[$paramName] = $valeur;
             }
         }
-
         $sql = "SELECT * FROM $this->table";
-
         if (!empty($whereClauses)) {
             $sql .= " WHERE " . implode(" AND ", $whereClauses);
         }
-
         if ($orderBy) {
             $sql .= " ORDER BY $orderBy $orderType";
         }
-
-        $stmt = $this->pdo->prepare($sql);
-        // PDOStatement::bindValue attend une référence pour le 3ème argument (type),
-        // il est plus sûr de binder dans la boucle ou directement dans execute() si les types sont simples.
-        // Ici, comme on a déjà construit $params, on peut les passer à execute().
-
-        $stmt->setFetchMode(PDO::FETCH_CLASS, $this->model);
-        return $stmt->execute($params) ? $stmt->fetchAll() : [];
-    }
-
-    /**
-     * Compter le nombre d'enregistrements
-     * @param array $criteres Critères de recherche
-     * @return int Nombre d'enregistrements
-     */
-    public function compter(array $criteres = []): int
-    {
-        $sql = "SELECT COUNT(*) FROM {$this->table}";
-        $params = [];
-
-        if (!empty($criteres)) {
-            $whereParts = [];
-            foreach ($criteres as $colonne => $valeur) {
-                // Sanitize column name if necessary, though binding protects value
-                $paramName = str_replace('.', '_', $colonne); // Basic sanitization for param name
-                if ($valeur === null) {
-                    $whereParts[] = "$colonne IS NULL";
-                } else {
-                    $whereParts[] = "$colonne = :$paramName";
-                    $params[$paramName] = $valeur;
-                }
-            }
-            $sql .= " WHERE " . implode(" AND ", $whereParts);
-        }
-
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
-        return (int)$stmt->fetchColumn();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $objects = [];
+        foreach ($rows as $row) {
+            $objects[] = $this->hydrater($row);
+        }
+        return $objects;
     }
 
-    /**
-     * Exécute une requête SQL personnalisée
-     * @param string $sql Requête SQL avec placeholders
-     * @param array $params Paramètres pour la requête
-     * @param bool $retournerEntites Si vrai, convertit les résultats en entités
-     * @return array Résultats de la requête
-     */
-    public function executerRequete(string $sql, array $params = [], bool $retournerEntites = true): array
+    public function executerRequeteAction(string $sql, array $params = []): int
     {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
+        return $stmt->rowCount();
+    }
 
-        if ($retournerEntites) {
-            return $stmt->fetchAll(PDO::FETCH_CLASS, $this->model);
-        }
+    /**
+     * Exécute une requête SELECT et retourne les résultats bruts.
+     * @param string $sql La requête SQL SELECT à exécuter.
+     * @param array $params Les paramètres de la requête.
+     * @return array Un tableau de tableaux associatifs.
+     */
+    public function executerSelect(string $sql, array $params = []): array
+    {
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    private function extractDataFromModel(object $model): array
+    {
+        $reflection = new ReflectionObject($model);
+        $properties = $reflection->getProperties(ReflectionProperty::IS_PRIVATE);
+        $data = [];
+
+        foreach ($properties as $property) {
+            $propertyName = $property->getName();
+            $getter = 'get' . ucfirst($propertyName);
+            if ($reflection->hasMethod($getter)) {
+                $value = $model->$getter();
+                if (!is_object($value) && !is_array($value) && $value !== null) {
+                    $columnName = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $propertyName));
+                    $data[$columnName] = $value;
+                }
+            }
+        }
+        return $data;
+    }
 }
