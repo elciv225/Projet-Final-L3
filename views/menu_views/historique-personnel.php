@@ -63,6 +63,7 @@
         <div class="table-header">
             <h3>Détails de l'Historique</h3>
         </div>
+        <div class="table-scroll-wrapper scroll-custom">
         <table class="table">
             <thead>
             <tr id="enTeteTableHistorique">
@@ -95,5 +96,20 @@
             <?php endif; ?>
             </tbody>
         </table>
+        </div>
+        <div class="table-footer">
+            <div class="results-info">
+                Affichage de 1 à 9 sur 240 entrées
+            </div>
+            <div class="pagination">
+                <button class="pagination-btn">‹</button>
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <span>...</span>
+                <button class="pagination-btn">12</button>
+                <button class="pagination-btn">›</button>
+            </div>
+        </div>
     </div>
 </main>
