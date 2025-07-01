@@ -44,9 +44,15 @@ class Request
         return $this->server['REQUEST_URI'];
     }
 
-    public function getPostParams(string $name): string
+    public function getPostParams(?string $name = null): array|string|null
     {
-        return $this->post[$name];
+        if ($name !== null) {
+            if (isset($this->post[$name])) {
+                return $this->post[$name];
+            }
+            return null;
+        }
+        return $this->post;
     }
 
     public function getGetParams(string $name): string

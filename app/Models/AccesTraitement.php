@@ -11,15 +11,13 @@ class AccesTraitement
     protected ?string $heureAccesion;
 
     /**
-     * @param string $table
      * @param Traitement $traitement
      * @param Utilisateur $utilisateur
      * @param string|null $dateAccesion
      * @param string|null $heureAccesion
      */
-    public function __construct(string $table, Traitement $traitement, Utilisateur $utilisateur, ?string $dateAccesion, ?string $heureAccesion)
+    public function __construct(Traitement $traitement, Utilisateur $utilisateur, ?string $dateAccesion, ?string $heureAccesion)
     {
-        $this->table = $table;
         $this->traitement = $traitement;
         $this->utilisateur = $utilisateur;
         $this->dateAccesion = $dateAccesion;

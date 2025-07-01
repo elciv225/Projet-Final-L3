@@ -37,7 +37,6 @@
                 </div>
                 <div class="stat-value">29</div>
             </div>
-
         </div>
     </div>
 </main>

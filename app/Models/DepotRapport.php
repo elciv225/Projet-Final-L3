@@ -36,11 +36,8 @@ class DepotRapport
      * @param RapportEtudiant $rapportEtudiant
      * @param string|null $dateDepot
      */
-    public function __construct(
-        Etudiant $etudiant,
-        RapportEtudiant $rapportEtudiant,
-        ?string $dateDepot
-    ) {
+    public function __construct(Etudiant $etudiant, RapportEtudiant $rapportEtudiant, ?string $dateDepot)
+    {
         $this->etudiant = $etudiant;
         $this->rapportEtudiant = $rapportEtudiant;
         $this->dateDepot = $dateDepot;
