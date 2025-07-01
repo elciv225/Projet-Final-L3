@@ -7,34 +7,42 @@
 
     <!-- Section de saisie des approbations -->
     <div class="form-section">
-        <div class="form-grid">
-            <div class="form-group">
-                <div class="select-wrapper">
-                    <select id="niveauApprobationSelect" class="custom-select" required>
-                        <option value="">Sélectionner un Niveau d'Approbation</option>
-                        <!-- Options populées par JS -->
-                    </select>
+        <div class="section-header">
+            <h3 class="section-title">Informations Générales de l'utilisateur</h3>
+        </div>
+        <div class="section-content">
+            <div class="form-grid">
+                <div class="form-group">
+                    <div class="select-wrapper">
+                        <select id="niveauApprobationSelect" class="custom-select" required>
+                            <option value="">Sélectionner un Niveau d'Approbation</option>
+                            <!-- Options populées par JS -->
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="select-wrapper">
-                    <select id="compteRenduSelect" class="custom-select" required>
-                        <option value="">Sélectionner un Compte Rendu</option>
-                        <!-- Options populées par JS -->
-                    </select>
+                <div class="form-group">
+                    <div class="select-wrapper">
+                        <select id="compteRenduSelect" class="custom-select" required>
+                            <option value="">Sélectionner un Compte Rendu</option>
+                            <!-- Options populées par JS -->
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <input type="date" id="dateApprobationInput" class="form-input" placeholder=" " required>
-                <label for="dateApprobationInput" class="form-label">Date d'Approbation</label>
+                <div class="form-group">
+                    <input type="date" id="dateApprobationInput" class="form-input" placeholder=" " required>
+                    <label for="dateApprobationInput" class="form-label">Date d'Approbation</label>
+                </div>
             </div>
         </div>
-        <div class="button-group">
-            <button class="btn btn-secondary" id="addButton">➕ Ajouter</button>
-            <button class="btn btn-secondary" id="modifyButton">✏️ Modifier</button>
-            <button class="btn btn-secondary" id="deleteButton">🗑️ Supprimer</button>
-            <button class="btn btn-secondary" id="printButton">🖨️ Imprimer</button>
-            <button class="btn btn-primary" id="validateButton">✓ Valider Tout</button>
+        <div class="section-bottom">
+            <h3 class="section-title">Action</h3>
+            <div style="display: flex; gap: 7px">
+                <button class="btn btn-secondary" id="addButton">➕ Ajouter</button>
+                <button class="btn btn-secondary" id="modifyButton">✏️ Modifier</button>
+                <button class="btn btn-secondary" id="deleteButton">🗑️ Supprimer</button>
+                <button class="btn btn-secondary" id="printButton">🖨️ Imprimer</button>
+                <button class="btn btn-primary" id="validateButton">✓ Valider Tout</button>
+            </div>
         </div>
     </div>
 

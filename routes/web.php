@@ -2,9 +2,11 @@
 
 use App\Controllers\AuthentificationController;
 use App\Controllers\Commission\DiscussionController;
+use App\Controllers\Commission\HistoriqueApprobationController;
 use App\Controllers\CommissionController;
 use App\Controllers\MenuViews\AttributionMenuController;
 use App\Controllers\MenuViews\EvaluationEtudiantController;
+use App\Controllers\MenuViews\HistoriquePersonnelController;
 use App\Controllers\MenuViews\ReglementInscriptionController;
 use App\Controllers\MenuViews\ParametreGenerauxController;
 use App\Controllers\MenuViews\UtilisateursController;
@@ -45,6 +47,27 @@ $configurationModules = [
             'controleur' => ParametreGenerauxController::class,
             'methodePrincipale' => 'index',
             'label' => 'Paramètres Généraux',
+            'icone' => '💁🏾‍',
+            'description' => 'Gestion des étudiants de l\'établissement',
+            'traitements' => [
+                'ajouter' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Ajouter un nouvel étudiant',
+                ],
+                'modifier' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Modifier les informations d\'un étudiant existant',
+                ],
+                'supprimer' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Supprimer un étudiant',
+                ]
+            ]
+        ],
+        'historique-personnel' => [
+            'controleur' => HistoriquePersonnelController::class,
+            'methodePrincipale' => 'index',
+            'label' => 'Historique du Personnel',
             'icone' => '💁🏾‍',
             'description' => 'Gestion des étudiants de l\'établissement',
             'traitements' => [
@@ -150,6 +173,27 @@ $configurationModules = [
                 ]
             ]
         ],
+        'historique-approbation' => [
+            'controleur' => HistoriqueApprobationController::class,
+            'methodePrincipale' => 'index',
+            'label' => 'Historique des approbations',
+            'icone' => '💁🏾‍',
+            'description' => 'Gestion des étudiants de l\'établissement',
+            'traitements' => [
+                'ajouter' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Ajouter un nouvel étudiant',
+                ],
+                'modifier' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Modifier les informations d\'un étudiant existant',
+                ],
+                'supprimer' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Supprimer un étudiant',
+                ]
+            ]
+        ],
     ]
 ];
 
@@ -216,7 +260,8 @@ $routes = array_merge($routes, [
     ['POST', '/charger-formulaire-categorie', [UtilisateursController::class, 'chargerFormulaireCategorie']],
     ['POST', '/charger-formulaire-paramatre-specifique', [ParametreGenerauxController::class, 'chargerFormulaireParametreGeneraux']],
     ['POST', '/traitement-utilisateur', [UtilisateursController::class, 'executerAction']],
-
+    ['POST', '/charger-donnee-historique-utilisateur', [HistoriquePersonnelController::class, 'chargerPersonnelPourDonneeHistorique']],
+    ['POST', '/charger-historique-personnel', [HistoriquePersonnelController::class, 'chargerDonneeHistoriquePersonnel']],
 ]);
 
 
