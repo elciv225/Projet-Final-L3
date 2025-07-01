@@ -64,7 +64,7 @@
                 </div>
                 <div class="message sent">
                     <div class="message-sender">Vous (Prof. Durand)</div>
-                    Je suis d'accord, la problématique est claire.
+                    J'approuve, la problématique est claire.
                 </div>
                 <div class="message received">
                     <div class="message-sender">Dr. Rossi</div>
@@ -73,21 +73,21 @@
             </div>
             <div class="message-input-area">
                 <textarea id="messageInput" placeholder="Écrire un message..." rows="1"></textarea>
-                <button id="sendMessageBtn"><span class="material-icons-outlined">send</span></button>
+                <button id="sendMessageBtn"><span class="material-icons-outlined">envoyer</span></button>
             </div>
         </div>
         <div class="voting-area" id="votingAreaContainer">
-            <h3 id="toggleVotingArea">Vote sur la validation <span class="material-icons-outlined">expand_more</span>
+            <h3 id="toggleVotingArea">Vote sur la validation <!--<span class="material-icons-outlined">expand_more</span>-->
             </h3>
             <div class="voting-content">
                 <div class="voting-buttons">
-                    <button class="vote-btn agree-btn" id="agreeBtn">D'accord</button>
-                    <button class="vote-btn disagree-btn" id="disagreeBtn">Pas d'accord</button>
+                    <button class="vote-btn agree-btn" id="agreeBtn">Approuvé</button>
+                    <button class="vote-btn disagree-btn" id="disagreeBtn">Désapprouvé</button>
                 </div>
                 <div class="voting-status" id="votingStatus">
                     <div class="member-vote">
                         <span class="member-name">Prof. Lemoine:</span>
-                        <span class="vote-indicator vote-agree" id="voteLemoine">D'accord</span>
+                        <span class="vote-indicator vote-agree" id="voteLemoine">Approuvé</span>
                     </div>
                     <div class="member-vote">
                         <span class="member-name">Vous (Prof. Durand):</span>
