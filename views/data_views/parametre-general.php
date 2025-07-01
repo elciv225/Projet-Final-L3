@@ -1,4 +1,5 @@
-<div class="form-section">
+<form class="form-section ajax-form" method="post" action="/traitement-parametre-general" data-target=".table-scroll-wrapper">
+    <input name="operation" value="ajouter" type="hidden">
     <div class="section-header">
         <h3 class="section-title">Mise à jour des <?= $parametre ?? "Param" ?></h3>
     </div>
@@ -8,14 +9,15 @@
                 <input type="text" id="libelle" name="<?= $parametre ?? "Param" ?>" class="form-input" placeholder=" " required>
                 <label for="libelle" class="form-label">Libelle de l'UE</label>
             </div>
-            <div class="form-group">
-                <input type="number" id="creditInput" value="Calculé automatiquement" class="form-input" placeholder=" "
-                       disabled>
-                <label for="creditInput" class="form-label"><?= $parametre ?? "Param" ?></label>
-            </div>
         </div>
     </div>
-</div>
+    <div class="section-bottom">
+        <h3 class="section-title">Action</h3>
+        <div style="display: flex">
+            <button class="btn btn-primary" type="submit">Ajouter</button>
+        </div>
+    </div>
+</form>
 <div class="table-container">
     <div class="table-header">
         <h3 class="table-title">Listes des enregistrements</h3>
