@@ -106,7 +106,7 @@ use System\Http\Response;
 
 <!-- Scripts -->
 <script src="/assets/js/ajax.js"></script>
-<script src="/assets/js/traitements.js"></script>
+<script src="/assets/js/views.js"></script>
 <script>
     // Script d'initialisation spécifique à l'espace admin
     document.addEventListener('DOMContentLoaded', function () {
@@ -193,6 +193,23 @@ use System\Http\Response;
             navList.appendChild(newItem);
         }
     }
+</script>
+<script>
+    function bindCategorieFormAutoSubmit() {
+        const select = document.querySelector('form.ajax-form select.select-submit');
+        if (select) {
+            select.addEventListener('change', function () {
+                // Déclencher la soumission AJAX
+                const form = this.closest('form');
+                if (form) {
+                    form.dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}));
+                }
+            });
+        }
+    }
+
+    window.ajaxRebinders = window.ajaxRebinders || [];
+    window.ajaxRebinders.push(bindCategorieFormAutoSubmit);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>

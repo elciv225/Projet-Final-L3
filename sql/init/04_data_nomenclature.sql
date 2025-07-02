@@ -208,3 +208,27 @@ INSERT INTO messagerie (membre_commission_id, etudiant_concerne_id, discussion_i
 VALUES ('ENS002', '21INF001', 'DISC_ENS002_21INF001',
         'Bonjour Jean-Luc, pouvez-vous me faire un point sur l''avancement de votre chapitre 2 ?',
         '2024-05-10 09:00:15');
+
+-- Ce script ajoute des valeurs par défaut pour les types et groupes d'utilisateurs,
+-- rendant la table 'utilisateur' plus robuste contre les insertions incomplètes.
+
+-- 1. Créer une catégorie "Système" pour les entrées par défaut, si elle n'existe pas.
+INSERT INTO categorie_utilisateur (id, libelle)
+SELECT 'CAT_SYSTEM', 'Système'
+WHERE NOT EXISTS (SELECT 1 FROM categorie_utilisateur WHERE id = 'CAT_SYSTEM');
+
+-- 2. Créer un type d'utilisateur par défaut.
+INSERT INTO type_utilisateur (id, libelle, categorie_utilisateur_id)
+SELECT 'TYPE_UNDEFINED', 'Non Défini', 'CAT_SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM type_utilisateur WHERE id = 'TYPE_UNDEFINED');
+
+-- 3. Créer un groupe d'utilisateurs par défaut.
+INSERT INTO groupe_utilisateur (id, libelle)
+SELECT 'GRP_DEFAULT', 'Groupe par Défaut'
+WHERE NOT EXISTS (SELECT 1 FROM groupe_utilisateur WHERE id = 'GRP_DEFAULT');
+
+-- 4. Modifier la table 'utilisateur' pour utiliser ces nouvelles valeurs par défaut.
+-- Note : Assurez-vous que les types de colonnes et longueurs correspondent à votre schéma.
+ALTER TABLE utilisateur
+    MODIFY COLUMN type_utilisateur_id VARCHAR(25) NOT NULL DEFAULT 'TYPE_UNDEFINED',
+    MODIFY COLUMN groupe_utilisateur_id VARCHAR(30) NOT NULL DEFAULT 'GRP_DEFAULT';

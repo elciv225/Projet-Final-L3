@@ -1,10 +1,6 @@
 /**
  * Système AJAX avancé - Support des vues complètes, fragments ET navigation
- * - Gestion des réponses JSON et HTML
- * - Mise à jour du DOM et de l'URL
- * - Navigation dynamique avec liens AJAX
- * - Loader spécifique aux conteneurs
- * - Compatible avec l'ancien code et le CSS existant
+ * Version améliorée avec meilleure gestion des rebinders et compatibilité vue.js
  */
 
 window.ajaxRebinders = window.ajaxRebinders || [];
@@ -15,7 +11,11 @@ document.addEventListener('DOMContentLoaded', function () {
     bindAjaxForms();
     bindAjaxLinks();
     bindHistoryEvents();
-    executeRebinders();
+
+    // Attendre un peu pour laisser le temps aux autres scripts de s'initialiser
+    setTimeout(() => {
+        executeRebinders();
+    }, 150);
 });
 
 // -------------------------------------------------------------------
@@ -72,7 +72,7 @@ function createGlobalElements() {
         documentBody.appendChild(warningCard);
     }
 
-    // --- NOUVEAU LOADER DE NAVIGATION (BARRE DE PROGRESSION) ---
+    // --- LOADER DE NAVIGATION (BARRE DE PROGRESSION) ---
     if (!document.getElementById('ajax-progress-loader')) {
         const progressLoader = document.createElement('div');
         progressLoader.id = 'ajax-progress-loader';
@@ -100,12 +100,11 @@ function createGlobalElements() {
             .ajax-content-loading {
                 filter: blur(4px);
                 transition: filter 0.3s ease-in-out;
-            }
+            }             
         `;
         document.head.appendChild(style);
     }
 }
-
 
 function showPopup(message, type = 'info') {
     const popup = document.getElementById('ajax-popup');
@@ -113,42 +112,57 @@ function showPopup(message, type = 'info') {
 
     popup.className = `popup ${type}`;
     popup.querySelector('#popup-message').textContent = message;
-
     popup.style.display = 'block';
 
-    gsap.to(popup, {
-        duration: 0.5,
-        opacity: 1,
-        x: 0,
-        scale: 1,
-        ease: 'power3.out'
-    });
+    // Utiliser GSAP si disponible, sinon animation CSS simple
+    if (typeof gsap !== 'undefined') {
+        gsap.to(popup, {
+            duration: 0.5,
+            opacity: 1,
+            x: 0,
+            scale: 1,
+            ease: 'power3.out'
+        });
 
-    gsap.to(popup, {
-        delay: 3,
-        duration: 0.6,
-        opacity: 0,
-        x: '100%',
-        scale: 0.9,
-        ease: 'power2.in',
-        onComplete: () => {
-            popup.style.display = 'none';
-            gsap.set(popup, {opacity: 0, x: '20px', scale: 0.95});
-        }
-    });
+        gsap.to(popup, {
+            delay: 3,
+            duration: 0.6,
+            opacity: 0,
+            x: '100%',
+            scale: 0.9,
+            ease: 'power2.in',
+            onComplete: () => {
+                popup.style.display = 'none';
+                gsap.set(popup, {opacity: 0, x: '20px', scale: 0.95});
+            }
+        });
+    } else {
+        // Animation CSS simple si GSAP n'est pas disponible
+        popup.style.opacity = '1';
+        popup.style.transform = 'scale(1) translateX(0)';
+
+        setTimeout(() => {
+            popup.style.opacity = '0';
+            popup.style.transform = 'scale(0.9) translateX(100%)';
+            setTimeout(() => {
+                popup.style.display = 'none';
+                popup.style.transform = 'scale(0.95) translateX(20px)';
+            }, 600);
+        }, 3000);
+    }
 }
 
 function closePopup() {
     const popup = document.getElementById('ajax-popup');
     if (popup) {
-        popup.style.animation = 'fade-out 0.5s ease-out';
+        popup.style.opacity = '0';
+        popup.style.transform = 'scale(0.9) translateX(100%)';
         setTimeout(() => {
             popup.style.display = 'none';
-            popup.style.animation = '';
+            popup.style.transform = 'scale(0.95) translateX(20px)';
         }, 500);
     }
 }
-
 
 /**
  * Affiche un loader.
@@ -197,22 +211,30 @@ function hideLoader(targetSelector = null) {
     }
 }
 
-
 function hideProgressLoader(blurredElement) {
     const progressLoader = document.getElementById('ajax-progress-loader');
     const progressBar = document.getElementById('ajax-progress-bar');
 
     if (progressLoader && progressBar) {
-        gsap.to(progressLoader, {
-            opacity: 0,
-            duration: 0.4,
-            ease: 'power2.in',
-            onComplete: () => {
+        if (typeof gsap !== 'undefined') {
+            gsap.to(progressLoader, {
+                opacity: 0,
+                duration: 0.4,
+                ease: 'power2.in',
+                onComplete: () => {
+                    progressLoader.style.display = 'none';
+                    progressLoader.style.opacity = '1';
+                    progressBar.style.width = '0%';
+                }
+            });
+        } else {
+            progressLoader.style.opacity = '0';
+            setTimeout(() => {
                 progressLoader.style.display = 'none';
                 progressLoader.style.opacity = '1';
                 progressBar.style.width = '0%';
-            }
-        });
+            }, 400);
+        }
     }
     if (blurredElement) {
         blurredElement.classList.remove('ajax-content-loading');
@@ -247,12 +269,23 @@ async function handleAjaxNavigation(link) {
     if (progressLoader && progressBar && contentWrapper) {
         contentWrapper.classList.add('ajax-content-loading');
         progressLoader.style.display = 'block';
-        gsap.set(progressBar, {width: '0%', opacity: 1});
-        gsap.to(progressBar, {
-            width: '85%',
-            duration: 2,
-            ease: 'power3.out'
-        });
+
+        if (typeof gsap !== 'undefined') {
+            gsap.set(progressBar, {width: '0%', opacity: 1});
+            gsap.to(progressBar, {
+                width: '85%',
+                duration: 2,
+                ease: 'power3.out'
+            });
+        } else {
+            progressBar.style.width = '0%';
+            progressBar.style.opacity = '1';
+            // Animation CSS simple
+            setTimeout(() => {
+                progressBar.style.width = '85%';
+                progressBar.style.transition = 'width 2s ease-out';
+            }, 50);
+        }
     }
 
     try {
@@ -284,11 +317,17 @@ async function handleNavigationResponse(data, url, target, blurredElement) {
     const progressBar = document.getElementById('ajax-progress-bar');
 
     if (progressBar) {
-        await gsap.to(progressBar, {
-            width: '100%',
-            duration: 0.3,
-            ease: 'power2.in'
-        }).then();
+        if (typeof gsap !== 'undefined') {
+            await gsap.to(progressBar, {
+                width: '100%',
+                duration: 0.3,
+                ease: 'power2.in'
+            }).then();
+        } else {
+            progressBar.style.width = '100%';
+            progressBar.style.transition = 'width 0.3s ease-in';
+            await new Promise(resolve => setTimeout(resolve, 300));
+        }
     }
 
     hideProgressLoader(blurredElement);
@@ -309,7 +348,6 @@ async function handleNavigationResponse(data, url, target, blurredElement) {
         }
 
         container.innerHTML = content;
-
         container.classList.add('content-entering');
 
         if (url !== window.location.href) {
@@ -329,7 +367,6 @@ async function handleNavigationResponse(data, url, target, blurredElement) {
     }
 }
 
-
 function updateActiveNavigation(activeLink) {
     document.querySelectorAll('.nav-link-ajax').forEach(link => {
         link.classList.remove('active');
@@ -341,12 +378,12 @@ function updateActiveNavigation(activeLink) {
 
 function executeRebinders() {
     if (window.ajaxRebinders && Array.isArray(window.ajaxRebinders)) {
-        window.ajaxRebinders.forEach(callback => {
+        window.ajaxRebinders.forEach((callback, index) => {
             if (typeof callback === 'function') {
                 try {
                     callback();
                 } catch (e) {
-                    console.error("Erreur lors de l'exécution d'un rebinder AJAX:", e);
+                    console.error(`Erreur lors de l'exécution du rebinder AJAX ${index}:`, e);
                 }
             }
         });
@@ -354,8 +391,32 @@ function executeRebinders() {
 }
 
 function rebindEventsInContainer(container) {
+    // Nettoyer les anciens événements si la fonction existe
+    if (typeof window.cleanupVueComponents === 'function') {
+        window.cleanupVueComponents();
+    }
+
+    // Réexécuter les rebinders
     executeRebinders();
+
+    // Recharger les scripts du conteneur
     reloadContainerScripts(container);
+
+    // Rebinder les formulaires AJAX dans le nouveau contenu
+    bindAjaxFormsInContainer(container);
+}
+
+function bindAjaxFormsInContainer(container) {
+    const forms = container.querySelectorAll('form.ajax-form');
+    forms.forEach(form => {
+        form.removeEventListener('submit', handleAjaxFormSubmit);
+        form.addEventListener('submit', handleAjaxFormSubmit);
+    });
+}
+
+async function handleAjaxFormSubmit(e) {
+    e.preventDefault();
+    await submitAjaxForm(this);
 }
 
 function reloadContainerScripts(container) {
@@ -376,26 +437,10 @@ function reloadContainerScripts(container) {
 
 function bindAjaxForms() {
     document.querySelectorAll('form.ajax-form').forEach(form => {
-        form.addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            // Vérifier si le formulaire a un attribut warning
-            const warningMessage = form.dataset.warning || form.getAttribute('warning');
-            if (warningMessage && !form.dataset.warningConfirmed) {
-                // Afficher la card de warning
-                showWarningCard(warningMessage, () => {
-                    // Si l'utilisateur confirme, marquer comme confirmé et soumettre
-                    form.dataset.warningConfirmed = 'true';
-                    submitAjaxForm(form);
-                });
-                return;
-            }
-
-            await submitAjaxForm(this);
-        });
+        form.removeEventListener('submit', handleAjaxFormSubmit);
+        form.addEventListener('submit', handleAjaxFormSubmit);
     });
 }
-
 
 let isSubmitting = false;
 
@@ -407,6 +452,19 @@ async function submitAjaxForm(form) {
     isSubmitting = true;
     const submitButton = form.querySelector('button[type="submit"]');
     const target = form.dataset.target;
+
+    // Vérifier si le formulaire a un attribut warning
+    const warningMessage = form.dataset.warning || form.getAttribute('data-warning');
+    if (warningMessage && !form.dataset.warningConfirmed) {
+        // Afficher la card de warning
+        showWarningCard(warningMessage, () => {
+            // Si l'utilisateur confirme, marquer comme confirmé et soumettre
+            form.dataset.warningConfirmed = 'true';
+            submitAjaxForm(form);
+        });
+        isSubmitting = false;
+        return;
+    }
 
     if (submitButton) {
         submitButton.classList.add('loading');
@@ -440,6 +498,9 @@ async function submitAjaxForm(form) {
         }
         hideLoader(target);
         hideLoader();
+
+        // Réinitialiser la confirmation de warning
+        form.removeAttribute('data-warning-confirmed');
     }
 }
 
@@ -463,7 +524,7 @@ async function handleFormResponse(response, form) {
         setTimeout(() => {
             window.location.href = data.redirect;
         }, 500);
-        return; // Stop further processing if redirect is present
+        return;
     }
 
     if (data.statut) {
@@ -524,7 +585,7 @@ function updateContent(html, form) {
     if (container) {
         container.innerHTML = html;
         if (form.action !== window.location.href) {
-            window.history.pushState({}, '', url);
+            window.history.pushState({}, '', form.action);
         }
         rebindEventsInContainer(container);
     } else {
@@ -582,13 +643,16 @@ function showWarningCard(message, onConfirm) {
     };
 }
 
-
 function hideWarningCard() {
     const warningCard = document.getElementById('warning-card');
     if (warningCard) {
         warningCard.style.display = 'none';
     }
 }
+
+// -------------------------------------------------------------------
+// API publique et utilitaires
+// -------------------------------------------------------------------
 
 window.ajaxRequest = async function (url, options = {}) {
     const method = options.method || 'GET';
@@ -604,10 +668,15 @@ window.ajaxRequest = async function (url, options = {}) {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json, text/html',
-                ...(method !== 'GET' && {'Content-Type': 'application/json'})
+                ...(options.headers || {}),
+                ...(method !== 'GET' && options.data && {'Content-Type': 'application/json'})
             },
-            body: method === 'GET' ? null : JSON.stringify(options.data)
+            body: method === 'GET' ? null : (options.data ? JSON.stringify(options.data) : options.body)
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status}`);
+        }
 
         const contentType = response.headers.get('content-type');
         const data = contentType?.includes('application/json')
@@ -615,7 +684,7 @@ window.ajaxRequest = async function (url, options = {}) {
             : await response.text();
 
         if (typeof data === 'object' && data !== null) {
-            if (data.statut === 'succes') {
+            if (data.statut === 'succes' || data.statut === 'success') {
                 if (options.success) options.success(data);
                 else showPopup(data.message || 'Opération réussie', 'success');
             } else if (data.statut === 'error') {
@@ -628,9 +697,13 @@ window.ajaxRequest = async function (url, options = {}) {
             if (options.success) options.success(data);
         }
 
+        return data;
+
     } catch (error) {
+        console.error('AJAX Request Error:', error);
         if (options.error) options.error(error);
-        else showPopup('Erreur serveur', 'error');
+        else showPopup('Erreur de communication avec le serveur', 'error');
+        throw error;
     } finally {
         if (shouldShowLoader) {
             hideLoader();
@@ -638,10 +711,12 @@ window.ajaxRequest = async function (url, options = {}) {
     }
 };
 
-// Export des fonctions
+// Export des fonctions publiques
 window.showPopup = showPopup;
 window.closePopup = closePopup;
 window.showLoader = showLoader;
 window.hideLoader = hideLoader;
 window.showWarningCard = showWarningCard;
 window.hideWarningCard = hideWarningCard;
+window.executeRebinders = executeRebinders;
+window.rebindEventsInContainer = rebindEventsInContainer;

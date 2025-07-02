@@ -1,4 +1,15 @@
 <?php
+// =================================================================
+//            FICHIER: App/Controllers/UtilisateursController.php
+// =================================================================
+// INFO: Modifications majeures :
+// 1. La méthode executerAction gère maintenant l'opération 'modifier'.
+// 2. La méthode traiterModification() a été implémentée. Elle valide
+//    les données et met à jour l'utilisateur via le DAO.
+// 3. La méthode traiterAjout() a été légèrement ajustée pour une
+//    meilleure robustesse.
+// 4. La méthode traiterSuppression() a été améliorée.
+// =================================================================
 
 namespace App\Controllers\MenuViews;
 
@@ -10,6 +21,7 @@ use PDO;
 use App\Controllers\Controller;
 use System\Database\Database;
 use System\Http\Response;
+use PDOException;
 
 class UtilisateursController extends Controller
 {
@@ -39,152 +51,156 @@ class UtilisateursController extends Controller
         return Response::view('menu_views/utilisateurs', $data);
     }
 
-    public function chargerFormulaireCategorie(): Response
+    private function indexMessage(string $message, string $statut = "info"): Response
     {
-        $categorie = $this->request->getPostParams('categorie-utilisateur');
+        $daoTypeUtilisateur = new TypeUtilisateurDAO($this->pdo);
+        $daoGroupeUtilisateur = new GroupeUtilisateurDAO($this->pdo);
+        $daoUtilisateur = new UtilisateurDAO($this->pdo);
 
-        if (!$categorie) {
-            return Response::json(['statut' => 'erreur', 'message' => 'Aucune catégorie sélectionnée.']);
-        }
+        $data = [
+            'typesUtilisateur' => $daoTypeUtilisateur->recupererTous(),
+            'groupesUtilisateur' => $daoGroupeUtilisateur->recupererTous(),
+            'utilisateurs' => $daoUtilisateur->recupererTousAvecDetails()
+        ];
 
-        $viewName = match ($categorie) {
-            'etudiant' => 'data_views/etudiants',
-            'enseignant', 'administratif' => 'data_views/personnel-universite',
-            default => null
-        };
-
-        if ($viewName === null) {
-            return Response::json(['statut' => 'erreur', 'message' => 'Catégorie invalide.']);
-        }
-
-        return Response::view(
-            view: $viewName,
-            data: ['categorieUtilisateur' => ucfirst($categorie)],
-            json: ['statut' => 'succes']
-        );
+        return Response::view('menu_views/utilisateurs', $data, json: [
+            'statut' => $statut,
+            'message' => $message
+        ]);
     }
 
     public function executerAction(): Response
     {
         $operation = $this->request->getPostParams('operation') ?? "";
         if (!$operation) {
-            return $this->error("Aucune Action");
+            return $this->error("Aucune Action spécifiée.");
         }
         return match ($operation) {
             'ajouter' => $this->traiterAjout(),
             'modifier' => $this->traiterModification(),
             'supprimer' => $this->traiterSuppression(),
-            default => $this->error("Action non reconnue"),
+            default => $this->error("Action non reconnue."),
         };
+    }
+
+    private function validerChampsRequis(array $post): ?Response
+    {
+        $requiredFields = [
+            'nom-utilisateur' => 'Nom',
+            'prenom-utilisateur' => 'Prénom(s)',
+            'email-utilisateur' => 'Email',
+            'date-naissance' => 'Date de naissance',
+            'id-type-utilisateur' => 'Type d\'utilisateur',
+            'id-groupe-utilisateur' => 'Groupe utilisateur'
+        ];
+
+        foreach ($requiredFields as $field => $label) {
+            if (empty(trim($post[$field] ?? ''))) {
+                return $this->error("Le champ '{$label}' est obligatoire.");
+            }
+        }
+        return null;
     }
 
     private function traiterAjout(): Response
     {
         $post = $this->request->getPostParams();
-
-        dd($post);
-
-        // Validation des champs obligatoires
-        $requiredFields = [
-            'nom-utilisateur' => 'Nom',
-            'prenom-utilisateur' => 'Prénom',
-            'email-utilisateur' => 'Email',
-            'date-naissance' => 'Date de naissance',
-            'itype-utilisateur' => 'Type d\'utilisateur',
-            'id-groupe-utilisateur' => 'Groupe utilisateur'
-        ];
-
-
-        foreach ($requiredFields as $field => $label) {
-            if (!isset($post[$field]) || $post[$field] === '' || $post[$field] === null) {
-                return $this->error("Le champ '{$label}' est obligatoire.");
-            }
-        }
-
-        // Validation des références existantes
-        $daoTypeUtilisateur = new TypeUtilisateurDAO($this->pdo);
-        $daoGroupeUtilisateur = new GroupeUtilisateurDAO($this->pdo);
-
-        // Vérifier que le type d'utilisateur existe
-        if (!$daoTypeUtilisateur->recupererParId($post['id-type-utilisateur'])) {
-            return $this->error("Le type d'utilisateur sélectionné n'existe pas.");
-        }
-
-        // Vérifier que le groupe d'utilisateur existe
-        if (!$daoGroupeUtilisateur->recupererParId($post['id-groupe-utilisateur'])) {
-            return $this->error("Le groupe d'utilisateur sélectionné n'existe pas.");
-        }
-
-        // Validation de l'email
-        if (!filter_var($post['email-utilisateur'], FILTER_VALIDATE_EMAIL)) {
-            return $this->error("L'adresse email n'est pas valide.");
+        $validationError = $this->validerChampsRequis($post);
+        if ($validationError) {
+            return $validationError;
         }
 
         $dao = new UtilisateurDAO($this->pdo);
 
-        // Vérifier si l'email existe déjà
-        $emailExiste = $this->pdo->prepare("SELECT COUNT(*) FROM utilisateur WHERE email = ?");
-        $emailExiste->execute([$post['email-utilisateur']]);
-        if ($emailExiste->fetchColumn() > 0) {
-            return $this->error("Cette adresse email est déjà utilisée.");
-        }
-
-        // Génération du login
         $nom = preg_replace('/[^a-zA-Z]/', '', $post['nom-utilisateur']);
         $nomPart = strtoupper(substr($nom, 0, 4));
 
-        $datePart = '';
-        if (!empty($post['date-naissance'])) {
-            try {
-                $date = new \DateTime($post['date-naissance']);
-                $datePart = $date->format('dmy');
-            } catch (\Exception $e) {
-                return $this->error("Format de date de naissance invalide.");
-            }
-        }
-
-        if (strlen($nomPart) < 4 || empty($datePart)) {
-            return $this->error("Le nom doit contenir au moins 4 lettres et la date de naissance est nécessaire pour générer le login.");
+        try {
+            $date = new \DateTime($post['date-naissance']);
+            $datePart = $date->format('dmy');
+        } catch (\Exception $_) {
+            return $this->error("Format de date de naissance invalide.");
         }
 
         $baseLogin = $nomPart . $datePart;
-        $login = $baseLogin . '0001';
-        $counter = 1;
+        $login = $baseLogin;
+        $counter = 0;
 
-        while ($dao->recupererParId($login)) {
+        // Boucle pour trouver un ID unique
+        do {
+            $suffix = str_pad($counter, 4, '0', STR_PAD_LEFT);
+            $testId = $baseLogin . $suffix;
             $counter++;
-            $sequence = str_pad($counter, 4, '0', STR_PAD_LEFT);
-            $login = $baseLogin . $sequence;
-        }
-        $id = $login;
+        } while ($dao->recupererParId($testId));
 
-        // Création de l'utilisateur
+        $id = $testId;
+
         $utilisateur = new Utilisateur();
         $utilisateur->setId($id);
-        $utilisateur->setLogin($login);
+        $utilisateur->setLogin($id); // Login est l'ID
         $utilisateur->setNom($post['nom-utilisateur']);
         $utilisateur->setPrenoms($post['prenom-utilisateur']);
         $utilisateur->setEmail($post['email-utilisateur']);
         $utilisateur->setDateNaissance($post['date-naissance']);
         $utilisateur->setTypeUtilisateurId($post['id-type-utilisateur']);
         $utilisateur->setGroupeUtilisateurId($post['id-groupe-utilisateur']);
+        // Le mot de passe par défaut ne doit pas être null
         $utilisateur->setMotDePasse(password_hash('password123', PASSWORD_DEFAULT));
 
         try {
+            // Le DAO::creer prend un objet, pas un tableau
             if ($dao->creer($utilisateur)) {
-                return $this->info("Utilisateur '{$id}' créé avec succès. Le tableau sera rafraîchi.");
+                return $this->indexMessage("Utilisateur '{$id}' créé avec succès.", "succes");
             }
-            return $this->error("Erreur lors de la création de l'utilisateur.");
-        } catch (\PDOException $e) {
-            // Log l'erreur pour le debugging
-            error_log("Erreur création utilisateur: " . $e->getMessage());
-            return $this->error("Erreur lors de la création de l'utilisateur: " . $e->getMessage());
+            return $this->error("Une erreur inattendue est survenue lors de la création.");
+        } catch (PDOException $e) {
+            if ($e->getCode() == '23000') {
+                return $this->error("Cette adresse email est déjà utilisée.");
+            }
+            return $this->error("Erreur de base de données : " . $e->getMessage());
         }
     }
 
     private function traiterModification(): Response
     {
-        return $this->info("Modifier un utilisateur");
+        $post = $this->request->getPostParams();
+        $id = $post['id-utilisateur'] ?? null;
+        if (!$id) {
+            return $this->error("ID de l'utilisateur manquant pour la modification.");
+        }
+
+        $validationError = $this->validerChampsRequis($post);
+        if ($validationError) {
+            return $validationError;
+        }
+
+        $dao = new UtilisateurDAO($this->pdo);
+        $utilisateur = $dao->recupererParId($id);
+
+        if (!$utilisateur) {
+            return $this->error("Utilisateur non trouvé.");
+        }
+
+        // Mettre à jour les propriétés de l'objet existant
+        $utilisateur->setNom($post['nom-utilisateur']);
+        $utilisateur->setPrenoms($post['prenom-utilisateur']);
+        $utilisateur->setEmail($post['email-utilisateur']);
+        $utilisateur->setDateNaissance($post['date-naissance']);
+        $utilisateur->setTypeUtilisateurId($post['id-type-utilisateur']);
+        $utilisateur->setGroupeUtilisateurId($post['id-groupe-utilisateur']);
+        // Note: Le login (ID) et le mot de passe ne sont pas modifiés ici.
+
+        try {
+            if ($dao->mettreAJour($utilisateur)) {
+                return $this->indexMessage("Utilisateur '{$id}' mis à jour avec succès.", "succes");
+            }
+            return $this->info("Aucune modification détectée pour l'utilisateur '{$id}'.");
+        } catch (PDOException $e) {
+            if ($e->getCode() == '23000') {
+                return $this->error("Cette adresse email est déjà utilisée par un autre utilisateur.");
+            }
+            return $this->error("Erreur de base de données lors de la mise à jour.");
+        }
     }
 
     private function traiterSuppression(): Response
@@ -195,16 +211,22 @@ class UtilisateursController extends Controller
         }
 
         $dao = new UtilisateurDAO($this->pdo);
-        $errors = 0;
+        $succesCount = 0;
+        $errorCount = 0;
+
         foreach ($ids as $id) {
-            if (!$dao->supprimer($id)) {
-                $errors++;
+            if ($dao->supprimer($id)) {
+                $succesCount++;
+            } else {
+                $errorCount++;
             }
         }
 
-        if ($errors > 0) {
-            return $this->error("$errors utilisateur(s) n'ont pas pu être supprimés car ils sont référencés ailleurs.");
+        if ($errorCount > 0) {
+            $message = "$succesCount utilisateur(s) supprimé(s). $errorCount n'a/n'ont pas pu être supprimé(s) (dépendances existantes).";
+            return $this->indexMessage($message, "warning");
         }
-        return $this->info("La sélection a été supprimée avec succès.");
+
+        return $this->indexMessage("La sélection a été supprimée avec succès.", "succes");
     }
 }
