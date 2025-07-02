@@ -6,20 +6,40 @@ use App\Models\PersonnelAdministratif;
 use PDO;
 
 class PersonnelAdministratifDAO extends DAO {
-    public function __construct(PDO $pdo) { parent::__construct($pdo, 'personnel_administratif', PersonnelAdministratif::class, 'utilisateur_id'); }
+    public function __construct(PDO $pdo) {
+        parent::__construct($pdo, 'personnel_administratif', PersonnelAdministratif::class, 'utilisateur_id');
+    }
 
+    /**
+     * Récupère tous les membres du personnel administratif avec leurs détails.
+     * @return array
+     */
     public function recupererTousAvecDetails(): array {
         $sql = "
-            SELECT u.id, u.nom, u.prenoms, u.email, f.libelle as fonction
+            SELECT u.id, u.nom, u.prenoms, u.email, u.date_naissance
             FROM utilisateur u
             JOIN personnel_administratif pa ON u.id = pa.utilisateur_id
-            LEFT JOIN (
-                SELECT utilisateur_id, MAX(date_occupation) as max_date FROM historique_fonction GROUP BY utilisateur_id
-            ) hf_max ON u.id = hf_max.utilisateur_id
-            LEFT JOIN historique_fonction hf ON hf_max.utilisateur_id = hf.utilisateur_id AND hf_max.max_date = hf.date_occupation
-            LEFT JOIN fonction f ON hf.fonction_id = f.id
             ORDER BY u.nom, u.prenoms;
         ";
         return $this->executerSelect($sql);
+    }
+
+    /**
+     * Modifie un membre du personnel administratif via la procédure stockée.
+     * @param array $params
+     * @return bool
+     */
+    public function modifierViaProcedure(array $params): bool
+    {
+        $sql = "CALL sp_modifier_personnel_admin(?, ?, ?, ?, ?)";
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->bindParam(1, $params['id_utilisateur'], PDO::PARAM_STR);
+        $stmt->bindParam(2, $params['nom'], PDO::PARAM_STR);
+        $stmt->bindParam(3, $params['prenoms'], PDO::PARAM_STR);
+        $stmt->bindParam(4, $params['email'], PDO::PARAM_STR);
+        $stmt->bindParam(5, $params['date_naissance'], PDO::PARAM_STR);
+
+        return $stmt->execute();
     }
 }

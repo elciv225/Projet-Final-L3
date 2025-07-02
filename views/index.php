@@ -107,6 +107,8 @@ use System\Http\Response;
 <!-- Scripts -->
 <script src="/assets/js/ajax.js"></script>
 <script src="/assets/js/view-etudiants.js"></script>
+<script src="/assets/js/view-enseignants.js"></script>
+<script src="/assets/js/view-personnel-administratif.js"></script>
 <script>
     // Script d'initialisation spécifique à l'espace admin
     document.addEventListener('DOMContentLoaded', function () {

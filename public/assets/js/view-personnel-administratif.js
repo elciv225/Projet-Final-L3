@@ -1,83 +1,42 @@
 (function () {
-    /**
-     * Gère les interactions spécifiques au formulaire enseignant.
-     */
     const formHandler = {
-        // CORRECTION: Le sélecteur cible maintenant le bon formulaire.
-        form: document.querySelector('form[action="/traitement-enseignant"]'),
+        form: document.querySelector('form[action="/traitement-personnel-admin"]'),
 
         init: function() {
             if (!this.form) return;
-
-            // Initialisation des éléments du formulaire
-            this.nomInput = this.form.querySelector('#nom-enseignant');
-            this.prenomInput = this.form.querySelector('#prenom-enseignant');
-            this.loginInput = this.form.querySelector('#login');
             this.cancelBtn = this.form.querySelector('#btn-cancel-edit');
-            this.idField = this.form.querySelector('#id-utilisateur-form');
-            this.operationField = this.form.querySelector('#form-operation');
-            this.title = this.form.querySelector('#form-title');
-            this.submitBtn = this.form.querySelector('#btn-submit-form');
-
-            this.bindEvents();
-        },
-
-        bindEvents: function() {
-            if (this.nomInput && this.prenomInput) {
-                this.nomInput.addEventListener('input', () => this.updateLogin());
-                this.prenomInput.addEventListener('input', () => this.updateLogin());
-            }
             if (this.cancelBtn) {
                 this.cancelBtn.addEventListener('click', () => this.reset());
             }
         },
 
-        updateLogin: function() {
-            if (!this.loginInput || !this.nomInput || !this.prenomInput) return;
-            const nom = this.nomInput.value.toLowerCase().replace(/[^a-z]/g, '');
-            const prenom = this.prenomInput.value.toLowerCase().charAt(0);
-            this.loginInput.value = (nom && prenom) ? prenom + nom : '';
-        },
-
         populateForEdit: function(row) {
-            if (!this.form || !row) return;
             this.reset();
-
             const userData = row.querySelector('.user-data');
 
-            this.idField.value = row.dataset.userId;
-            this.form.querySelector('#nom-enseignant').value = userData.dataset.nom;
-            this.form.querySelector('#prenom-enseignant').value = userData.dataset.prenoms;
-            this.form.querySelector('#email-enseignant').value = userData.dataset.email;
+            this.form.querySelector('#id-utilisateur-form').value = row.dataset.userId;
+            this.form.querySelector('#nom-personnel').value = userData.dataset.nom;
+            this.form.querySelector('#prenom-personnel').value = userData.dataset.prenoms;
+            this.form.querySelector('#email-personnel').value = userData.dataset.email;
             this.form.querySelector('#date-naissance').value = userData.dataset.naissance;
 
-            this.form.querySelector('#id-grade').value = row.querySelector('.grade-data')?.dataset.gradeId || '';
-            this.form.querySelector('#id-specialite').value = row.querySelector('.specialite-data')?.dataset.specialiteId || '';
-            this.form.querySelector('#id-fonction').value = row.querySelector('.fonction-data')?.dataset.fonctionId || '';
-
-            this.updateLogin();
-            this.operationField.value = 'modifier';
-            this.title.textContent = 'Modifier les informations de l\'enseignant';
-            this.submitBtn.textContent = 'Modifier';
+            this.form.querySelector('#form-operation').value = 'modifier';
+            this.form.querySelector('#form-title').textContent = 'Modifier les informations';
+            this.form.querySelector('#btn-submit-form').textContent = 'Modifier';
             this.cancelBtn.style.display = 'inline-block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         },
 
         reset: function() {
-            if (!this.form) return;
             this.form.reset();
-            this.idField.value = '';
-            this.operationField.value = 'ajouter';
-            this.title.textContent = 'Ajouter un nouvel enseignant';
-            this.submitBtn.textContent = 'Ajouter';
+            this.form.querySelector('#id-utilisateur-form').value = '';
+            this.form.querySelector('#form-operation').value = 'ajouter';
+            this.form.querySelector('#form-title').textContent = 'Ajouter un membre du personnel';
+            this.form.querySelector('#btn-submit-form').textContent = 'Ajouter';
             if (this.cancelBtn) this.cancelBtn.style.display = 'none';
-            this.updateLogin();
         }
     };
 
-    /**
-     * Gère la logique du tableau interactif.
-     */
     const tableHandler = {
         init: function (tableId) {
             const table = document.getElementById(tableId);
@@ -198,7 +157,7 @@
             });
 
             if (idsToDelete.length > 0) {
-                state.deleteForm.setAttribute('data-warning', `Êtes-vous sûr de vouloir supprimer ${idsToDelete.length} enseignant(s) ?`);
+                state.deleteForm.setAttribute('data-warning', `Êtes-vous sûr de vouloir supprimer ${idsToDelete.length} membre(s) ?`);
             } else {
                 state.deleteForm.removeAttribute('data-warning');
             }
@@ -211,7 +170,7 @@
                     deleteBtn.addEventListener('click', (e) => {
                         e.preventDefault();
                         const userId = row.dataset.userId;
-                        const userName = row.querySelector('.user-data')?.textContent.trim() || 'cet enseignant';
+                        const userName = row.querySelector('.user-data')?.textContent.trim() || 'ce membre';
                         const message = `Êtes-vous sûr de vouloir supprimer "${userName}" (${userId}) ?`;
 
                         state.deleteForm.setAttribute('data-warning', message);
@@ -244,13 +203,13 @@
         }
     };
 
-    function initializeEnseignantModule() {
+    function initializePersonnelAdminModule() {
         formHandler.init();
-        tableHandler.init('enseignantTable');
+        tableHandler.init('adminTable');
     }
 
-    document.addEventListener('DOMContentLoaded', initializeEnseignantModule);
+    document.addEventListener('DOMContentLoaded', initializePersonnelAdminModule);
     window.ajaxRebinders = window.ajaxRebinders || [];
-    window.ajaxRebinders.push(initializeEnseignantModule);
+    window.ajaxRebinders.push(initializePersonnelAdminModule);
 
 })();

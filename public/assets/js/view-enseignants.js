@@ -3,21 +3,15 @@
      * Gère les interactions spécifiques au formulaire enseignant.
      */
     const formHandler = {
-        // CORRECTION: Le sélecteur cible maintenant le bon formulaire.
         form: document.querySelector('form[action="/traitement-enseignant"]'),
 
         init: function() {
             if (!this.form) return;
 
-            // Initialisation des éléments du formulaire
-            this.nomInput = this.form.querySelector('#nom-enseignant');
-            this.prenomInput = this.form.querySelector('#prenom-enseignant');
-            this.loginInput = this.form.querySelector('#login');
-            this.cancelBtn = this.form.querySelector('#btn-cancel-edit');
-            this.idField = this.form.querySelector('#id-utilisateur-form');
-            this.operationField = this.form.querySelector('#form-operation');
-            this.title = this.form.querySelector('#form-title');
-            this.submitBtn = this.form.querySelector('#btn-submit-form');
+            this.nomInput = document.getElementById('nom-enseignant');
+            this.prenomInput = document.getElementById('prenom-enseignant');
+            this.loginInput = document.getElementById('login');
+            this.cancelBtn = document.getElementById('btn-cancel-edit');
 
             this.bindEvents();
         },
@@ -40,12 +34,11 @@
         },
 
         populateForEdit: function(row) {
-            if (!this.form || !row) return;
             this.reset();
 
             const userData = row.querySelector('.user-data');
 
-            this.idField.value = row.dataset.userId;
+            this.form.querySelector('#id-utilisateur-form').value = row.dataset.userId;
             this.form.querySelector('#nom-enseignant').value = userData.dataset.nom;
             this.form.querySelector('#prenom-enseignant').value = userData.dataset.prenoms;
             this.form.querySelector('#email-enseignant').value = userData.dataset.email;
@@ -56,20 +49,19 @@
             this.form.querySelector('#id-fonction').value = row.querySelector('.fonction-data')?.dataset.fonctionId || '';
 
             this.updateLogin();
-            this.operationField.value = 'modifier';
-            this.title.textContent = 'Modifier les informations de l\'enseignant';
-            this.submitBtn.textContent = 'Modifier';
+            this.form.querySelector('#form-operation').value = 'modifier';
+            this.form.querySelector('#form-title').textContent = 'Modifier les informations de l\'enseignant';
+            this.form.querySelector('#btn-submit-form').textContent = 'Modifier';
             this.cancelBtn.style.display = 'inline-block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         },
 
         reset: function() {
-            if (!this.form) return;
             this.form.reset();
-            this.idField.value = '';
-            this.operationField.value = 'ajouter';
-            this.title.textContent = 'Ajouter un nouvel enseignant';
-            this.submitBtn.textContent = 'Ajouter';
+            this.form.querySelector('#id-utilisateur-form').value = '';
+            this.form.querySelector('#form-operation').value = 'ajouter';
+            this.form.querySelector('#form-title').textContent = 'Ajouter un nouvel enseignant';
+            this.form.querySelector('#btn-submit-form').textContent = 'Ajouter';
             if (this.cancelBtn) this.cancelBtn.style.display = 'none';
             this.updateLogin();
         }
@@ -83,7 +75,7 @@
             const table = document.getElementById(tableId);
             if (!table) return;
 
-            const state = {
+            const tableState = {
                 table,
                 tableBody: table.querySelector('tbody'),
                 allRows: Array.from(table.querySelector('tbody').querySelectorAll('tr')),
@@ -96,38 +88,39 @@
                 currentPage: 1,
             };
 
-            if (!state.tableBody || state.allRows.length === 0 || !state.deleteForm) return;
+            if (!tableState.tableBody || tableState.allRows.length === 0 || !tableState.deleteForm) return;
 
-            const update = () => this.render(state);
-            state.update = update;
+            const updateTable = () => this.update(tableState);
+            tableState.updateTable = updateTable;
 
-            if (state.searchInput) state.searchInput.addEventListener('input', () => {
-                state.currentPage = 1;
-                update();
+            if (tableState.searchInput) tableState.searchInput.addEventListener('input', () => {
+                tableState.currentPage = 1;
+                updateTable();
             });
-            if (state.selectAllCheckbox) state.selectAllCheckbox.addEventListener('change', (e) => this.handleSelectAll(e, state));
+            if (tableState.selectAllCheckbox) tableState.selectAllCheckbox.addEventListener('change', (e) => this.handleSelectAll(e, tableState));
 
-            this.bindRowActions(state);
-            update();
+            this.bindRowActions(tableState);
+            updateTable();
         },
 
-        render: function (state) {
+        update: function (state) {
             const searchTerm = state.searchInput ? state.searchInput.value.toLowerCase() : '';
             const filteredRows = state.allRows.filter(row => row.textContent.toLowerCase().includes(searchTerm));
 
             state.allRows.forEach(row => row.style.display = 'none');
 
-            const totalPages = Math.ceil(filteredRows.length / state.rowsPerPage);
-            state.currentPage = Math.min(state.currentPage, totalPages > 0 ? totalPages : 1);
+            const totalRows = filteredRows.length;
+            const totalPages = Math.ceil(totalRows / state.rowsPerPage);
+            if (state.currentPage > totalPages) state.currentPage = totalPages > 0 ? totalPages : 1;
 
-            const start = (state.currentPage - 1) * state.rowsPerPage;
-            const end = start + state.rowsPerPage;
-            const visibleRows = filteredRows.slice(start, end);
+            const startRow = (state.currentPage - 1) * state.rowsPerPage;
+            const endRow = startRow + state.rowsPerPage;
+            const visibleRows = filteredRows.slice(startRow, endRow);
 
             visibleRows.forEach(row => row.style.display = '');
 
             this.setupPagination(state, totalPages);
-            this.updateResultsInfo(state, start, end, filteredRows.length);
+            this.updateResultsInfo(state, startRow, endRow, totalRows);
             this.updateSelectAllCheckbox(state);
             this.updateDeleteForm(state);
         },
@@ -145,7 +138,7 @@
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
                     state.currentPage = page;
-                    this.render(state);
+                    this.update(state);
                 });
                 return button;
             };
@@ -166,7 +159,7 @@
 
         handleSelectAll: function(e, state) {
             const isChecked = e.target.checked;
-            const filteredRows = state.allRows.filter(row => row.textContent.toLowerCase().includes(state.searchInput.value.toLowerCase()));
+            const filteredRows = state.allRows.filter(row => row.textContent.toLowerCase().includes(searchTerm));
             filteredRows.forEach(row => {
                 const checkbox = row.querySelector('input[type="checkbox"]');
                 if (checkbox) checkbox.checked = isChecked;
@@ -182,19 +175,19 @@
         },
 
         updateDeleteForm: function(state) {
-            const hiddenContainer = state.deleteForm.querySelector(`div[id^="hidden-inputs-for-delete-"]`);
-            if (!hiddenContainer) return;
+            const hiddenInputsContainer = state.deleteForm.querySelector(`div[id^="hidden-inputs-for-delete-"]`);
+            if (!hiddenInputsContainer) return;
 
             const checkedBoxes = Array.from(state.tableBody.querySelectorAll('input[type="checkbox"]:checked'));
             const idsToDelete = checkedBoxes.map(cb => cb.value);
 
-            hiddenContainer.innerHTML = '';
+            hiddenInputsContainer.innerHTML = '';
             idsToDelete.forEach(id => {
                 const input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = 'ids[]';
                 input.value = id;
-                hiddenContainer.appendChild(input);
+                hiddenInputsContainer.appendChild(input);
             });
 
             if (idsToDelete.length > 0) {
@@ -216,13 +209,13 @@
 
                         state.deleteForm.setAttribute('data-warning', message);
 
-                        const hiddenContainer = state.deleteForm.querySelector(`div[id^="hidden-inputs-for-delete-"]`);
-                        hiddenContainer.innerHTML = '';
+                        const hiddenInputsContainer = state.deleteForm.querySelector(`div[id^="hidden-inputs-for-delete-"]`);
+                        hiddenInputsContainer.innerHTML = '';
                         const input = document.createElement('input');
                         input.type = 'hidden';
                         input.name = 'ids[]';
                         input.value = userId;
-                        hiddenContainer.appendChild(input);
+                        hiddenInputsContainer.appendChild(input);
 
                         state.deleteForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
                     });
@@ -244,6 +237,9 @@
         }
     };
 
+    /**
+     * Initialise tous les modules de la page.
+     */
     function initializeEnseignantModule() {
         formHandler.init();
         tableHandler.init('enseignantTable');

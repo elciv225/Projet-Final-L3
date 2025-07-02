@@ -144,8 +144,206 @@ BEGIN
     COMMIT;
 END//
 
--- Procédure pour modifier un étudiant
+-- Procédure de création d'un enseignant
+CREATE PROCEDURE sp_creer_enseignant(
+    IN p_nom VARCHAR(50),
+    IN p_prenoms VARCHAR(100),
+    IN p_email VARCHAR(255),
+    IN p_mot_de_passe VARCHAR(255),
+    IN p_date_naissance DATE,
+    IN p_grade_id VARCHAR(30),
+    IN p_specialite_id VARCHAR(30),
+    IN p_fonction_id VARCHAR(30),
+    OUT p_user_id VARCHAR(30)
+)
+BEGIN
+    DECLARE v_last_num INT DEFAULT 0;
+    DECLARE v_login VARCHAR(50);
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            ROLLBACK;
+            RESIGNAL;
+        END;
 
+    START TRANSACTION;
+
+    SELECT IFNULL(MAX(CAST(SUBSTRING(id, 4) AS UNSIGNED)), 0) INTO v_last_num FROM utilisateur WHERE id LIKE 'ENS%';
+    SET p_user_id = CONCAT('ENS', LPAD(v_last_num + 1, 3, '0'));
+    SET v_login = CONCAT(LOWER(SUBSTRING(p_prenoms, 1, 1)), LOWER(REPLACE(p_nom, ' ', '')));
+
+    INSERT INTO utilisateur (id, nom, prenoms, email, login, mot_de_passe, date_naissance, groupe_utilisateur_id,
+                             type_utilisateur_id)
+    VALUES (p_user_id, p_nom, p_prenoms, p_email, v_login, SHA2(p_mot_de_passe, 256), p_date_naissance,
+            'GRP_VALID_RAPPORT', 'TYPE_ENSEIGNANT_PERM');
+
+    INSERT INTO enseignant (utilisateur_id) VALUES (p_user_id);
+
+    IF p_grade_id IS NOT NULL AND p_grade_id != '' THEN
+        INSERT INTO historique_grade (utilisateur_id, grade_id, date_grade) VALUES (p_user_id, p_grade_id, CURDATE());
+    END IF;
+    IF p_specialite_id IS NOT NULL AND p_specialite_id != '' THEN
+        INSERT INTO historique_specialite (utilisateur_id, specialite_id, date_occupation)
+        VALUES (p_user_id, p_specialite_id, CURDATE());
+    END IF;
+    IF p_fonction_id IS NOT NULL AND p_fonction_id != '' THEN
+        INSERT INTO historique_fonction (utilisateur_id, fonction_id, date_occupation)
+        VALUES (p_user_id, p_fonction_id, CURDATE());
+    END IF;
+    COMMIT;
+END//
+
+
+-- Procédure de création d'un membre du personnel administratif
+CREATE PROCEDURE sp_creer_personnel_admin(
+    IN p_nom VARCHAR(50),
+    IN p_prenoms VARCHAR(100),
+    IN p_email VARCHAR(255),
+    IN p_mot_de_passe VARCHAR(255),
+    IN p_date_naissance DATE,
+    OUT p_user_id VARCHAR(30)
+)
+BEGIN
+    DECLARE v_last_num INT DEFAULT 0;
+    DECLARE v_login VARCHAR(50);
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            ROLLBACK;
+            RESIGNAL;
+        END;
+
+    START TRANSACTION;
+
+    SELECT IFNULL(MAX(CAST(SUBSTRING(id, 4) AS UNSIGNED)), 0) INTO v_last_num FROM utilisateur WHERE id LIKE 'ADM%';
+    SET p_user_id = CONCAT('ADM', LPAD(v_last_num + 1, 3, '0'));
+    SET v_login = CONCAT(LOWER(SUBSTRING(p_prenoms, 1, 1)), LOWER(REPLACE(p_nom, ' ', '')));
+
+    INSERT INTO utilisateur (id, nom, prenoms, email, login, mot_de_passe, date_naissance, groupe_utilisateur_id,
+                             type_utilisateur_id)
+    VALUES (p_user_id, p_nom, p_prenoms, p_email, v_login, SHA2(p_mot_de_passe, 256), p_date_naissance,
+            'GRP_ADMIN_PEDAGO', 'TYPE_ADMIN_SCOLARITE');
+
+    INSERT INTO personnel_administratif (utilisateur_id) VALUES (p_user_id);
+    COMMIT;
+END//
+
+-- =================================================================
+-- 📌 PROCÉDURES DE MODIFICATION
+-- =================================================================
+
+-- Procédure de modification d'un enseignant
+CREATE PROCEDURE sp_modifier_enseignant(
+    IN p_user_id VARCHAR(30),
+    IN p_nom VARCHAR(50),
+    IN p_prenoms VARCHAR(100),
+    IN p_email VARCHAR(255),
+    IN p_date_naissance DATE,
+    IN p_grade_id VARCHAR(30),
+    IN p_specialite_id VARCHAR(30),
+    IN p_fonction_id VARCHAR(30)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            ROLLBACK;
+            RESIGNAL;
+        END;
+
+    START TRANSACTION;
+
+-- Mettre à jour les informations de base de l'utilisateur
+    UPDATE utilisateur
+    SET nom            = p_nom,
+        prenoms        = p_prenoms,
+        email          = p_email,
+        date_naissance = p_date_naissance
+    WHERE id = p_user_id;
+
+-- Mettre à jour les informations historiques (crée une nouvelle entrée si elle n'existe pas)
+    IF p_grade_id IS NOT NULL AND p_grade_id != '' THEN
+        INSERT INTO historique_grade (utilisateur_id, grade_id, date_grade)
+        VALUES (p_user_id, p_grade_id, CURDATE())
+        ON DUPLICATE KEY UPDATE date_grade = CURDATE();
+    END IF;
+    IF p_specialite_id IS NOT NULL AND p_specialite_id != '' THEN
+        INSERT INTO historique_specialite (utilisateur_id, specialite_id, date_occupation)
+        VALUES (p_user_id, p_specialite_id, CURDATE())
+        ON DUPLICATE KEY UPDATE date_occupation = CURDATE();
+    END IF;
+    IF p_fonction_id IS NOT NULL AND p_fonction_id != '' THEN
+        INSERT INTO historique_fonction (utilisateur_id, fonction_id, date_occupation)
+        VALUES (p_user_id, p_fonction_id, CURDATE())
+        ON DUPLICATE KEY UPDATE date_occupation = CURDATE();
+    END IF;
+    COMMIT;
+END//
+
+
+-- Procédure de modification d'un membre du personnel administratif
+CREATE PROCEDURE sp_modifier_personnel_admin(
+    IN p_user_id VARCHAR(30),
+    IN p_nom VARCHAR(50),
+    IN p_prenoms VARCHAR(100),
+    IN p_email VARCHAR(255),
+    IN p_date_naissance DATE
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            ROLLBACK;
+            RESIGNAL;
+        END;
+
+    START TRANSACTION;
+
+-- Mettre à jour les informations de base de l'utilisateur
+    UPDATE utilisateur
+    SET nom            = p_nom,
+        prenoms        = p_prenoms,
+        email          = p_email,
+        date_naissance = p_date_naissance
+    WHERE id = p_user_id;
+    COMMIT;
+END//
+
+
+-- =================================================================
+-- 📌 PROCÉDURE DE SUPPRESSION
+-- =================================================================
+
+-- Procédure de suppression sécurisée d'un membre du personnel (enseignant ou admin)
+CREATE PROCEDURE sp_supprimer_personnel(IN p_utilisateur_id VARCHAR(30))
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            ROLLBACK;
+            RESIGNAL;
+        END;
+
+    START TRANSACTION;
+
+-- Supprimer les dépendances (enseignant ou admin)
+    DELETE FROM historique_grade WHERE utilisateur_id = p_utilisateur_id;
+    DELETE FROM historique_specialite WHERE utilisateur_id = p_utilisateur_id;
+    DELETE FROM historique_fonction WHERE utilisateur_id = p_utilisateur_id;
+    DELETE FROM affectation_encadrant WHERE utilisateur_id = p_utilisateur_id;
+    DELETE FROM validation_rapport WHERE utilisateur_id = p_utilisateur_id;
+    DELETE FROM evaluation WHERE enseignant_id = p_utilisateur_id;
+    DELETE FROM approbation_rapport WHERE utilisateur_id = p_utilisateur_id;
+    DELETE FROM remise_compte_rendu WHERE utilisateur_id = p_utilisateur_id;
+
+-- Supprimer les spécialisations
+    DELETE FROM enseignant WHERE utilisateur_id = p_utilisateur_id;
+    DELETE FROM personnel_administratif WHERE utilisateur_id = p_utilisateur_id;
+
+-- Supprimer les notifications
+    DELETE FROM notification WHERE emetteur_id = p_utilisateur_id OR recepteur_id = p_utilisateur_id;
+
+-- Finalement, supprimer l'utilisateur
+    DELETE FROM utilisateur WHERE id = p_utilisateur_id;
+    COMMIT;
+END//
+
+-- Procédure pour modifier un étudiant
 CREATE PROCEDURE sp_modifier_etudiant(
     IN p_etudiant_id VARCHAR(30),
     IN p_nom VARCHAR(50),

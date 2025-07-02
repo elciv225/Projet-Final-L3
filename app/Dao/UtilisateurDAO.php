@@ -29,27 +29,82 @@ class UtilisateurDAO extends DAO
     }
 
     /**
-     * Supprime un utilisateur uniquement s'il n'est pas référencé dans les tables enfants.
-     * @param string $id L'ID de l'utilisateur à supprimer.
-     * @return bool True si la suppression a réussi (1 ligne affectée), false sinon.
+     * Crée un compte enseignant en utilisant la procédure stockée.
+     * @param array $params
+     * @return string|null
      */
-    public function supprimer(string $id): bool
+    public function creerEnseignantViaProcedure(array $params): ?string
     {
-        $sql = "
-            DELETE FROM utilisateur 
-            WHERE id = :id AND id NOT IN (
-                SELECT utilisateur_id FROM etudiant WHERE utilisateur_id = :id
-                UNION ALL
-                SELECT utilisateur_id FROM enseignant WHERE utilisateur_id = :id
-                UNION ALL
-                SELECT utilisateur_id FROM personnel_administratif WHERE utilisateur_id = :id
-            )
-        ";
-
+        $sql = "CALL sp_creer_enseignant(?, ?, ?, ?, ?, ?, ?, ?, @p_user_id)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
 
-        return $stmt->rowCount() > 0;
+        $stmt->bindParam(1, $params['nom'], PDO::PARAM_STR);
+        $stmt->bindParam(2, $params['prenoms'], PDO::PARAM_STR);
+        $stmt->bindParam(3, $params['email'], PDO::PARAM_STR);
+        $stmt->bindParam(4, $params['mot_de_passe'], PDO::PARAM_STR);
+        $stmt->bindParam(5, $params['date_naissance'], PDO::PARAM_STR);
+        $stmt->bindParam(6, $params['grade_id'], PDO::PARAM_STR);
+        $stmt->bindParam(7, $params['specialite_id'], PDO::PARAM_STR);
+        $stmt->bindParam(8, $params['fonction_id'], PDO::PARAM_STR);
+
+        $stmt->execute();
+        $stmt->closeCursor();
+
+        $result = $this->pdo->query("SELECT @p_user_id as userId")->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['userId'] : null;
+    }
+
+    /**
+     * Crée un compte de personnel administratif en utilisant la procédure stockée.
+     * @param array $params
+     * @return string|null
+     */
+    public function creerPersonnelAdminViaProcedure(array $params): ?string
+    {
+        $sql = "CALL sp_creer_personnel_admin(?, ?, ?, ?, ?, @p_user_id)";
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->bindParam(1, $params['nom'], PDO::PARAM_STR);
+        $stmt->bindParam(2, $params['prenoms'], PDO::PARAM_STR);
+        $stmt->bindParam(3, $params['email'], PDO::PARAM_STR);
+        $stmt->bindParam(4, $params['mot_de_passe'], PDO::PARAM_STR);
+        $stmt->bindParam(5, $params['date_naissance'], PDO::PARAM_STR);
+
+        $stmt->execute();
+        $stmt->closeCursor();
+
+        $result = $this->pdo->query("SELECT @p_user_id as userId")->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['userId'] : null;
+    }
+
+    /**
+     * Supprime un ou plusieurs membres du personnel en appelant la procédure stockée.
+     * @param array|string $ids
+     * @return int
+     */
+    public function supprimerPersonnel(array|string $ids): int
+    {
+        if (is_string($ids)) {
+            $ids = [$ids];
+        }
+
+        if (empty($ids)) {
+            return 0;
+        }
+
+        try {
+            $stmt = $this->pdo->prepare("CALL sp_supprimer_personnel(?)");
+            $deletedCount = 0;
+
+            foreach ($ids as $id) {
+                if (!empty($id)) {
+                    $stmt->execute([$id]);
+                    $deletedCount++;
+                }
+            }
+            return $deletedCount;
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
 }
