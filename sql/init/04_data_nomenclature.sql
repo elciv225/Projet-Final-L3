@@ -1,4 +1,17 @@
--- Insertion des éléments de base primordiale pour l'application
+-- =================================================================
+-- Fichier: 04_data_nomenclature.sql
+-- Description: Insertion des données de référence et de test.
+-- CORRECTION: Ajout de la désactivation/réactivation des contraintes
+-- pour permettre la modification de la table utilisateur.
+-- =================================================================
+
+-- Définit l'encodage pour la session pour garantir la bonne gestion des caractères français
+SET NAMES 'utf8mb4';
+SET CHARACTER SET utf8mb4;
+
+-- On désactive temporairement la vérification des clés étrangères
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- =================================================================
 --                  POPULATION DES TABLES DE REFERENCE
 -- =================================================================
@@ -63,10 +76,14 @@ VALUES ('CAT_ETUDIANT', 'Étudiant'),
 
 -- type_utilisateur
 INSERT INTO type_utilisateur (id, libelle, categorie_utilisateur_id)
-VALUES ('TYPE_ETUDIANT_L3', 'Étudiant en Licence 3', 'CAT_ETUDIANT'),
+VALUES ('TYPE_ETUDIANT_L1', 'Étudiant en Licence 1', 'CAT_ETUDIANT'),
+       ('TYPE_ETUDIANT_L2', 'Étudiant en Licence 2', 'CAT_ETUDIANT'),
+       ('TYPE_ETUDIANT_L3', 'Étudiant en Licence 3', 'CAT_ETUDIANT'),
+       ('TYPE_ETUDIANT_M1', 'Étudiant en Master 1', 'CAT_ETUDIANT'),
        ('TYPE_ETUDIANT_M2', 'Étudiant en Master 2', 'CAT_ETUDIANT'),
        ('TYPE_ENSEIGNANT_PERM', 'Enseignant Permanent', 'CAT_ENSEIGNANT'),
-       ('TYPE_ADMIN_SCOLARITE', 'Agent de Scolarité', 'CAT_ADMIN');
+       ('TYPE_ADMIN_SCOLARITE', 'Agent de Scolarité', 'CAT_ADMIN'),
+       ('TYPE_UNDEFINED', 'Indéfinie', 'CAT_ADMIN');
 
 -- groupe_utilisateur
 INSERT INTO groupe_utilisateur (id, libelle)
@@ -209,8 +226,9 @@ VALUES ('ENS002', '21INF001', 'DISC_ENS002_21INF001',
         'Bonjour Jean-Luc, pouvez-vous me faire un point sur l''avancement de votre chapitre 2 ?',
         '2024-05-10 09:00:15');
 
--- Ce script ajoute des valeurs par défaut pour les types et groupes d'utilisateurs,
--- rendant la table 'utilisateur' plus robuste contre les insertions incomplètes.
+-- =================================================================
+--      AJOUT DE VALEURS PAR DÉFAUT POUR LA ROBUSTESSE
+-- =================================================================
 
 -- 1. Créer une catégorie "Système" pour les entrées par défaut, si elle n'existe pas.
 INSERT INTO categorie_utilisateur (id, libelle)
@@ -228,7 +246,10 @@ SELECT 'GRP_DEFAULT', 'Groupe par Défaut'
 WHERE NOT EXISTS (SELECT 1 FROM groupe_utilisateur WHERE id = 'GRP_DEFAULT');
 
 -- 4. Modifier la table 'utilisateur' pour utiliser ces nouvelles valeurs par défaut.
--- Note : Assurez-vous que les types de colonnes et longueurs correspondent à votre schéma.
+-- Cette opération est maintenant possible grâce à la désactivation des contraintes.
 ALTER TABLE utilisateur
     MODIFY COLUMN type_utilisateur_id VARCHAR(25) NOT NULL DEFAULT 'TYPE_UNDEFINED',
     MODIFY COLUMN groupe_utilisateur_id VARCHAR(30) NOT NULL DEFAULT 'GRP_DEFAULT';
+
+-- On réactive la vérification des clés étrangères à la fin du script
+SET FOREIGN_KEY_CHECKS = 1;

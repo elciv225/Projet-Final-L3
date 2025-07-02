@@ -89,7 +89,7 @@ CREATE TABLE groupe_utilisateur
 -- Description: Définit les statuts possibles au sein d'un jury (Président, Membre, etc.).
 CREATE TABLE statut_jury
 (
-    id      VARCHAR(25), -- ex: 'STATUT_JURY_PRESIDENT'
+    id      VARCHAR(30), -- ex: 'STATUT_JURY_PRESIDENT'
     libelle VARCHAR(50),
     PRIMARY KEY (id)
 );
@@ -98,7 +98,7 @@ CREATE TABLE statut_jury
 -- Description: Définit les différents niveaux d'approbation pour un document.
 CREATE TABLE niveau_approbation
 (
-    id      VARCHAR(25), -- ex: 'APPROB_CHEF_DEPT'
+    id      VARCHAR(30), -- ex: 'APPROB_CHEF_DEPT'
     libelle VARCHAR(50),
     PRIMARY KEY (id)
 );
@@ -188,7 +188,7 @@ CREATE TABLE ecue
 -- Description: Spécifie plus finement la catégorie d'un utilisateur.
 CREATE TABLE type_utilisateur
 (
-    id                       VARCHAR(25),          -- ex: 'TYPE_ETUDIANT_L1'
+    id                       VARCHAR(30),          -- ex: 'TYPE_ETUDIANT_L1'
     libelle                  VARCHAR(50),
     categorie_utilisateur_id VARCHAR(30) NOT NULL, -- ex: 'CAT_ETUDIANT'
     PRIMARY KEY (id),
@@ -199,15 +199,15 @@ CREATE TABLE type_utilisateur
 -- Description: Table centrale contenant les informations de tous les utilisateurs.
 CREATE TABLE utilisateur
 (
-    id                      VARCHAR(30),          -- ex: '24INF001' (matricule)
-    nom                     VARCHAR(50),
-    prenoms                 VARCHAR(100),
-    email                   VARCHAR(255) UNIQUE,
-    login                   VARCHAR(50) UNIQUE,
-    mot_de_passe            VARCHAR(255),
-    date_naissance          DATE,
-    groupe_utilisateur_id   VARCHAR(30) NOT NULL, -- ex: 'GRP_VALID_RAPPORT'
-    type_utilisateur_id     VARCHAR(25) NOT NULL, -- ex: 'TYPE_ETUDIANT_L1'
+    id                    VARCHAR(30),          -- ex: '24INF001' (matricule)
+    nom                   VARCHAR(50),
+    prenoms               VARCHAR(100),
+    email                 VARCHAR(255) UNIQUE,
+    login                 VARCHAR(50) UNIQUE,
+    mot_de_passe          VARCHAR(255),
+    date_naissance        DATE,
+    groupe_utilisateur_id VARCHAR(30) NOT NULL, -- ex: 'GRP_VALID_RAPPORT'
+    type_utilisateur_id   VARCHAR(30) NOT NULL, -- ex: 'TYPE_ETUDIANT_L1'
     PRIMARY KEY (id),
     FOREIGN KEY (groupe_utilisateur_id) REFERENCES groupe_utilisateur (id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (type_utilisateur_id) REFERENCES type_utilisateur (id) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -236,7 +236,7 @@ CREATE TABLE enseignant
 CREATE TABLE etudiant
 (
     utilisateur_id VARCHAR(30), -- ex: '24INF001'
-    numero_carte VARCHAR(30),
+    numero_carte   VARCHAR(30),
     PRIMARY KEY (utilisateur_id),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -311,7 +311,7 @@ CREATE TABLE affectation_encadrant
 (
     utilisateur_id      VARCHAR(30), -- ex: 'ENS012'
     rapport_etudiant_id VARCHAR(40), -- ex: 'RAPPORT_2024_24INF001'
-    statut_jury_id      VARCHAR(25), -- ex: 'STATUT_JURY_PRESIDENT'
+    statut_jury_id      VARCHAR(30), -- ex: 'STATUT_JURY_PRESIDENT'
     date_affectation    DATE,
     PRIMARY KEY (utilisateur_id, rapport_etudiant_id, statut_jury_id),
     FOREIGN KEY (utilisateur_id) REFERENCES enseignant (utilisateur_id) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -346,7 +346,7 @@ CREATE TABLE remise_compte_rendu
 -- Description: Historique des approbations sur les comptes rendus.
 CREATE TABLE historique_approbation
 (
-    niveau_approbation_id VARCHAR(25), -- ex: 'APPROB_CHEF_DEPT'
+    niveau_approbation_id VARCHAR(30), -- ex: 'APPROB_CHEF_DEPT'
     compte_rendu_id       VARCHAR(40), -- ex: 'CR_REUNION_20240520'
     date_approbation      TIMESTAMP,
     PRIMARY KEY (niveau_approbation_id, compte_rendu_id),
@@ -386,7 +386,7 @@ CREATE TABLE historique_fonction
 CREATE TABLE historique_specialite
 (
     utilisateur_id  VARCHAR(30), -- ex: 'ENS012'
-    specialite_id     VARCHAR(30), -- ex: 'FCT_CHEF_DEPT'
+    specialite_id   VARCHAR(30), -- ex: 'FCT_CHEF_DEPT'
     date_occupation DATE,
     PRIMARY KEY (utilisateur_id, specialite_id),
     FOREIGN KEY (utilisateur_id) REFERENCES enseignant (utilisateur_id) ON DELETE RESTRICT ON UPDATE CASCADE,

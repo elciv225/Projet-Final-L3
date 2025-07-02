@@ -10,6 +10,7 @@ use App\Controllers\MenuViews\HistoriquePersonnelController;
 use App\Controllers\MenuViews\ReglementInscriptionController;
 use App\Controllers\MenuViews\ParametreGenerauxController;
 use App\Controllers\MenuViews\UtilisateursController;
+use App\Controllers\MenuViews\EtudiantsController; // Added EtudiantsController
 use App\Controllers\IndexController;
 use App\Controllers\Public\AccueilController;
 use App\Controllers\Public\AuthentificationPublicController;
@@ -28,6 +29,27 @@ $configurationModules = [
             'label' => 'Utilsateur',
             'icone' => '👨‍',
             'description' => 'Gestion des utilisateurs de l\'établissement',
+            'traitements' => [
+                'ajouter' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Ajouter un nouvel étudiant',
+                ],
+                'modifier' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Modifier les informations d\'un étudiant existant',
+                ],
+                'supprimer' => [
+                    'methodeHttp' => 'POST',
+                    'description' => 'Supprimer un étudiant',
+                ]
+            ]
+        ],
+        'etudiants' => [ // Added etudiants module definition
+            'controleur' => EtudiantsController::class,
+            'methodePrincipale' => 'index',
+            'label' => 'Étudiants',
+            'icone' => '🎓',
+            'description' => 'Gestion des étudiants de l\'établissement',
             'traitements' => [
                 'ajouter' => [
                     'methodeHttp' => 'POST',
@@ -85,7 +107,7 @@ $configurationModules = [
                 ]
             ]
         ],
-        ],
+    ],
     'autres'=>[
         'evaluation-etudiant' => [
             'controleur' => EvaluationEtudiantController::class,
@@ -150,7 +172,7 @@ $configurationModules = [
                 ]
             ]
         ],
-        ],
+    ],
     'commission'=>[
         'messagerie-commission' => [
             'controleur' => DiscussionController::class,
@@ -260,6 +282,7 @@ $routes = array_merge($routes, [
     ['POST', '/charger-formulaire-categorie', [UtilisateursController::class, 'chargerFormulaireCategorie']],
     ['POST', '/charger-formulaire-paramatre-specifique', [ParametreGenerauxController::class, 'chargerFormulaireCategorie']],
     ['POST', '/traitement-utilisateur', [UtilisateursController::class, 'executerAction']],
+    ['POST', '/traitement-etudiant', [EtudiantsController::class, 'executerAction']],
     ['POST', '/charger-donnee-historique-utilisateur', [HistoriquePersonnelController::class, 'chargerPersonnelPourDonneeHistorique']],
     ['POST', '/charger-historique-personnel', [HistoriquePersonnelController::class, 'chargerDonneeHistoriquePersonnel']],
 ]);
