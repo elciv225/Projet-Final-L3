@@ -22,10 +22,12 @@ use App\Controllers\Controller;
 use System\Database\Database;
 use System\Http\Response;
 use PDOException;
+use App\Traits\ValidationTrait;
 
 class UtilisateursController extends Controller
 {
-    protected PDO $pdo;
+    use ValidationTrait;
+    // protected PDO $pdo; // Déjà dans le parent
 
     public function __construct()
     {
@@ -57,16 +59,35 @@ class UtilisateursController extends Controller
         $daoGroupeUtilisateur = new GroupeUtilisateurDAO($this->pdo);
         $daoUtilisateur = new UtilisateurDAO($this->pdo);
 
-        $data = [
+        // Données complètes pour la vue principale
+        $viewData = [
+            'title' => 'Gestion des Utilisateurs', // Titre pour la page complète
+            'heading' => 'Utilisateurs', // Heading pour la page complète
             'typesUtilisateur' => $daoTypeUtilisateur->recupererTous(),
             'groupesUtilisateur' => $daoGroupeUtilisateur->recupererTous(),
-            'utilisateurs' => $daoUtilisateur->recupererTousAvecDetails()
+            'utilisateurs' => $daoUtilisateur->recupererTousAvecDetailsEtIdsComplets() // Assurez-vous que cette méthode existe et renvoie les IDs
         ];
 
-        return Response::view('menu_views/utilisateurs', $data, json: [
-            'statut' => $statut,
-            'message' => $message
-        ]);
+        // Données pour la vue partielle AJAX (liste des utilisateurs et potentiellement les selects si dynamiques)
+        $partialViewData = [
+            'utilisateurs' => $viewData['utilisateurs'],
+            // Si les selects typesUtilisateur et groupesUtilisateur peuvent changer, les inclure aussi.
+            // Pour l'instant, on suppose qu'ils sont stables pour le rendu partiel du tableau.
+        ];
+
+        // Ajouter les données nécessaires pour que les data-attributes de la vue partielle soient complets
+        // Ceci est crucial si `recupererTousAvecDetailsEtIdsComplets` ne renvoie pas déjà tout.
+        // Il faut s'assurer que $viewData['utilisateurs'] contient 'date_naissance', 'type_utilisateur_id', 'groupe_utilisateur_id'
+        // Si ce n'est pas le cas, il faut modifier la requête dans UtilisateurDAO.
+
+        return $this->reponseVueAvecMessage(
+            'menu_views/utilisateurs', // Vue complète
+            $viewData,
+            $message,
+            $statut,
+            'partials/table-utilisateurs-rows', // Vue partielle pour AJAX
+            $partialViewData
+        );
     }
 
     public function executerAction(): Response
@@ -83,31 +104,21 @@ class UtilisateursController extends Controller
         };
     }
 
-    private function validerChampsRequis(array $post): ?Response
-    {
-        $requiredFields = [
-            'nom-utilisateur' => 'Nom',
-            'prenom-utilisateur' => 'Prénom(s)',
-            'email-utilisateur' => 'Email',
-            'date-naissance' => 'Date de naissance',
-            'id-type-utilisateur' => 'Type d\'utilisateur',
-            'id-groupe-utilisateur' => 'Groupe utilisateur'
-        ];
-
-        foreach ($requiredFields as $field => $label) {
-            if (empty(trim($post[$field] ?? ''))) {
-                return $this->error("Le champ '{$label}' est obligatoire.");
-            }
-        }
-        return null;
-    }
-
     private function traiterAjout(): Response
     {
         $post = $this->request->getPostParams();
-        $validationError = $this->validerChampsRequis($post);
-        if ($validationError) {
-            return $validationError;
+
+        $rules = [
+            'nom-utilisateur' => 'required|min:2',
+            'prenom-utilisateur' => 'required|min:2',
+            'email-utilisateur' => 'required|email',
+            'date-naissance' => 'required|date',
+            'id-type-utilisateur' => 'required',
+            'id-groupe-utilisateur' => 'required'
+        ];
+
+        if (!$this->validate($post, $rules)) {
+            return $this->indexMessage($this->getAllErrorsAsString(), "error");
         }
 
         $dao = new UtilisateurDAO($this->pdo);
@@ -166,12 +177,21 @@ class UtilisateursController extends Controller
         $post = $this->request->getPostParams();
         $id = $post['id-utilisateur'] ?? null;
         if (!$id) {
-            return $this->error("ID de l'utilisateur manquant pour la modification.");
+            return $this->indexMessage("ID de l'utilisateur manquant pour la modification.", "error");
         }
 
-        $validationError = $this->validerChampsRequis($post);
-        if ($validationError) {
-            return $validationError;
+        $rules = [
+            'id-utilisateur' => 'required', // L'ID est dans $post['id-utilisateur']
+            'nom-utilisateur' => 'required|min:2',
+            'prenom-utilisateur' => 'required|min:2',
+            'email-utilisateur' => 'required|email',
+            'date-naissance' => 'required|date',
+            'id-type-utilisateur' => 'required',
+            'id-groupe-utilisateur' => 'required'
+        ];
+
+        if (!$this->validate($post, $rules)) {
+             return $this->indexMessage($this->getAllErrorsAsString(), "error");
         }
 
         $dao = new UtilisateurDAO($this->pdo);

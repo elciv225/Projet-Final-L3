@@ -10,7 +10,7 @@
     </div>
 
     <!-- Formulaire d'inscription et de modification -->
-    <form class="form-section ajax-form" method="post" action="/traitement-etudiant" data-target=".table-scroll-wrapper">
+    <form class="form-section ajax-form" method="post" action="/traitement-etudiant" data-target="#etudiantTable tbody">
         <input name="operation" id="form-operation" value="inscrire" type="hidden">
         <input name="id-etudiant" id="id-etudiant-form" value="" type="hidden">
 

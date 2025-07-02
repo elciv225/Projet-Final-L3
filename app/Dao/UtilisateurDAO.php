@@ -29,6 +29,33 @@ class UtilisateurDAO extends DAO
     }
 
     /**
+     * Récupère tous les utilisateurs avec les libellés de leur type et groupe,
+     * ET les IDs bruts pour type_utilisateur_id, groupe_utilisateur_id, et date_naissance.
+     * @return array
+     */
+    public function recupererTousAvecDetailsEtIdsComplets(): array
+    {
+        $sql = "
+            SELECT
+                u.id,
+                u.nom,
+                u.prenoms,
+                u.email,
+                u.date_naissance,      -- Champ brut pour data-attribute
+                u.type_utilisateur_id, -- Champ brut pour data-attribute
+                u.groupe_utilisateur_id, -- Champ brut pour data-attribute
+                tu.libelle as type_user,
+                gu.libelle as groupe
+            FROM utilisateur u
+            LEFT JOIN type_utilisateur tu ON u.type_utilisateur_id = tu.id
+            LEFT JOIN groupe_utilisateur gu ON u.groupe_utilisateur_id = gu.id
+            ORDER BY u.nom, u.prenoms;
+        ";
+        return $this->executerSelect($sql);
+    }
+
+
+    /**
      * Supprime un utilisateur uniquement s'il n'est pas référencé dans les tables enfants.
      * @param string $id L'ID de l'utilisateur à supprimer.
      * @return bool True si la suppression a réussi (1 ligne affectée), false sinon.

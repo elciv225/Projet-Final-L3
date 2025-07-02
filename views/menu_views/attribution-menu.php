@@ -1,152 +1,92 @@
+<?php
+// Données passées par le contrôleur :
+// $groupesUtilisateur (array d'objets GroupeUtilisateur)
+// $menusParCategorie (array associatif de menus groupés par catégorie)
+?>
 <main class="main-content">
-
     <div class="page-header">
         <div class="header-left">
-            <h1>Gestion des menus</h1>
+            <h1>Attribution des Menus aux Groupes</h1>
+            <p>Définissez ici les menus accessibles pour chaque groupe d'utilisateurs et leurs permissions spécifiques.</p>
         </div>
     </div>
 
     <div class="container">
-        <!-- Section unique pour la configuration des permissions -->
         <div class="form-section">
             <div class="section-header">
                 <h3 class="section-title">Configuration des Permissions de Groupe</h3>
             </div>
             <div class="section-content">
-                <!-- Sous-section pour la sélection du groupe -->
                 <div class="form-group-inline" style="margin-bottom: 32px;">
-                    <label for="userGroupSelect">Groupe utilisateur:</label>
+                    <label for="userGroupSelect" class="form-label" style="margin-right: 10px;">Groupe utilisateur :</label>
                     <div class="select-wrapper">
-                        <select id="userGroupSelect" class="custom-select">
-                            <option value="">Sélectionner un groupe</option>
-                            <option value="admin">Administrateur</option>
-                            <option value="editor">Éditeur</option>
-                            <option value="viewer">Lecteur</option>
-                            <option value="guest">Invité</option>
+                        <select id="userGroupSelect" class="form-input custom-select">
+                            <option value="">Sélectionner un groupe...</option>
+                            <?php if (isset($groupesUtilisateur)): ?>
+                                <?php foreach ($groupesUtilisateur as $groupe): ?>
+                                    <option value="<?= htmlspecialchars($groupe->getId()) ?>">
+                                        <?= htmlspecialchars($groupe->getLibelle()) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
                 </div>
 
-                <!-- Sous-section pour le tableau des permissions -->
                 <div class="permissions-table-container">
                     <div class="total-select-header">
-                        <span>Tout Sélectionner</span>
+                        <span>Tout Sélectionner/Désélectionner</span>
                         <input type="checkbox" id="masterPermissionCheckbox" class="checkbox">
                     </div>
                     <table class="permissions-table">
                         <thead>
-                        <tr>
-                            <th>Traitement</th>
-                            <th>Ajouter</th>
-                            <th>Modifier</th>
-                            <th>Supprimer</th>
-                            <th>Imprimer</th>
-                        </tr>
+                            <tr>
+                                <th>Menu / Catégorie</th>
+                                <th>Peut Ajouter</th>
+                                <th>Peut Modifier</th>
+                                <th>Peut Supprimer</th>
+                                <th>Peut Imprimer</th>
+                            </tr>
                         </thead>
                         <tbody id="permissionsTableBody">
-                        <!-- Le contenu sera vide initialement -->
-                        <tr>
-                            <td colspan="5" style="text-align: center; color: var(--text-disabled); padding: 40px;">
-                                Veuillez sélectionner un groupe pour voir les permissions.
-                            </td>
-                        </tr>
+                            <!-- Message initial -->
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-disabled); padding: 40px;">
+                                    Veuillez sélectionner un groupe pour charger et configurer les permissions des menus.
+                                </td>
+                            </tr>
+                             <?php /* Boucle PHP pour l'affichage initial si nécessaire, ou laisser JS peupler
+                            if (isset($menusParCategorie) && !empty($menusParCategorie)):
+                                foreach ($menusParCategorie as $categorieId => $categorieData): ?>
+                                    <tr class="category-row">
+                                        <td colspan="5"><strong><?= htmlspecialchars($categorieData['libelle']) ?></strong></td>
+                                    </tr>
+                                    <?php foreach ($categorieData['menus'] as $menu):
+                                        $menuId = htmlspecialchars($menu['id']);
+                                        $permissions = $menu['permissions'] ?? ['peut_ajouter' => false, 'peut_modifier' => false, 'peut_supprimer' => false, 'peut_imprimer' => false];
+                                    ?>
+                                    <tr data-menu-id="<?= $menuId ?>">
+                                        <td><?= htmlspecialchars($menu['libelle']) ?></td>
+                                        <td><div class="checkbox-container"><input type="checkbox" class="checkbox permission-checkbox" data-permission-type="peut_ajouter" <?= $permissions['peut_ajouter'] ? 'checked' : '' ?>></div></td>
+                                        <td><div class="checkbox-container"><input type="checkbox" class="checkbox permission-checkbox" data-permission-type="peut_modifier" <?= $permissions['peut_modifier'] ? 'checked' : '' ?>></div></td>
+                                        <td><div class="checkbox-container"><input type="checkbox" class="checkbox permission-checkbox" data-permission-type="peut_supprimer" <?= $permissions['peut_supprimer'] ? 'checked' : '' ?>></div></td>
+                                        <td><div class="checkbox-container"><input type="checkbox" class="checkbox permission-checkbox" data-permission-type="peut_imprimer" <?= $permissions['peut_imprimer'] ? 'checked' : '' ?>></div></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php endforeach;
+                            else: ?>
+                                <tr><td colspan="5" style="text-align: center;">Aucun menu disponible.</td></tr>
+                            <?php endif; */?>
                         </tbody>
                     </table>
                 </div>
             </div>
+             <div class="section-bottom" style="margin-top: 20px;">
+                <h3 class="section-title">Action</h3>
+                <button class="btn btn-primary" id="savePermissionsButton">Enregistrer les Permissions</button>
+            </div>
         </div>
-    </div>
-
-    <div class="footer-buttons">
-        <button class="btn btn-primary" id="validateButton">Valider</button>
     </div>
 </main>
 
-
-<script>
-    // Le code JavaScript reste inchangé
-    document.addEventListener('DOMContentLoaded', function () {
-        const userGroupSelect = document.getElementById('userGroupSelect');
-        const masterPermissionCheckbox = document.getElementById('masterPermissionCheckbox');
-        const permissionsTableBody = document.getElementById('permissionsTableBody');
-        const validateButton = document.getElementById('validateButton');
-
-        const treatments = [
-            {id: 'trait1', name: 'Traitement 1', permissions: {add: false, mod: true, del: true, imp: true}},
-            {id: 'trait2', name: 'Traitement 2', permissions: {add: true, mod: false, del: true, imp: true}},
-            {id: 'trait3', name: 'Traitement 3', permissions: {add: false, mod: false, del: true, imp: true}},
-            {id: 'trait4', name: 'Traitement 4', permissions: {add: false, mod: false, del: false, imp: true}},
-        ];
-
-        function renderPermissionsTable() {
-            permissionsTableBody.innerHTML = '';
-            treatments.forEach(treatment => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                        <td>${treatment.name}</td>
-                        <td><div class="checkbox-container"><input type="checkbox" class="checkbox permission-checkbox" data-treatment-id="${treatment.id}" data-permission-type="add" ${treatment.permissions.add ? 'checked' : ''}></div></td>
-                        <td><div class="checkbox-container"><input type="checkbox" class="checkbox permission-checkbox" data-treatment-id="${treatment.id}" data-permission-type="mod" ${treatment.permissions.mod ? 'checked' : ''}></div></td>
-                        <td><div class="checkbox-container"><input type="checkbox" class="checkbox permission-checkbox" data-treatment-id="${treatment.id}" data-permission-type="del" ${treatment.permissions.del ? 'checked' : ''}></div></td>
-                        <td><div class="checkbox-container"><input type="checkbox" class="checkbox permission-checkbox" data-treatment-id="${treatment.id}" data-permission-type="imp" ${treatment.permissions.imp ? 'checked' : ''}></div></td>
-                    `;
-                permissionsTableBody.appendChild(row);
-            });
-            updateMasterPermissionCheckboxState();
-            addPermissionCheckboxListeners();
-        }
-
-        function addPermissionCheckboxListeners() {
-            document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
-                checkbox.removeEventListener('change', updateMasterPermissionCheckboxState);
-                checkbox.addEventListener('change', updateMasterPermissionCheckboxState);
-            });
-        }
-
-        function updateMasterPermissionCheckboxState() {
-            const allCheckboxes = document.querySelectorAll('.permission-checkbox');
-            if (allCheckboxes.length === 0) {
-                masterPermissionCheckbox.checked = false;
-                masterPermissionCheckbox.indeterminate = false;
-                return;
-            }
-            const checkedCheckboxes = document.querySelectorAll('.permission-checkbox:checked');
-            masterPermissionCheckbox.checked = checkedCheckboxes.length === allCheckboxes.length;
-            masterPermissionCheckbox.indeterminate = checkedCheckboxes.length > 0 && checkedCheckboxes.length < allCheckboxes.length;
-        }
-
-        masterPermissionCheckbox.addEventListener('change', function () {
-            const isChecked = this.checked;
-            document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
-                checkbox.checked = isChecked;
-                const treatmentId = checkbox.dataset.treatmentId;
-                const permissionType = checkbox.dataset.permissionType;
-                const treatment = treatments.find(t => t.id === treatmentId);
-                if (treatment) {
-                    treatment.permissions[permissionType] = isChecked;
-                }
-            });
-        });
-
-        validateButton.addEventListener('click', function () {
-            const selectedGroup = userGroupSelect.value;
-            if (!selectedGroup) {
-                alert("Veuillez sélectionner un groupe utilisateur.");
-                return;
-            }
-            const currentPermissions = {};
-            document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
-                const treatmentId = checkbox.dataset.treatmentId;
-                const permissionType = checkbox.dataset.permissionType;
-                if (!currentPermissions[treatmentId]) {
-                    currentPermissions[treatmentId] = {};
-                }
-                currentPermissions[treatmentId][permissionType] = checkbox.checked;
-            });
-            console.log('Groupe sélectionné:', selectedGroup);
-            console.log('Permissions actuelles:', currentPermissions);
-            alert("Permissions mises à jour pour le groupe: " + selectedGroup + "\n(Vérifiez la console pour les détails)");
-        });
-
-        renderPermissionsTable();
-    });
-</script>
+<script src="/assets/js/attribution-menu.js" defer></script>

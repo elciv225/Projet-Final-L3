@@ -12,10 +12,13 @@ use System\Database\Database;
 use System\Http\Response;
 use PDO;
 use PDOException;
+use App\Traits\ValidationTrait;
 
 class EtudiantsController extends Controller
 {
-    protected PDO $pdo;
+    use ValidationTrait;
+
+    // protected PDO $pdo; // Déjà dans le Controller parent
 
     public function __construct()
     {
@@ -43,13 +46,30 @@ class EtudiantsController extends Controller
     private function indexMessage(string $message, string $statut = "info"): Response
     {
         $etudiantDAO = new EtudiantDAO($this->pdo);
-        $data = [
-            'etudiants' => $etudiantDAO->recupererTousAvecDetails()
+        $niveauEtudeDAO = new NiveauEtudeDAO($this->pdo);
+        $anneeAcademiqueDAO = new AnneeAcademiqueDAO($this->pdo);
+
+        // Données complètes pour la vue principale
+        $viewData = [
+            'title' => 'Gestion des Étudiants', // Assurez-vous que le titre est défini si la vue complète est rechargée
+            'heading' => 'Étudiants',         // Idem pour heading
+            'etudiants' => $etudiantDAO->recupererTousAvecDetails(),
+            'niveauxEtude' => $niveauEtudeDAO->recupererTous(),
+            'anneesAcademiques' => $anneeAcademiqueDAO->recupererTous(),
         ];
-        return Response::view('menu_views/etudiants', $data, json: [
-            'statut' => $statut,
-            'message' => $message
-        ]);
+
+        // Pour AJAX, si on ne met à jour que le tableau, on a seulement besoin des étudiants
+        $partialViewData = ['etudiants' => $viewData['etudiants']];
+
+        // Utilisation de la méthode factorisée du contrôleur parent
+        return $this->reponseVueAvecMessage(
+            'menu_views/etudiants', // Vue complète pour rechargement non-AJAX
+            $viewData,
+            $message,
+            $statut,
+            'partials/table-etudiants-rows', // Vue partielle pour la mise à jour AJAX du contenu du tableau
+            $partialViewData // Les données spécifiques pour la vue partielle (et pour le JSON si pas de vue partielle AJAX)
+        );
     }
 
     public function executerAction(): Response
@@ -67,19 +87,21 @@ class EtudiantsController extends Controller
     {
         $post = $this->request->getPostParams();
 
-        $requiredFields = [
-            'nom-etudiant' => 'Nom', 'prenom-etudiant' => 'Prénom(s)', 'email-etudiant' => 'Email',
-            'date-naissance' => 'Date de naissance', 'id-niveau-etude' => 'Niveau d\'étude',
-            'id-annee-academique' => 'Année académique', 'montant-inscription' => 'Montant'
+        $rules = [
+            'nom-etudiant' => 'required|min:2',
+            'prenom-etudiant' => 'required|min:2',
+            'email-etudiant' => 'required|email',
+            'date-naissance' => 'required|date',
+            'id-niveau-etude' => 'required',
+            'id-annee-academique' => 'required',
+            'montant-inscription' => 'required|numeric|min:0'
         ];
-        foreach ($requiredFields as $field => $label) {
-            if (empty(trim($post[$field] ?? ''))) {
-                return $this->error("Le champ '{$label}' est obligatoire.");
-            }
+
+        if (!$this->validate($post, $rules)) {
+            return $this->indexMessage($this->getAllErrorsAsString(), "error");
         }
 
         try {
-            // CORRIGÉ: Le tableau de paramètres est simplifié
             $params = [
                 'nom' => $post['nom-etudiant'],
                 'prenoms' => $post['prenom-etudiant'],
@@ -123,20 +145,22 @@ class EtudiantsController extends Controller
             return $this->error("ID de l'étudiant manquant pour la modification.");
         }
 
-        // 2. Validation des champs requis (ne change pas)
-        $requiredFields = [
-            'nom-etudiant' => 'Nom', 'prenom-etudiant' => 'Prénom(s)', 'email-etudiant' => 'Email',
-            'date-naissance' => 'Date de naissance', 'id-niveau-etude' => 'Niveau d\'étude',
-            'id-annee-academique' => 'Année académique', 'montant-inscription' => 'Montant'
+        $rules = [
+            'id-etudiant' => 'required', // Assurez-vous que l'ID est bien présent pour la modification
+            'nom-etudiant' => 'required|min:2',
+            'prenom-etudiant' => 'required|min:2',
+            'email-etudiant' => 'required|email',
+            'date-naissance' => 'required|date',
+            'id-niveau-etude' => 'required',
+            'id-annee-academique' => 'required',
+            'montant-inscription' => 'required|numeric|min:0'
         ];
-        foreach ($requiredFields as $field => $label) {
-            if (empty(trim($post[$field] ?? ''))) {
-                return $this->error("Le champ '{$label}' est obligatoire.");
-            }
+
+        if (!$this->validate($post, $rules)) {
+            return $this->indexMessage($this->getAllErrorsAsString(), "error");
         }
 
         try {
-            // 3. Instancier le DAO et appeler la méthode de modification
             $etudiantDAO = new EtudiantDAO($this->pdo);
 
             // Le tableau $post contient déjà toutes les clés nécessaires

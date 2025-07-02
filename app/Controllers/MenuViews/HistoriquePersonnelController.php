@@ -3,134 +3,130 @@
 namespace App\Controllers\MenuViews;
 
 use App\Controllers\Controller;
+use App\Dao\EnseignantDAO;
+use App\Dao\PersonnelAdministratifDAO;
+use App\Dao\HistoriqueFonctionDAO;
+use App\Dao\HistoriqueGradeDAO;
+use App\Dao\HistoriqueSpecialiteDAO;
+use System\Database\Database;
 use System\Http\Response;
+use PDO;
 
 class HistoriquePersonnelController extends Controller
 {
+    private PDO $pdo;
+    private EnseignantDAO $enseignantDAO;
+    private PersonnelAdministratifDAO $personnelDAO; // Peut être utilisé pour récupérer nom/prénom
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->pdo = Database::getConnection();
+        $this->enseignantDAO = new EnseignantDAO($this->pdo);
+        $this->personnelDAO = new PersonnelAdministratifDAO($this->pdo); // ou UtilisateurDAO
+    }
+
     public function index(): Response
     {
         $data = [
-            'title' => 'Gestion des Historiques',
-            'heading' => 'Enseignants',
-            'content' => 'Gestion du corps enseignant de l\'établissement.'
+            'title' => 'Historique du Personnel',
+            'heading' => 'Historique du Personnel',
+            // Les listes déroulantes seront initialement vides ou avec un placeholder
         ];
-
-        // Toujours retourner la vue de menu_views, jamais la page complète
         return Response::view('menu_views/historique-personnel', $data);
     }
 
-    public function chargerPersonnelPourDonneeHistorique(): Response
+    /**
+     * Charge la liste des personnels (enseignants ou administratifs) pour le sélecteur.
+     * Appelée via AJAX.
+     */
+    public function chargerPersonnels(): Response
     {
-        $typeUtilisateur = $this->request->getPostParams('type-utilisateur');
+        $typeUtilisateur = $this->request->getGetParams('type_utilisateur');
+        $personnels = [];
 
-        switch ($typeUtilisateur) {
-            case 'enseignant':
-                $listeUtilisateur = [
-                    [
-                        'utilisateur_id' => 1,
-                        'nom-prenom' => 'Enseignant 1'
-                    ],
-                    [
-                        'utilisateur_id' => 2,
-                        'nom-prenom' => 'Enseignant 2'
-                    ]
-                ];
-                break;
-            case 'personnel_administratif':
-                $listeUtilisateur = [
-                    [
-                        'utilisateur_id' => 1,
-                        'nom-prenom' => 'Personnel 1'
-                    ],
-                    [
-                        'utilisateur_id' => 2,
-                        'nom-prenom' => 'Personnel 2'
-                    ]
-                ];
-                break;
-            default:
-                $listeUtilisateur = [];
-                $this->error("Aucun type d'utilisateur");
+        if ($typeUtilisateur === 'enseignant') {
+            // Récupérer uniquement id, nom, prenoms pour alléger
+            $personnels = $this->enseignantDAO->recupererTous(['id', 'nom', 'prenoms']);
+        } elseif ($typeUtilisateur === 'personnel_administratif') {
+            // Idem pour le personnel administratif
+            $personnels = $this->personnelDAO->recupererTous(['id', 'nom', 'prenoms']);
+        } else {
+            return Response::json(['error' => 'Type d\'utilisateur non valide.'], 400);
         }
-
-        $data = [
-            'title' => 'Gestion des Historiques',
-            'heading' => 'Enseignants',
-            'content' => 'Gestion du corps enseignant de l\'établissement.',
-            'listeUtilisateur' => $listeUtilisateur,
-            'selectActive' => true,
-            'recherche' => true
-        ];
-
-        // Toujours retourner la vue de menu_views, jamais la page complète
-        return Response::view(
-            'menu_views/historique-personnel',
-            $data,
-            json: [
-                'statut' => 'succes',
-                'message' => 'Données chargé'
-            ]
-        );
+        return Response::json(['personnels' => $personnels]);
     }
 
-    public function chargerDonneeHistoriquePersonnel(): Response
+    /**
+     * Charge et affiche l'historique demandé pour un personnel.
+     * Appelée via AJAX par le formulaire de filtres.
+     */
+    public function afficherHistorique(): Response
     {
         $typeHistorique = $this->request->getPostParams('type-historique');
         $utilisateurId = $this->request->getPostParams('utilisateur');
+        // Le type d'utilisateur (enseignant/admin) est implicite par la sélection de l'utilisateur,
+        // mais on pourrait le re-valider ou le passer si nécessaire.
 
-        // Valider les entrées
         if (empty($typeHistorique) || empty($utilisateurId)) {
-            return Response::json([
-                'statut' => 'error',
-                'message' => 'Veuillez remplir tous les champs'
-            ]);
+            // Normalement, le JS empêche cette soumission, mais double vérification.
+            // Renvoyer une vue partielle vide ou avec un message d'erreur.
+             return Response::view('partials/table-historique-vide', ['message' => 'Veuillez sélectionner tous les filtres.']);
         }
 
         $entete = [];
-        $corps = [];
-        $donneesChargees = true; // Indicateur que des données ont été recherchées
+        $lignes = [];
+        $nomPersonnel = "Inconnu"; // À récupérer
 
-        // Simuler la récupération des données en fonction du type d'historique
-        switch ($typeHistorique) {
-            case 'fonction':
-                $entete = ['Fonction', 'Date de début', 'Date de fin'];
-                // Données d'exemple pour l'historique des fonctions de l'utilisateur $utilisateurId
-                if ($utilisateurId == 1) { // Utiliser == au lieu de === pour la comparaison
-                    $corps = [
-                        ['Enseignant de Mathématiques', '01/09/2020', '31/08/2023'],
-                        ['Responsable de niveau', '01/09/2023', 'Actuel']
-                    ];
-                }
-                break;
-
-            case 'grade':
-                $entete = ['Grade', 'Date de début', 'Date de fin'];
-                // Données d'exemple pour l'historique des grades de l'utilisateur $utilisateurId
-                if ($utilisateurId == 1) {
-                    $corps = [
-                        ['Master en Éducation', '15/06/2020', 'diplome_master.pdf'],
-                        ['Agrégation', '10/07/2023', 'agregation_2023.pdf']
-                    ];
-                } else if ($utilisateurId == 2) {
-                    $corps = [
-                        ['Licence en Histoire', '20/06/2018', 'diplome_licence.pdf']
-                    ];
-                }
-                break;
+        // Récupérer le nom du personnel pour l'affichage
+        // On a besoin de savoir si c'est un enseignant ou un admin pour utiliser le bon DAO,
+        // ou d'avoir un UtilisateurDAO générique.
+        // Pour simplifier, on essaie les deux ou on se base sur une convention d'ID.
+        // Supposons qu'on a un UtilisateurDAO:
+        $userDao = new \App\Dao\UtilisateurDAO($this->pdo);
+        $personnelInfo = $userDao->recupererParId($utilisateurId);
+        if ($personnelInfo) {
+            $nomPersonnel = $personnelInfo->getNom() . " " . $personnelInfo->getPrenoms();
         }
 
-        $data = [
-            'title' => 'Gestion des Historiques',
-            'heading' => 'Enseignants',
-            'content' => 'Gestion du corps enseignant de l\'établissement.',
-            'entete' => $entete,
-            'corps' => $corps,
-            'donneesChargees' => $donneesChargees // Ajouter cet indicateur
+
+        switch ($typeHistorique) {
+            case 'fonction':
+                $dao = new HistoriqueFonctionDAO($this->pdo);
+                // La méthode recupererAvecDetailsPourUtilisateur doit joindre avec la table 'fonction'
+                $lignes = $dao->recupererAvecDetailsPourUtilisateur($utilisateurId);
+                $entete = ['Fonction', 'Date d\'Occupation']; // + Date de Fin si gérée
+                break;
+            case 'grade':
+                $dao = new HistoriqueGradeDAO($this->pdo);
+                $lignes = $dao->recupererAvecDetailsPourUtilisateur($utilisateurId);
+                $entete = ['Grade', 'Date d\'Obtention']; // + Document si géré
+                break;
+            case 'specialite': // Uniquement pour enseignants
+                $dao = new HistoriqueSpecialiteDAO($this->pdo);
+                $lignes = $dao->recupererAvecDetailsPourUtilisateur($utilisateurId);
+                $entete = ['Spécialité', 'Date d\'Affectation'];
+                break;
+            default:
+                 return Response::view('partials/table-historique-vide', ['message' => 'Type d\'historique non reconnu.']);
+        }
+
+        $dataPourVuePartielle = [
+            'enteteTable' => $entete,
+            'lignesTable' => $lignes,
+            'typeHistoriqueDemandee' => $typeHistorique,
+            'nomPersonnel' => $nomPersonnel,
+            'utilisateurId' => $utilisateurId,
+            'donneesChargees' => true
         ];
 
-        return Response::view('menu_views/historique-personnel', $data, json: [
-            'statut' => 'succes',
-            'message' => 'Données chargées'
-        ]);
+        // Renvoyer la vue partielle de la table (et potentiellement du formulaire de modification si on l'ajoute)
+        // Le target du formulaire AJAX est '.table', donc on renvoie juste le contenu de la table.
+        // Si on veut mettre à jour plus, il faudrait une cible plus large.
+        return Response::view('partials/table-historique-contenu', $dataPourVuePartielle);
     }
+
+    // TODO: Ajouter des méthodes pour gérer l'ajout, la modification, la suppression
+    // d'entrées d'historique si cela est prévu depuis cette interface.
+    // Actuellement, la maquette se concentre sur la consultation.
 }

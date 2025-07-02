@@ -19,42 +19,101 @@ class Controller
         $this->pdo = Database::getConnection();
     }
 
-
     /**
-     * Fonction de pop up erreur
+     * Retourne une réponse JSON pour un succès.
+     * Peut inclure des données supplémentaires pour la mise à jour de la vue.
      * @param string $message
-     * @return Response JSON pour la pop up
+     * @param array $data Optionnel, données à inclure dans la réponse.
+     * @return Response
      */
-    public function succes(string $message):Response{
-        return Response::json([
+    public function succes(string $message, array $data = []): Response
+    {
+        return Response::json(array_merge([
             'statut' => 'succes',
             'message' => $message
-        ]);
+        ], $data));
     }
 
     /**
-     * Fonction de pop up erreur
+     * Retourne une réponse JSON pour une erreur.
      * @param string $message
-     * @return Response JSON pour la pop up
+     * @param int $statusCode Code HTTP pour l'erreur (défaut 400 Bad Request).
+     * @return Response
      */
-    public function error(string $message):Response{
+    public function error(string $message, int $statusCode = 400): Response
+    {
+        // Assurez-vous que le statut HTTP est également défini.
+        // La méthode Response::json devrait idéalement permettre de passer un code de statut.
+        // Si ce n'est pas le cas, il faudrait modifier Response::json ou utiliser http_response_code() avant.
+        // http_response_code($statusCode); // Exemple
         return Response::json([
             'statut' => 'error',
             'message' => $message
-        ]);
+        ]); // Potentiellement Response::json([...], $statusCode)
     }
 
     /**
-     * Fonction de pop up info
+     * Retourne une réponse JSON pour une information.
      * @param string $message
-     * @return Response JSON pour la pop up
+     * @param array $data Optionnel, données à inclure.
+     * @return Response
      */
-    public function info(string $message):Response{
-        return Response::json([
+    public function info(string $message, array $data = []): Response
+    {
+        return Response::json(array_merge([
             'statut' => 'info',
             'message' => $message
-        ]);
+        ], $data));
     }
+
+    /**
+     * Gère la réponse commune pour les opérations CRUD dans les contrôleurs de MenuViews.
+     * Recharge la vue principale du module avec un message et les données mises à jour.
+     *
+     * @param string $viewPath Le chemin vers la vue principale du module (ex: 'menu_views/etudiants').
+     * @param array $viewData Les données nécessaires pour rendre la vue (ex: liste des étudiants, formulaires).
+     * @param string $message Le message de succès/erreur/info.
+     * @param string $status Le statut ('succes', 'error', 'info').
+     * @param array $additionalJsonData Données JSON supplémentaires à fusionner.
+     * @return Response
+     */
+    protected function reponseVueAvecMessage(
+        string $viewPath,
+        array $viewData,
+        string $message,
+        string $status = 'info',
+        ?string $partialViewPathForAjax = null, // Chemin optionnel vers une vue partielle pour AJAX
+        array $additionalJsonData = []
+    ): Response {
+        $baseJsonData = [
+            'statut' => $status,
+            'message' => $message,
+        ];
+
+        // Fusionner les données additionnelles JSON en premier pour qu'elles puissent être écrasées par $viewData si conflit.
+        $finalJsonData = array_merge($baseJsonData, $additionalJsonData, $viewData);
+
+        if (Response::isAjaxRequest()) {
+            if ($partialViewPathForAjax) {
+                // Si un chemin de vue partielle est fourni pour AJAX, rendre cette vue.
+                // Le JS (ajax.js) doit être capable de gérer une réponse HTML pour son data-target.
+                // On peut aussi inclure le JSON de statut/message dans un en-tête ou un wrapper si besoin.
+                // Pour la simplicité, on va juste rendre la vue partielle.
+                // Le JS peut faire un autre appel pour le message si nécessaire, ou le message peut être ignoré.
+                // Ou, mieux, la vue partielle peut elle-même inclure une zone pour le message si $message et $status sont passés.
+                $viewData['messagePopup'] = ['texte' => $message, 'type' => $status]; // Rendre le message dispo à la vue partielle
+                return Response::view($partialViewPathForAjax, $viewData); // Ne pas passer $finalJsonData comme JSON ici.
+            } else {
+                // Comportement par défaut : renvoyer toutes les données en JSON.
+                return Response::json($finalJsonData);
+            }
+        } else {
+            // Pour une requête non-AJAX, recharger la page entière avec les données.
+            $viewData['messagePopup'] = ['texte' => $message, 'type' => $status];
+            return Response::view($viewPath, $viewData);
+        }
+    }
+
 
     /**
      * Récupère tous les modules disponibles pour le menu

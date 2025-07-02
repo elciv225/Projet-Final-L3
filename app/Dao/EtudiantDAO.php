@@ -128,4 +128,39 @@ class EtudiantDAO extends DAO
             throw $e;
         }
     }
+
+    /**
+     * Récupère un étudiant par son ID avec les détails de son inscription pour une année académique donnée.
+     * Utilisé pour la page de règlement des inscriptions.
+     */
+    public function recupererParIdAvecDetailsInscription(string $etudiantId, string $anneeAcademiqueId): ?array
+    {
+        $sql = "
+            SELECT
+                u.id as etudiant_id, u.nom, u.prenoms, u.email, e.numero_carte,
+                ie.id as inscription_id,
+                ie.niveau_etude_id, ne.libelle as niveau_etude_libelle,
+                ie.annee_academique_id,
+                ie.montant_initial, -- Montant total à payer pour l'inscription
+                (SELECT COALESCE(SUM(hp.montant_paye), 0)
+                 FROM historique_paiement hp
+                 WHERE hp.utilisateur_id = ie.utilisateur_id
+                   AND hp.annee_academique_id = ie.annee_academique_id
+                   AND hp.inscription_etudiant_id = ie.id) as total_deja_paye
+            FROM utilisateur u
+            JOIN etudiant e ON u.id = e.utilisateur_id
+            JOIN inscription_etudiant ie ON u.id = ie.utilisateur_id
+                                       AND ie.annee_academique_id = :annee_id
+            LEFT JOIN niveau_etude ne ON ie.niveau_etude_id = ne.id
+            WHERE u.id = :etudiant_id;
+        ";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':etudiant_id' => $etudiantId, ':annee_id' => $anneeAcademiqueId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result) {
+            $result['reste_a_payer'] = $result['montant_initial'] - $result['total_deja_paye'];
+        }
+        return $result ?: null;
+    }
 }

@@ -432,6 +432,29 @@ BEGIN
     RETURN COALESCE(v_moyenne, 0.00);
 END//
 
+-- Fonction pour obtenir le libellé du type de personnel (simplifié)
+CREATE FUNCTION fn_get_type_personnel_libelle(p_utilisateur_id VARCHAR(30))
+RETURNS VARCHAR(50)
+DETERMINISTIC
+READS SQL DATA
+BEGIN
+    DECLARE v_type_libelle VARCHAR(50) DEFAULT 'Inconnu';
+    DECLARE v_is_enseignant INT DEFAULT 0;
+    DECLARE v_is_administratif INT DEFAULT 0;
+
+    SELECT COUNT(*) INTO v_is_enseignant FROM enseignant WHERE utilisateur_id = p_utilisateur_id;
+    IF v_is_enseignant > 0 THEN
+        SET v_type_libelle = 'Enseignant';
+    ELSE
+        SELECT COUNT(*) INTO v_is_administratif FROM personnel_administratif WHERE utilisateur_id = p_utilisateur_id;
+        IF v_is_administratif > 0 THEN
+            SET v_type_libelle = 'Personnel Administratif';
+        END IF;
+    END IF;
+    RETURN v_type_libelle;
+END//
+
+
 CREATE FUNCTION fn_obtenir_mention(p_moyenne DECIMAL(4, 2))
     RETURNS VARCHAR(20)
     DETERMINISTIC
@@ -462,6 +485,367 @@ DELIMITER ;
 -- =================================================================
 
 DELIMITER //
+
+-- Procédures pour Personnel (Enseignant et Administratif)
+
+-- Ajouter Enseignant
+CREATE PROCEDURE sp_ajouter_enseignant(
+    IN p_nom VARCHAR(50),
+    IN p_prenoms VARCHAR(100),
+    IN p_email VARCHAR(255),
+    IN p_mot_de_passe VARCHAR(255),
+    IN p_date_naissance DATE,
+    IN p_grade_id VARCHAR(30),      -- Peut être NULL
+    IN p_date_grade DATE,           -- Peut être NULL si p_grade_id est NULL
+    IN p_fonction_id VARCHAR(30),   -- Peut être NULL
+    IN p_date_fonction DATE,        -- Peut être NULL si p_fonction_id est NULL
+    IN p_specialite_id VARCHAR(30), -- Peut être NULL
+    IN p_date_specialite DATE,      -- Peut être NULL si p_specialite_id est NULL
+    OUT p_utilisateur_id VARCHAR(30)
+)
+BEGIN
+    DECLARE v_id_genere VARCHAR(30);
+    DECLARE v_login VARCHAR(60);
+    DECLARE v_prefix_nom VARCHAR(4);
+    DECLARE v_prefix_date VARCHAR(6);
+    DECLARE v_full_prefix VARCHAR(10);
+    DECLARE v_last_num INT DEFAULT 0;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
+
+    START TRANSACTION;
+
+    -- Génération ID utilisateur (ENS + 4 premières lettres nom + JJMMAA date naissance + Séquence)
+    SET v_prefix_nom = UPPER(SUBSTRING(REPLACE(p_nom, ' ', ''), 1, 4));
+    SET v_prefix_date = DATE_FORMAT(p_date_naissance, '%d%m%y');
+    SET v_full_prefix = CONCAT('ENS', v_prefix_nom, v_prefix_date);
+
+    SELECT IFNULL(MAX(CAST(SUBSTRING(id, LENGTH(v_full_prefix) + 1) AS UNSIGNED)), 0)
+    INTO v_last_num
+    FROM utilisateur
+    WHERE id LIKE CONCAT(v_full_prefix, '%');
+    SET v_id_genere = CONCAT(v_full_prefix, LPAD(v_last_num + 1, 3, '0')); -- Ex: ENSMARTIN250885001
+    SET v_login = v_id_genere; -- Login est l'ID généré
+
+    INSERT INTO utilisateur (id, nom, prenoms, email, login, mot_de_passe, date_naissance, groupe_utilisateur_id, type_utilisateur_id)
+    VALUES (v_id_genere, p_nom, p_prenoms, p_email, v_login, SHA2(p_mot_de_passe, 256), p_date_naissance, 'GRP_VALID_RAPPORT', 'TYPE_ENSEIGNANT_PERM');
+
+    INSERT INTO enseignant (utilisateur_id) VALUES (v_id_genere);
+
+    IF p_grade_id IS NOT NULL AND p_date_grade IS NOT NULL THEN
+        INSERT INTO historique_grade (utilisateur_id, grade_id, date_grade)
+        VALUES (v_id_genere, p_grade_id, p_date_grade);
+    END IF;
+
+    IF p_fonction_id IS NOT NULL AND p_date_fonction IS NOT NULL THEN
+        INSERT INTO historique_fonction (utilisateur_id, fonction_id, date_occupation)
+        VALUES (v_id_genere, p_fonction_id, p_date_fonction);
+    END IF;
+
+    IF p_specialite_id IS NOT NULL AND p_date_specialite IS NOT NULL THEN
+        INSERT INTO historique_specialite (utilisateur_id, specialite_id, date_specialite)
+        VALUES (v_id_genere, p_specialite_id, p_date_specialite);
+    END IF;
+
+    SET p_utilisateur_id = v_id_genere;
+    COMMIT;
+END//
+
+
+-- Modifier Enseignant
+CREATE PROCEDURE sp_modifier_enseignant(
+    IN p_utilisateur_id VARCHAR(30),
+    IN p_nom VARCHAR(50),
+    IN p_prenoms VARCHAR(100),
+    IN p_email VARCHAR(255),
+    IN p_date_naissance DATE,
+    IN p_grade_id VARCHAR(30),
+    IN p_date_grade DATE,
+    IN p_fonction_id VARCHAR(30),
+    IN p_date_fonction DATE,
+    IN p_specialite_id VARCHAR(30),
+    IN p_date_specialite DATE
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
+    START TRANSACTION;
+
+    UPDATE utilisateur
+    SET nom = p_nom, prenoms = p_prenoms, email = p_email, date_naissance = p_date_naissance
+    WHERE id = p_utilisateur_id;
+
+    -- Gérer l'historique du grade (mise à jour ou insertion si la date est nouvelle)
+    IF p_grade_id IS NOT NULL AND p_date_grade IS NOT NULL THEN
+        IF NOT EXISTS (SELECT 1 FROM historique_grade WHERE utilisateur_id = p_utilisateur_id AND grade_id = p_grade_id AND date_grade = p_date_grade) THEN
+            INSERT INTO historique_grade (utilisateur_id, grade_id, date_grade)
+            VALUES (p_utilisateur_id, p_grade_id, p_date_grade)
+            ON DUPLICATE KEY UPDATE date_grade = p_date_grade; -- Si une entrée pour ce grade existe déjà, met à jour la date (ou autre logique)
+        END IF;
+    END IF;
+
+    -- Gérer l'historique de la fonction
+    IF p_fonction_id IS NOT NULL AND p_date_fonction IS NOT NULL THEN
+        IF NOT EXISTS (SELECT 1 FROM historique_fonction WHERE utilisateur_id = p_utilisateur_id AND fonction_id = p_fonction_id AND date_occupation = p_date_fonction) THEN
+            INSERT INTO historique_fonction (utilisateur_id, fonction_id, date_occupation)
+            VALUES (p_utilisateur_id, p_fonction_id, p_date_fonction)
+            ON DUPLICATE KEY UPDATE date_occupation = p_date_fonction;
+        END IF;
+    END IF;
+
+    -- Gérer l'historique de la spécialité
+    IF p_specialite_id IS NOT NULL AND p_date_specialite IS NOT NULL THEN
+         IF NOT EXISTS (SELECT 1 FROM historique_specialite WHERE utilisateur_id = p_utilisateur_id AND specialite_id = p_specialite_id AND date_specialite = p_date_specialite) THEN
+            INSERT INTO historique_specialite (utilisateur_id, specialite_id, date_specialite)
+            VALUES (p_utilisateur_id, p_specialite_id, p_date_specialite)
+            ON DUPLICATE KEY UPDATE date_specialite = p_date_specialite;
+        END IF;
+    END IF;
+
+    COMMIT;
+END//
+
+-- Ajouter Personnel Administratif
+CREATE PROCEDURE sp_ajouter_personnel_administratif(
+    IN p_nom VARCHAR(50),
+    IN p_prenoms VARCHAR(100),
+    IN p_email VARCHAR(255),
+    IN p_mot_de_passe VARCHAR(255),
+    IN p_date_naissance DATE,
+    IN p_fonction_id VARCHAR(30), -- Peut être NULL
+    IN p_date_fonction DATE,      -- Peut être NULL si p_fonction_id est NULL
+    OUT p_utilisateur_id VARCHAR(30)
+)
+BEGIN
+    DECLARE v_id_genere VARCHAR(30);
+    DECLARE v_login VARCHAR(60);
+    DECLARE v_prefix_nom VARCHAR(4);
+    DECLARE v_prefix_date VARCHAR(6);
+    DECLARE v_full_prefix VARCHAR(10);
+    DECLARE v_last_num INT DEFAULT 0;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
+    START TRANSACTION;
+
+    -- Génération ID utilisateur (ADM + 4 premières lettres nom + JJMMAA date naissance + Séquence)
+    SET v_prefix_nom = UPPER(SUBSTRING(REPLACE(p_nom, ' ', ''), 1, 4));
+    SET v_prefix_date = DATE_FORMAT(p_date_naissance, '%d%m%y');
+    SET v_full_prefix = CONCAT('ADM', v_prefix_nom, v_prefix_date);
+
+    SELECT IFNULL(MAX(CAST(SUBSTRING(id, LENGTH(v_full_prefix) + 1) AS UNSIGNED)), 0)
+    INTO v_last_num
+    FROM utilisateur
+    WHERE id LIKE CONCAT(v_full_prefix, '%');
+    SET v_id_genere = CONCAT(v_full_prefix, LPAD(v_last_num + 1, 3, '0')); -- Ex: ADMLEFEVRE100378001
+    SET v_login = v_id_genere;
+
+    INSERT INTO utilisateur (id, nom, prenoms, email, login, mot_de_passe, date_naissance, groupe_utilisateur_id, type_utilisateur_id)
+    VALUES (v_id_genere, p_nom, p_prenoms, p_email, v_login, SHA2(p_mot_de_passe, 256), p_date_naissance, 'GRP_ADMIN_PEDAGO', 'TYPE_ADMIN_SCOLARITE');
+
+    INSERT INTO personnel_administratif (utilisateur_id) VALUES (v_id_genere);
+
+    IF p_fonction_id IS NOT NULL AND p_date_fonction IS NOT NULL THEN
+        INSERT INTO historique_fonction (utilisateur_id, fonction_id, date_occupation)
+        VALUES (v_id_genere, p_fonction_id, p_date_fonction);
+    END IF;
+
+    SET p_utilisateur_id = v_id_genere;
+    COMMIT;
+END//
+
+-- Modifier Personnel Administratif
+CREATE PROCEDURE sp_modifier_personnel_administratif(
+    IN p_utilisateur_id VARCHAR(30),
+    IN p_nom VARCHAR(50),
+    IN p_prenoms VARCHAR(100),
+    IN p_email VARCHAR(255),
+    IN p_date_naissance DATE,
+    IN p_fonction_id VARCHAR(30),
+    IN p_date_fonction DATE
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
+    START TRANSACTION;
+
+    UPDATE utilisateur
+    SET nom = p_nom, prenoms = p_prenoms, email = p_email, date_naissance = p_date_naissance
+    WHERE id = p_utilisateur_id;
+
+    IF p_fonction_id IS NOT NULL AND p_date_fonction IS NOT NULL THEN
+        IF NOT EXISTS (SELECT 1 FROM historique_fonction WHERE utilisateur_id = p_utilisateur_id AND fonction_id = p_fonction_id AND date_occupation = p_date_fonction) THEN
+            INSERT INTO historique_fonction (utilisateur_id, fonction_id, date_occupation)
+            VALUES (p_utilisateur_id, p_fonction_id, p_date_fonction)
+            ON DUPLICATE KEY UPDATE date_occupation = p_date_fonction;
+        END IF;
+    END IF;
+
+    COMMIT;
+END//
+
+
+-- Procédure de suppression générique pour un personnel (enseignant ou administratif)
+-- ou un étudiant.
+CREATE PROCEDURE sp_supprimer_personnel(IN p_utilisateur_id VARCHAR(30))
+BEGIN
+    DECLARE v_is_enseignant INT DEFAULT 0;
+    DECLARE v_is_admin INT DEFAULT 0;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL; -- Propage l'erreur
+    END;
+
+    START TRANSACTION;
+
+    -- Vérifier si c'est un enseignant
+    SELECT COUNT(*) INTO v_is_enseignant FROM enseignant WHERE utilisateur_id = p_utilisateur_id;
+    -- Vérifier si c'est un personnel administratif
+    SELECT COUNT(*) INTO v_is_admin FROM personnel_administratif WHERE utilisateur_id = p_utilisateur_id;
+
+    -- Supprimer les dépendances communes ou spécifiques
+    -- (Exemple: historique_fonction, historique_grade, historique_specialite)
+    -- Ces suppressions doivent être faites AVANT de supprimer de la table 'enseignant' ou 'personnel_administratif'
+    -- à cause des contraintes de clé étrangère si elles sont ON DELETE RESTRICT/NO ACTION.
+    -- Si ON DELETE CASCADE est utilisé sur ces tables d'historique, alors la suppression
+    -- de 'enseignant'/'personnel_administratif' les supprimera automatiquement.
+    -- Pour cet exemple, nous allons supposer que nous devons les supprimer manuellement.
+
+    DELETE FROM historique_fonction WHERE utilisateur_id = p_utilisateur_id;
+    IF v_is_enseignant > 0 THEN
+        DELETE FROM historique_grade WHERE utilisateur_id = p_utilisateur_id;
+        DELETE FROM historique_specialite WHERE utilisateur_id = p_utilisateur_id;
+        DELETE FROM evaluation WHERE enseignant_id = p_utilisateur_id;
+        DELETE FROM affectation_encadrant WHERE utilisateur_id = p_utilisateur_id;
+        DELETE FROM validation_rapport WHERE utilisateur_id = p_utilisateur_id;
+    END IF;
+
+    -- Supprimer de la table de spécialisation (etudiant, enseignant, personnel_administratif)
+    -- et les tables d'historique liées si ON DELETE CASCADE n'est pas utilisé.
+    DELETE FROM etudiant WHERE utilisateur_id = p_utilisateur_id; -- Au cas où un utilisateur est aussi étudiant
+    IF v_is_enseignant > 0 THEN
+        DELETE FROM enseignant WHERE utilisateur_id = p_utilisateur_id;
+    END IF;
+    IF v_is_admin > 0 THEN
+        DELETE FROM personnel_administratif WHERE utilisateur_id = p_utilisateur_id;
+    END IF;
+
+    -- Supprimer les inscriptions et l'historique de paiement associé (si c'est un étudiant)
+    DELETE FROM historique_paiement WHERE utilisateur_id = p_utilisateur_id;
+    DELETE FROM inscription_etudiant WHERE utilisateur_id = p_utilisateur_id;
+
+    -- Supprimer les permissions de menu pour cet utilisateur (s'il en avait directement, sinon par groupe)
+    -- Si les permissions sont uniquement par groupe, cette ligne n'est pas nécessaire pour la suppression d'un utilisateur.
+    -- DELETE FROM groupe_menu WHERE utilisateur_id = p_utilisateur_id; -- Si vous avez des perms individuelles.
+
+    -- Supprimer les rapports et leurs dépendances (si c'est un étudiant)
+    -- Cette logique est déjà dans sp_supprimer_etudiant, mais peut être nécessaire si un utilisateur
+    -- supprimé via cette procédure générique était aussi un étudiant.
+    -- Pour éviter la duplication, il vaut mieux s'assurer que sp_supprimer_etudiant est appelé si c'est un étudiant.
+    -- Ici, on suppose que si l'utilisateur est étudiant, sp_supprimer_etudiant a été/sera appelé.
+    -- Si cette procédure est le point d'entrée unique, il faut ajouter la logique de suppression des rapports ici.
+    -- Exemple simplifié (si l'utilisateur est étudiant et a des rapports) :
+    -- DELETE FROM depot_rapport WHERE utilisateur_id = p_utilisateur_id; (et autres tables liées aux rapports)
+
+
+    -- Supprimer les notifications liées
+    DELETE FROM notification WHERE emetteur_id = p_utilisateur_id OR recepteur_id = p_utilisateur_id;
+    DELETE FROM messagerie WHERE expediteur_id = p_utilisateur_id OR destinataire_id = p_utilisateur_id;
+
+
+    -- Finalement, supprimer l'utilisateur
+    -- Le trigger trg_prevent_user_delete pourrait bloquer si mal configuré ou si des dépendances non gérées existent.
+    -- Assurez-vous que ce trigger est compatible avec cette procédure de suppression.
+    DELETE FROM utilisateur WHERE id = p_utilisateur_id;
+
+    COMMIT;
+END//
+
+-- Procédure pour enregistrer un paiement d'inscription
+CREATE PROCEDURE sp_enregistrer_paiement_inscription(
+    IN p_etudiant_id VARCHAR(30),
+    IN p_annee_academique_id VARCHAR(10),
+    IN p_montant_paye DECIMAL(10, 2),
+    IN p_date_paiement DATE,
+    OUT p_success BOOLEAN
+)
+BEGIN
+    DECLARE v_inscription_id INT;
+    DECLARE v_montant_initial DECIMAL(10,2);
+    DECLARE v_total_deja_paye DECIMAL(10,2);
+    DECLARE v_reste_a_payer DECIMAL(10,2);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        SET p_success = FALSE;
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    SET p_success = FALSE;
+
+    -- Récupérer l'ID de l'inscription et le montant initial
+    SELECT id, montant_initial
+    INTO v_inscription_id, v_montant_initial
+    FROM inscription_etudiant
+    WHERE utilisateur_id = p_etudiant_id AND annee_academique_id = p_annee_academique_id;
+
+    IF v_inscription_id IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Aucune inscription trouvée pour cet étudiant et cette année académique.';
+        LEAVE THIS_PROCEDURE;
+    END IF;
+
+    -- Calculer le total déjà payé pour cette inscription
+    SELECT COALESCE(SUM(montant_paye), 0)
+    INTO v_total_deja_paye
+    FROM historique_paiement
+    WHERE utilisateur_id = p_etudiant_id
+      AND annee_academique_id = p_annee_academique_id
+      AND inscription_etudiant_id = v_inscription_id;
+
+    SET v_reste_a_payer = v_montant_initial - v_total_deja_paye;
+
+    IF p_montant_paye <= 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Le montant payé doit être positif.';
+        LEAVE THIS_PROCEDURE;
+    END IF;
+
+    IF p_montant_paye > v_reste_a_payer THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Le montant payé ne peut excéder le reste à payer.';
+        LEAVE THIS_PROCEDURE;
+    END IF;
+
+    START TRANSACTION;
+
+    INSERT INTO historique_paiement (utilisateur_id, annee_academique_id, inscription_etudiant_id, date_paiement, montant_paye, reference_paiement)
+    VALUES (p_etudiant_id, p_annee_academique_id, v_inscription_id, p_date_paiement, p_montant_paye, CONCAT('PAI-', p_etudiant_id, '-', p_annee_academique_id, '-', CURDATE()));
+
+    -- Mettre à jour le total payé et le reste à payer dans inscription_etudiant (optionnel, si vous stockez ces totaux)
+    -- UPDATE inscription_etudiant
+    -- SET total_paye = v_total_deja_paye + p_montant_paye,
+    --     reste_a_payer = v_montant_initial - (v_total_deja_paye + p_montant_paye)
+    -- WHERE id = v_inscription_id;
+
+    COMMIT;
+    SET p_success = TRUE;
+END//
+
+
+CREATE TRIGGER trg_audit_utilisateur_update
+    END IF;
+
+    -- Supprimer les notifications liées
+    DELETE FROM notification WHERE emetteur_id = p_utilisateur_id OR recepteur_id = p_utilisateur_id;
+    DELETE FROM messagerie WHERE expediteur_id = p_utilisateur_id OR destinataire_id = p_utilisateur_id;
+
+
+    -- Finalement, supprimer l'utilisateur
+    -- Le trigger trg_prevent_user_delete pourrait bloquer si mal configuré ou si des dépendances non gérées existent.
+    -- Assurez-vous que ce trigger est compatible avec cette procédure de suppression.
+    DELETE FROM utilisateur WHERE id = p_utilisateur_id;
+
+    COMMIT;
+END//
+
 
 CREATE TRIGGER trg_audit_utilisateur_update
     AFTER UPDATE

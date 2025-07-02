@@ -1,175 +1,157 @@
-let rowToEdit = null;
+// =========================================================================
+//  SCRIPT POUR LA GESTION DE L'ÉVALUATION DES ÉTUDIANTS
+// =========================================================================
+// Assurez-vous que DataTableManager.js est chargé avant ce script.
 
-document.getElementById('btnValider').addEventListener('click', function () {
-    const enseignantId = document.getElementById('id-enseignant').value.trim();
-    const etudiantId = document.getElementById('id-etudiant').value.trim();
-    const ecueId = document.getElementById('idEcueInput').value.trim();
-    const dateEvaluation = document.getElementById('date-evaluation').value;
-    const note = document.getElementById('note').value.trim();
+(function () {
+    const TABLE_ID = 'evaluationTable';
+    let evaluationTableManager = null;
 
-    // === Validation ===
-    if (!enseignantId || !etudiantId || !ecueId || !dateEvaluation || note === '') {
-        alert("Veuillez remplir tous les champs !");
-        return;
+    const formEvaluation = document.getElementById('form-evaluation');
+    const operationInput = document.getElementById('evaluation-operation');
+    const formTitle = document.getElementById('evaluation-form-title');
+    const submitButton = document.getElementById('btn-submit-evaluation');
+    const cancelButton = document.getElementById('btn-cancel-evaluation');
+
+    // Inputs pour les clés originales (en mode modification)
+    const idEnseignantOriginalInput = document.getElementById('id_enseignant_original');
+    const idEtudiantOriginalInput = document.getElementById('id_etudiant_original');
+    const idEcueOriginalInput = document.getElementById('id_ecue_original');
+    const anneeOriginalInput = document.getElementById('annee_academique_id_original');
+    const sessionOriginalInput = document.getElementById('session_id_original');
+
+    if (!formEvaluation) {
+        console.warn("Formulaire d'évaluation non trouvé pour initialisation.");
+        // Ne pas bloquer le reste si la table existe
     }
 
-    if (note < 0 || note > 20) {
-        alert("La note doit être comprise entre 0 et 20.");
-        return;
+    function resetForm() {
+        if (!formEvaluation) return;
+        formEvaluation.reset();
+        if(operationInput) operationInput.value = 'ajouter';
+        if(formTitle) formTitle.textContent = 'Nouvelle Évaluation';
+        if(submitButton) submitButton.textContent = 'Ajouter';
+        if(cancelButton) cancelButton.style.display = 'none';
+
+        if(idEnseignantOriginalInput) idEnseignantOriginalInput.value = '';
+        if(idEtudiantOriginalInput) idEtudiantOriginalInput.value = '';
+        if(idEcueOriginalInput) idEcueOriginalInput.value = '';
+        if(anneeOriginalInput) anneeOriginalInput.value = '';
+        if(sessionOriginalInput) sessionOriginalInput.value = '';
+
+        document.getElementById('enseignant_id').disabled = false;
+        document.getElementById('etudiant_id').disabled = false;
+        document.getElementById('ecue_id').disabled = false;
+        document.getElementById('annee_academique_id').disabled = false;
+        document.getElementById('session_id').disabled = false;
     }
 
-    // Vérification de l'unicité (clé primaire composite : id-enseignant, id-etudiant, idEcueInput)
-    if (!rowToEdit) {
-        const lignes = document.querySelectorAll('.table tbody tr');
-        for (let ligne of lignes) {
-            const idEnseignantCell = ligne.cells[1]?.textContent;
-            const idEtudiantCell = ligne.cells[2]?.textContent;
-            const idEcueCell = ligne.cells[3]?.textContent;
+    if (cancelButton) {
+        cancelButton.addEventListener('click', resetForm);
+    }
 
-            if (
-                idEnseignantCell === enseignantId &&
-                idEtudiantCell === etudiantId &&
-                idEcueCell === ecueId
-            ) {
-                alert("Cette évaluation existe déjà !");
-                return;
+    function populateFormForEdit(row) {
+        if (!formEvaluation || !row || !row.dataset.compositeKey) return;
+        const compositeKey = JSON.parse(row.dataset.compositeKey);
+
+        if(operationInput) operationInput.value = 'modifier';
+        if(formTitle) formTitle.textContent = 'Modifier l\'Évaluation';
+        if(submitButton) submitButton.textContent = 'Modifier';
+        if(cancelButton) cancelButton.style.display = 'inline-block';
+
+        document.getElementById('enseignant_id').value = compositeKey.enseignant_id;
+        document.getElementById('etudiant_id').value = compositeKey.etudiant_id;
+        document.getElementById('ecue_id').value = compositeKey.ecue_id;
+        document.getElementById('annee_academique_id').value = compositeKey.annee_academique_id;
+        document.getElementById('session_id').value = compositeKey.session_id;
+
+        // La date doit être formatée en YYYY-MM-DD pour l'input type="date"
+        const dateCell = row.querySelector('td[data-label="Date Éval."]');
+        if(dateCell && dateCell.textContent) {
+            const dateParts = dateCell.textContent.split('/'); // Format JJ/MM/AAAA
+            if(dateParts.length === 3) {
+                document.getElementById('date_evaluation').value = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
             }
         }
+
+        const noteCell = row.querySelector('td[data-label="Note"]');
+        if(noteCell && noteCell.textContent) {
+            document.getElementById('note').value = noteCell.textContent.replace(',', '.').replace(' ', '');
+        }
+
+        if(idEnseignantOriginalInput) idEnseignantOriginalInput.value = compositeKey.enseignant_id;
+        if(idEtudiantOriginalInput) idEtudiantOriginalInput.value = compositeKey.etudiant_id;
+        if(idEcueOriginalInput) idEcueOriginalInput.value = compositeKey.ecue_id;
+        if(anneeOriginalInput) anneeOriginalInput.value = compositeKey.annee_academique_id;
+        if(sessionOriginalInput) sessionOriginalInput.value = compositeKey.session_id;
+
+        document.getElementById('enseignant_id').disabled = true;
+        document.getElementById('etudiant_id').disabled = true;
+        document.getElementById('ecue_id').disabled = true;
+        document.getElementById('annee_academique_id').disabled = true;
+        document.getElementById('session_id').disabled = true;
+
+        window.scrollTo({ top: formEvaluation.offsetTop - 20, behavior: 'smooth' });
     }
 
-    if (rowToEdit) {
-        // === Modification
-        rowToEdit.cells[1].textContent = enseignantId;
-        rowToEdit.cells[2].textContent = etudiantId;
-        rowToEdit.cells[3].textContent = ecueId;
-        rowToEdit.cells[4].textContent = dateEvaluation;
-        rowToEdit.cells[5].textContent = note;
+    function initializeEvaluationModule() {
+        if (formEvaluation) resetForm(); // S'assurer que le formulaire est propre au chargement
 
-        rowToEdit = null;
-        document.getElementById('btnValider').textContent = 'Valider';
-    } else {
-        // === Ajout
-        const tbody = document.querySelector('.table tbody');
-        const newRow = document.createElement('tr');
+        if (typeof DataTableManager === 'undefined') {
+            console.error('DataTableManager is not loaded. Skipping table initialization for evaluations.');
+            return;
+        }
 
-        newRow.innerHTML = `
-            <td><input type="checkbox" class="checkbox"></td>
-            <td>${enseignantId}</td>
-            <td>${etudiantId}</td>
-            <td>${ecueId}</td>
-            <td>${dateEvaluation}</td>
-            <td>${note}</td>
-            <td>
-                <div class="table-actions">
-                    <button class="action-btn edit-btn">✏️</button>
-                    <button class="action-btn delete-btn">🗑️</button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(newRow);
-    }
+        const tableElement = document.getElementById(TABLE_ID);
+        if (!tableElement || !tableElement.querySelector('tbody')) {
+            console.warn(`Table or tbody for '${TABLE_ID}' not found. DataTableManager not initialized.`);
+            return;
+        }
 
-    // Réinitialisation des champs
-    document.querySelectorAll('.form-input').forEach(input => input.value = '');
-});
-
-
-// === Modifier une ligne ===
-document.querySelector('.table tbody').addEventListener('click', function (e) {
-    if (e.target.classList.contains('edit-btn')) {
-        const row = e.target.closest('tr');
-        rowToEdit = row;
-
-        document.getElementById('id-enseignant').value = row.cells[1].textContent;
-        document.getElementById('id-etudiant').value = row.cells[2].textContent;
-        document.getElementById('idEcueInput').value = row.cells[3].textContent;
-        document.getElementById('date-evaluation').value = row.cells[4].textContent;
-        document.getElementById('note').value = row.cells[5].textContent;
-
-        document.getElementById('btnValider').textContent = 'Mettre à jour';
-    }
-});
-
-// === Supprimer une ligne ===
-document.querySelector('.table tbody').addEventListener('click', function (e) {
-    if (e.target.classList.contains('delete-btn')) {
-        e.target.closest('tr').remove();
-    }
-});
-
-// === Supprimer les lignes sélectionnées ===
-document.getElementById('btnSupprimerSelection').addEventListener('click', function () {
-    const checkedRows = document.querySelectorAll('.table tbody .checkbox:checked');
-    if (checkedRows.length === 0) {
-        alert("Veuillez cocher au moins une ligne !");
-        return;
-    }
-
-    if (confirm("Confirmez-vous la suppression des lignes sélectionnées ?")) {
-        checkedRows.forEach(cb => cb.closest('tr').remove());
-    }
-});
-
-// === Recherche en direct ===
-document.getElementById('searchInput').addEventListener('keyup', function () {
-    const searchTerm = this.value.toLowerCase();
-    const rows = document.querySelectorAll('.table tbody tr');
-
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(searchTerm) ? '' : 'none';
-    });
-});
-
-// === Export PDF ===
-document.getElementById("btnExportPDF").addEventListener("click", function () {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    doc.setFontSize(12);
-    doc.text("Historique des Évaluations", 10, 10);
-
-    let y = 20;
-    document.querySelectorAll(".table tr").forEach(row => {
-        let x = 10;
-        row.querySelectorAll("th, td").forEach(cell => {
-            doc.text(cell.textContent.trim(), x, y);
-            x += 30;
+        evaluationTableManager = new DataTableManager(TABLE_ID, {
+            rowsPerPage: 10,
+            rowCheckboxClass: 'select-evaluation-item',
+            editButtonClass: 'btn-edit-evaluation',
+            deleteButtonClass: 'btn-delete-single-evaluation',
+            onEditRow: (rowElement, event) => {
+                populateFormForEdit(rowElement);
+            },
+            // La valeur de la checkbox est le JSON stringifié de la clé composite
+            getRowId: function(tr) {
+                const checkbox = tr.querySelector(`.${this.rowCheckboxClass}`);
+                return checkbox ? checkbox.value : tr.dataset.compositeKey;
+            },
+            getSearchableText: function(tr) {
+                // Concaténer le texte des cellules pertinentes pour la recherche
+                let text = "";
+                // Enseignant (cell 1), Étudiant (cell 2), ECUE (cell 3), Année (cell 4), Session (cell 5)
+                for(let i = 1; i <= 5; i++) {
+                    if(tr.cells[i]) text += tr.cells[i].textContent + " ";
+                }
+                return text.toLowerCase();
+            }
         });
-        y += 10;
-    });
+    }
 
-    doc.save("evaluations.pdf");
-});
+    document.addEventListener('DOMContentLoaded', initializeEvaluationModule);
 
-// === Export Excel ===
-document.getElementById("btnExportExcel").addEventListener("click", function () {
-    const table = document.querySelector(".table");
-    const wb = XLSX.utils.table_to_book(table, { sheet: "Évaluations" });
-    XLSX.writeFile(wb, "evaluations.xlsx");
-});
+    if (typeof window.addAjaxSuccessListener === 'function') {
+        window.addAjaxSuccessListener(function(form, data, htmlResponse) {
+            const formTargetSelector = form.dataset.target;
+            const tableTbodySelector = `#${TABLE_ID} > tbody`;
 
-// === Impression ===
-document.getElementById("btnPrint").addEventListener("click", function () {
-    const tableHTML = document.querySelector(".table").outerHTML;
-    const newWindow = window.open("", "", "width=900,height=700");
+            if (formTargetSelector === tableTbodySelector && evaluationTableManager && htmlResponse) {
+                evaluationTableManager.updateTableContent(); // Le HTML a déjà été inséré par ajax.js
+                if (form.id === 'form-evaluation') resetForm(); // Réinitialiser le formulaire d'ajout/modif
+            }
+        });
+    } else {
+        console.warn("addAjaxSuccessListener non défini. Les mises à jour AJAX du tableau pourraient ne pas rafraîchir DataTableManager.");
+    }
 
-    newWindow.document.write(`
-        <html>
-        <head>
-            <title>Impression</title>
-            <style>
-                table { width: 100%; border-collapse: collapse; }
-                th, td { border: 1px solid #000; padding: 8px; text-align: left; }
-            </style>
-        </head>
-        <body>
-            <h2>Historique des Évaluations</h2>
-            ${tableHTML}
-        </body>
-        </html>
-    `);
+    function escapeHTML(str) { // Utile si on reconstruit le HTML en JS, moins ici car le serveur renvoie du HTML.
+        if (str === null || str === undefined) return '';
+        return String(str).replace(/[&<>"']/g, match => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[match]));
+    }
 
-    newWindow.document.close();
-    newWindow.print();
-});
+})();
