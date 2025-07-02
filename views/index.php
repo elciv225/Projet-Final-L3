@@ -107,7 +107,6 @@ use System\Http\Response;
 <!-- Scripts -->
 <script src="/assets/js/ajax.js"></script>
 <script src="/assets/js/traitements.js"></script>
-
 <script>
     // Script d'initialisation spécifique à l'espace admin
     document.addEventListener('DOMContentLoaded', function () {

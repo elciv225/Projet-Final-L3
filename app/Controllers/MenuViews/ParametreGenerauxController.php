@@ -33,10 +33,12 @@ class ParametreGenerauxController extends Controller
         }
 
         $viewName = match ($paramatre) {
-            'ue' => 'data_views/ue',
-
-            // Pour tous les autres cas listés, une vue générale est utilisée.
-            // Cela évite la répétition de code.
+            'ue',
+            'ecue' => 'data_views/ue',
+            'annee_academique' => 'data_views/annee_academique',
+            'specialite',
+            'menu',
+            'categorie_menu',
             'entreprise',
             'niveau_etude',
             'grade',
