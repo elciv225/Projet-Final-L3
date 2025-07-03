@@ -9,12 +9,12 @@ document.getElementById('btnValider').addEventListener('click', function () {
 
     // === Validation ===
     if (!enseignantId || !etudiantId || !ecueId || !dateEvaluation || note === '') {
-        alert("Veuillez remplir tous les champs !");
+        window.showPopup("Veuillez remplir tous les champs !", "warning");
         return;
     }
 
     if (note < 0 || note > 20) {
-        alert("La note doit être comprise entre 0 et 20.");
+        window.showPopup("La note doit être comprise entre 0 et 20.", "warning");
         return;
     }
 
@@ -31,7 +31,7 @@ document.getElementById('btnValider').addEventListener('click', function () {
                 idEtudiantCell === etudiantId &&
                 idEcueCell === ecueId
             ) {
-                alert("Cette évaluation existe déjà !");
+                window.showPopup("Cette évaluation existe déjà !", "warning");
                 return;
             }
         }
@@ -101,13 +101,14 @@ document.querySelector('.table tbody').addEventListener('click', function (e) {
 document.getElementById('btnSupprimerSelection').addEventListener('click', function () {
     const checkedRows = document.querySelectorAll('.table tbody .checkbox:checked');
     if (checkedRows.length === 0) {
-        alert("Veuillez cocher au moins une ligne !");
+        window.showPopup("Veuillez cocher au moins une ligne !", "warning");
         return;
     }
 
-    if (confirm("Confirmez-vous la suppression des lignes sélectionnées ?")) {
+    window.showWarningCard("Confirmez-vous la suppression des lignes sélectionnées ?", function() {
         checkedRows.forEach(cb => cb.closest('tr').remove());
-    }
+        window.showPopup("Lignes supprimées avec succès", "success");
+    });
 });
 
 // === Recherche en direct ===

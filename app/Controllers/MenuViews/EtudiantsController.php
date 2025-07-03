@@ -98,6 +98,13 @@ class EtudiantsController extends Controller
                 throw new \Exception("L'inscription a échoué car le matricule n'a pas été retourné.");
             }
 
+            // Enregistrer l'audit
+            \App\Models\Audit::enregistrer(
+                "Inscription d'un nouvel étudiant: {$post['nom-etudiant']} {$post['prenom-etudiant']} (Matricule: {$nouveauMatricule})",
+                'INSCRIPTION_ETUDIANT',
+                null
+            );
+
             return $this->indexMessage("Étudiant '{$nouveauMatricule}' inscrit avec succès.", "succes");
 
         } catch (PDOException $e) {
@@ -144,6 +151,13 @@ class EtudiantsController extends Controller
             $success = $etudiantDAO->modifierViaProcedure($post);
 
             if ($success) {
+                // Enregistrer l'audit
+                \App\Models\Audit::enregistrer(
+                    "Modification des informations de l'étudiant ID: {$etudiantId} - {$post['nom-etudiant']} {$post['prenom-etudiant']}",
+                    'MODIFICATION_ETUDIANT',
+                    null
+                );
+
                 return $this->indexMessage("Étudiant '{$etudiantId}' mis à jour avec succès.", "succes");
             } else {
                 // Ce cas est peu probable si execute() ne lève pas d'exception, mais c'est une sécurité
@@ -186,6 +200,13 @@ class EtudiantsController extends Controller
             $deletedCount = $etudiantDAO->supprimerEtudiants($ids);
 
             if ($deletedCount > 0) {
+                // Enregistrer l'audit
+                \App\Models\Audit::enregistrer(
+                    "Suppression de $deletedCount étudiant(s) (IDs: " . implode(', ', $ids) . ")",
+                    'SUPPRESSION_ETUDIANT',
+                    null
+                );
+
                 $message = ($deletedCount === 1) ? "1 étudiant a été supprimé avec succès." : "$deletedCount étudiants ont été supprimés avec succès.";
                 return $this->indexMessage($message, "succes");
             } else {

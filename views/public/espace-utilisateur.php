@@ -10,22 +10,6 @@
     <link rel="stylesheet" href="/assets/css/espace-utilisateur.css">
 </head>
 <body>
-    <!-- Sidebar existante -->
-    <aside class="sidebar">
-        <div class="sidebar-logo">📚</div>
-        <nav>
-            <ul class="sidebar-nav">
-                <li class="nav-item">
-                    <a href="#" class="nav-link active">
-                        <svg fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
-                        </svg>
-                    </a>
-                </li>
-                <!-- Autres éléments de navigation -->
-            </ul>
-        </nav>
-    </aside>
 
     <!-- Contenu principal -->
     <main class="main-wrapper">

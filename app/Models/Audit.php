@@ -11,6 +11,40 @@ class Audit
     private string $utilisateur_id;
 
     /**
+     * Enregistre une entrée d'audit dans la base de données
+     * 
+     * @param string $description Description de l'action effectuée
+     * @param string $traitement_id Identifiant du traitement
+     * @param string|null $utilisateur_id Identifiant de l'utilisateur (null si système)
+     * @return bool True si l'enregistrement a réussi, False sinon
+     */
+    public static function enregistrer(string $description, string $traitement_id, ?string $utilisateur_id = null): bool
+    {
+        // Récupérer l'ID de l'utilisateur connecté si non fourni
+        if ($utilisateur_id === null && isset($_SESSION['utilisateur_connecte']['id'])) {
+            $utilisateur_id = $_SESSION['utilisateur_connecte']['id'];
+        }
+
+        // Si toujours null, utiliser un ID par défaut pour le système
+        if ($utilisateur_id === null) {
+            $utilisateur_id = '0'; // ID pour le système
+        }
+
+        // Créer un nouvel objet Audit
+        $audit = new self();
+        $audit->setDescription($description);
+        $audit->setDateTraitement(date('Y-m-d H:i:s'));
+        $audit->setTraitementId($traitement_id);
+        $audit->setUtilisateurId($utilisateur_id);
+
+        // Enregistrer dans la base de données
+        $pdo = \System\Database\Database::getConnection();
+        $auditDAO = new \App\Dao\AuditDAO($pdo);
+
+        return $auditDAO->creer($audit);
+    }
+
+    /**
      * @return int
      */
     public function getId(): int

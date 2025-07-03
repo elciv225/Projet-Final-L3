@@ -114,7 +114,7 @@
                     <tbody>
                     <?php if (isset($etudiants) && !empty($etudiants)): ?>
                         <?php foreach ($etudiants as $etudiant): ?>
-                            <tr>
+                            <tr data-user-id="<?= htmlspecialchars($etudiant['id'] ?? '') ?>">
                                 <td><input type="checkbox" class="checkbox" name="ids[]" value="<?= htmlspecialchars($etudiant['id'] ?? '') ?>"></td>
                                 <td class="id-etudiant"><?= htmlspecialchars($etudiant['id'] ?? '') ?></td>
                                 <td class="numero-carte"><?= htmlspecialchars($etudiant['numero_carte'] ?? 'N/A') ?></td>

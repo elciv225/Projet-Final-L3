@@ -99,17 +99,115 @@
         </div>
         <div class="table-footer">
             <div class="results-info">
-                Affichage de 1 à 9 sur 240 entrées
+                <?php if (isset($pagination) && $pagination['totalItems'] > 0): ?>
+                    Affichage de <?= $pagination['startIndex'] ?> à <?= $pagination['endIndex'] ?> sur <?= $pagination['totalItems'] ?> entrées
+                <?php else: ?>
+                    Aucune entrée à afficher
+                <?php endif; ?>
             </div>
+            <?php if (isset($pagination) && $pagination['totalPages'] > 1): ?>
             <div class="pagination">
-                <button class="pagination-btn">‹</button>
-                <button class="pagination-btn active">1</button>
-                <button class="pagination-btn">2</button>
-                <button class="pagination-btn">3</button>
-                <span>...</span>
-                <button class="pagination-btn">12</button>
-                <button class="pagination-btn">›</button>
+                <!-- Bouton précédent -->
+                <?php if ($pagination['page'] > 1): ?>
+                    <button class="pagination-btn pagination-prev" data-page="<?= $pagination['page'] - 1 ?>">‹</button>
+                <?php else: ?>
+                    <button class="pagination-btn" disabled>‹</button>
+                <?php endif; ?>
+
+                <!-- Première page -->
+                <button class="pagination-btn <?= $pagination['page'] == 1 ? 'active' : '' ?>" data-page="1">1</button>
+
+                <!-- Pages intermédiaires -->
+                <?php
+                $startPage = max(2, $pagination['page'] - 1);
+                $endPage = min($pagination['totalPages'] - 1, $pagination['page'] + 1);
+
+                if ($startPage > 2): ?>
+                    <span>...</span>
+                <?php endif;
+
+                for ($i = $startPage; $i <= $endPage; $i++): ?>
+                    <button class="pagination-btn <?= $pagination['page'] == $i ? 'active' : '' ?>" data-page="<?= $i ?>"><?= $i ?></button>
+                <?php endfor;
+
+                if ($endPage < $pagination['totalPages'] - 1): ?>
+                    <span>...</span>
+                <?php endif; ?>
+
+                <!-- Dernière page -->
+                <?php if ($pagination['totalPages'] > 1): ?>
+                    <button class="pagination-btn <?= $pagination['page'] == $pagination['totalPages'] ? 'active' : '' ?>" data-page="<?= $pagination['totalPages'] ?>"><?= $pagination['totalPages'] ?></button>
+                <?php endif; ?>
+
+                <!-- Bouton suivant -->
+                <?php if ($pagination['page'] < $pagination['totalPages']): ?>
+                    <button class="pagination-btn pagination-next" data-page="<?= $pagination['page'] + 1 ?>">›</button>
+                <?php else: ?>
+                    <button class="pagination-btn" disabled>›</button>
+                <?php endif; ?>
             </div>
+            <?php endif; ?>
         </div>
     </div>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Ajouter des écouteurs d'événements pour les boutons de pagination
+    document.querySelectorAll('.pagination-btn').forEach(function(button) {
+        if (!button.disabled && button.hasAttribute('data-page')) {
+            button.addEventListener('click', function() {
+                const page = this.getAttribute('data-page');
+                navigateToPage(page);
+            });
+        }
+    });
+
+    // Fonction pour naviguer vers une page spécifique
+    function navigateToPage(page) {
+        // Récupérer les valeurs des filtres actuels
+        const typeHistorique = document.getElementById('selectTypeHistorique').value;
+        const utilisateur = document.getElementById('selectUtilisateurSpecifique').value;
+
+        // Créer un formulaire temporaire pour soumettre la requête
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = '/charger-historique-personnel';
+        form.classList.add('ajax-form');
+        form.setAttribute('data-target', '.table');
+
+        // Ajouter les champs cachés pour les filtres
+        const typeHistoriqueInput = document.createElement('input');
+        typeHistoriqueInput.type = 'hidden';
+        typeHistoriqueInput.name = 'type-historique';
+        typeHistoriqueInput.value = typeHistorique;
+        form.appendChild(typeHistoriqueInput);
+
+        const utilisateurInput = document.createElement('input');
+        utilisateurInput.type = 'hidden';
+        utilisateurInput.name = 'utilisateur';
+        utilisateurInput.value = utilisateur;
+        form.appendChild(utilisateurInput);
+
+        // Ajouter le champ caché pour la page
+        const pageInput = document.createElement('input');
+        pageInput.type = 'hidden';
+        pageInput.name = 'page';
+        pageInput.value = page;
+        form.appendChild(pageInput);
+
+        // Ajouter le formulaire au document et le soumettre
+        document.body.appendChild(form);
+
+        // Utiliser la fonction submitAjaxForm si elle existe, sinon soumettre normalement
+        if (typeof submitAjaxForm === 'function') {
+            submitAjaxForm(form);
+        } else {
+            form.submit();
+        }
+
+        // Supprimer le formulaire temporaire
+        document.body.removeChild(form);
+    }
+});
+</script>

@@ -46,11 +46,15 @@ function handleAdd() {
     const niveau = document.getElementById('niveauApprobationSelect').value;
     const cr = document.getElementById('compteRenduSelect').value;
     const date = document.getElementById('dateApprobationInput').value;
-    if (!niveau || !cr || !date) return alert('Veuillez remplir tous les champs.');
+    if (!niveau || !cr || !date) {
+        window.showPopup('Veuillez remplir tous les champs.', 'warning');
+        return;
+    }
 
     historique.push({ id: Date.now(), niveau, cr, date });
     renderTable();
     clearForm();
+    window.showPopup('Approbation ajoutée avec succès.', 'success');
 }
 
 function clearForm() {

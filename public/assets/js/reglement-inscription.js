@@ -9,7 +9,7 @@ document.getElementById('btnValider').addEventListener('click', function () {
 
     // Vérifications
     if (!utilisateurId || !niveauEtudeId || !anneeAcademiqueId || !dateInscription || !montant) {
-        alert("Veuillez remplir tous les champs obligatoires !");
+        window.showPopup("Veuillez remplir tous les champs obligatoires !", "warning");
         return;
     }
 
@@ -19,7 +19,7 @@ document.getElementById('btnValider').addEventListener('click', function () {
         for (let ligne of lignes) {
             const cellId = ligne.children[1]?.textContent;
             if (cellId === utilisateurId) {
-                alert("Ce numéro de carte est déjà inscrit !");
+                window.showPopup("Ce numéro de carte est déjà inscrit !", "warning");
                 return;
             }
         }
@@ -88,13 +88,14 @@ document.querySelector('.table tbody').addEventListener('click', function (e) {
 document.getElementById('btnSupprimerSelection').addEventListener('click', function () {
     const checkboxes = document.querySelectorAll('.table tbody .checkbox:checked');
     if (checkboxes.length === 0) {
-        alert("Veuillez sélectionner au moins une ligne !");
+        window.showPopup("Veuillez sélectionner au moins une ligne !", "warning");
         return;
     }
 
-    if (confirm("Voulez-vous supprimer les lignes sélectionnées ?")) {
+    window.showWarningCard("Voulez-vous supprimer les lignes sélectionnées ?", function() {
         checkboxes.forEach(checkbox => checkbox.closest('tr').remove());
-    }
+        window.showPopup("Lignes supprimées avec succès", "success");
+    });
 });
 
 // === Recherche en temps réel ===

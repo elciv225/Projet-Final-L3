@@ -241,7 +241,7 @@ checkVotingStatus();
 
 closeSessionBtn.addEventListener('click', () => {
     if (!closeSessionBtn.disabled) {
-        alert("Session clôturée. Le statut du rapport est mis à jour.");
+        window.showPopup("Session clôturée. Le statut du rapport est mis à jour.", "success");
         const activeStudentItem = document.querySelector('.student-item.active');
         if (activeStudentItem) {
             const statusBadge = activeStudentItem.querySelector('.status-badge');

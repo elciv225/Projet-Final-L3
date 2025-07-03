@@ -1,256 +1,54 @@
 (function () {
     /**
-     * Gère les interactions spécifiques au formulaire enseignant.
+     * Gère les interactions spécifiques au formulaire étudiant.
      */
-    const formHandler = {
-        // CORRECTION: Le sélecteur cible maintenant le bon formulaire.
-        form: document.querySelector('form[action="/traitement-enseignant"]'),
+    let formInstance;
 
-        init: function() {
-            if (!this.form) return;
+    function populateEtudiantForm(form, row) {
+        const userData = row.querySelector('.nom-prenoms');
+        const emailElement = row.querySelector('.email-etudiant');
 
-            // Initialisation des éléments du formulaire
-            this.nomInput = this.form.querySelector('#nom-enseignant');
-            this.prenomInput = this.form.querySelector('#prenom-enseignant');
-            this.loginInput = this.form.querySelector('#login');
-            this.cancelBtn = this.form.querySelector('#btn-cancel-edit');
-            this.idField = this.form.querySelector('#id-utilisateur-form');
-            this.operationField = this.form.querySelector('#form-operation');
-            this.title = this.form.querySelector('#form-title');
-            this.submitBtn = this.form.querySelector('#btn-submit-form');
+        form.querySelector('#nom-etudiant').value = userData.dataset.nom;
+        form.querySelector('#prenom-etudiant').value = userData.dataset.prenoms;
+        form.querySelector('#email-etudiant').value = emailElement.textContent.trim();
+        form.querySelector('#date-naissance').value = userData.dataset.dateNaissance;
 
-            this.bindEvents();
-        },
-
-        bindEvents: function() {
-            if (this.nomInput && this.prenomInput) {
-                this.nomInput.addEventListener('input', () => this.updateLogin());
-                this.prenomInput.addEventListener('input', () => this.updateLogin());
-            }
-            if (this.cancelBtn) {
-                this.cancelBtn.addEventListener('click', () => this.reset());
-            }
-        },
-
-        updateLogin: function() {
-            if (!this.loginInput || !this.nomInput || !this.prenomInput) return;
-            const nom = this.nomInput.value.toLowerCase().replace(/[^a-z]/g, '');
-            const prenom = this.prenomInput.value.toLowerCase().charAt(0);
-            this.loginInput.value = (nom && prenom) ? prenom + nom : '';
-        },
-
-        populateForEdit: function(row) {
-            if (!this.form || !row) return;
-            this.reset();
-
-            const userData = row.querySelector('.user-data');
-
-            this.idField.value = row.dataset.userId;
-            this.form.querySelector('#nom-enseignant').value = userData.dataset.nom;
-            this.form.querySelector('#prenom-enseignant').value = userData.dataset.prenoms;
-            this.form.querySelector('#email-enseignant').value = userData.dataset.email;
-            this.form.querySelector('#date-naissance').value = userData.dataset.naissance;
-
-            this.form.querySelector('#id-grade').value = row.querySelector('.grade-data')?.dataset.gradeId || '';
-            this.form.querySelector('#id-specialite').value = row.querySelector('.specialite-data')?.dataset.specialiteId || '';
-            this.form.querySelector('#id-fonction').value = row.querySelector('.fonction-data')?.dataset.fonctionId || '';
-
-            this.updateLogin();
-            this.operationField.value = 'modifier';
-            this.title.textContent = 'Modifier les informations de l\'enseignant';
-            this.submitBtn.textContent = 'Modifier';
-            this.cancelBtn.style.display = 'inline-block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        },
-
-        reset: function() {
-            if (!this.form) return;
-            this.form.reset();
-            this.idField.value = '';
-            this.operationField.value = 'ajouter';
-            this.title.textContent = 'Ajouter un nouvel enseignant';
-            this.submitBtn.textContent = 'Ajouter';
-            if (this.cancelBtn) this.cancelBtn.style.display = 'none';
-            this.updateLogin();
+        // Champs spécifiques aux étudiants
+        if (row.querySelector('.niveau-etude')) {
+            form.querySelector('#id-niveau-etude').value = row.querySelector('.niveau-etude')?.dataset.niveauId || '';
         }
-    };
-
-    /**
-     * Gère la logique du tableau interactif.
-     */
-    const tableHandler = {
-        init: function (tableId) {
-            const table = document.getElementById(tableId);
-            if (!table) return;
-
-            const state = {
-                table,
-                tableBody: table.querySelector('tbody'),
-                allRows: Array.from(table.querySelector('tbody').querySelectorAll('tr')),
-                searchInput: document.getElementById(`searchInput-${tableId}`),
-                paginationContainer: document.getElementById(`pagination-${tableId}`),
-                resultsInfoContainer: document.getElementById(`resultsInfo-${tableId}`),
-                selectAllCheckbox: document.getElementById(`selectAll-${tableId}`),
-                deleteForm: document.getElementById(`delete-form-${tableId}`),
-                rowsPerPage: 9,
-                currentPage: 1,
-            };
-
-            if (!state.tableBody || state.allRows.length === 0 || !state.deleteForm) return;
-
-            const update = () => this.render(state);
-            state.update = update;
-
-            if (state.searchInput) state.searchInput.addEventListener('input', () => {
-                state.currentPage = 1;
-                update();
-            });
-            if (state.selectAllCheckbox) state.selectAllCheckbox.addEventListener('change', (e) => this.handleSelectAll(e, state));
-
-            this.bindRowActions(state);
-            update();
-        },
-
-        render: function (state) {
-            const searchTerm = state.searchInput ? state.searchInput.value.toLowerCase() : '';
-            const filteredRows = state.allRows.filter(row => row.textContent.toLowerCase().includes(searchTerm));
-
-            state.allRows.forEach(row => row.style.display = 'none');
-
-            const totalPages = Math.ceil(filteredRows.length / state.rowsPerPage);
-            state.currentPage = Math.min(state.currentPage, totalPages > 0 ? totalPages : 1);
-
-            const start = (state.currentPage - 1) * state.rowsPerPage;
-            const end = start + state.rowsPerPage;
-            const visibleRows = filteredRows.slice(start, end);
-
-            visibleRows.forEach(row => row.style.display = '');
-
-            this.setupPagination(state, totalPages);
-            this.updateResultsInfo(state, start, end, filteredRows.length);
-            this.updateSelectAllCheckbox(state);
-            this.updateDeleteForm(state);
-        },
-
-        setupPagination: function (state, totalPages) {
-            if (!state.paginationContainer) return;
-            state.paginationContainer.innerHTML = '';
-            if (totalPages <= 1) return;
-
-            const createButton = (text, page, isDisabled = false, isActive = false) => {
-                const button = document.createElement('button');
-                button.className = 'pagination-btn' + (isActive ? ' active' : '');
-                button.innerHTML = text;
-                button.disabled = isDisabled;
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    state.currentPage = page;
-                    this.render(state);
-                });
-                return button;
-            };
-
-            state.paginationContainer.appendChild(createButton('‹', state.currentPage - 1, state.currentPage === 1));
-            for (let i = 1; i <= totalPages; i++) {
-                state.paginationContainer.appendChild(createButton(i, i, false, i === state.currentPage));
-            }
-            state.paginationContainer.appendChild(createButton('›', state.currentPage + 1, state.currentPage === totalPages));
-        },
-
-        updateResultsInfo: function (state, start, end, total) {
-            if (!state.resultsInfoContainer) return;
-            const startNum = total === 0 ? 0 : start + 1;
-            const endNum = Math.min(end, total);
-            state.resultsInfoContainer.textContent = `Affichage de ${startNum} à ${endNum} sur ${total} entrées`;
-        },
-
-        handleSelectAll: function(e, state) {
-            const isChecked = e.target.checked;
-            const filteredRows = state.allRows.filter(row => row.textContent.toLowerCase().includes(state.searchInput.value.toLowerCase()));
-            filteredRows.forEach(row => {
-                const checkbox = row.querySelector('input[type="checkbox"]');
-                if (checkbox) checkbox.checked = isChecked;
-            });
-            this.updateDeleteForm(state);
-        },
-
-        updateSelectAllCheckbox: function(state) {
-            if (!state.selectAllCheckbox) return;
-            const filteredRows = state.allRows.filter(row => row.textContent.toLowerCase().includes(state.searchInput.value.toLowerCase()));
-            const checkboxes = filteredRows.map(row => row.querySelector('input[type="checkbox"]')).filter(Boolean);
-            state.selectAllCheckbox.checked = checkboxes.length > 0 && checkboxes.every(cb => cb.checked);
-        },
-
-        updateDeleteForm: function(state) {
-            const hiddenContainer = state.deleteForm.querySelector(`div[id^="hidden-inputs-for-delete-"]`);
-            if (!hiddenContainer) return;
-
-            const checkedBoxes = Array.from(state.tableBody.querySelectorAll('input[type="checkbox"]:checked'));
-            const idsToDelete = checkedBoxes.map(cb => cb.value);
-
-            hiddenContainer.innerHTML = '';
-            idsToDelete.forEach(id => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'ids[]';
-                input.value = id;
-                hiddenContainer.appendChild(input);
-            });
-
-            if (idsToDelete.length > 0) {
-                state.deleteForm.setAttribute('data-warning', `Êtes-vous sûr de vouloir supprimer ${idsToDelete.length} enseignant(s) ?`);
-            } else {
-                state.deleteForm.removeAttribute('data-warning');
-            }
-        },
-
-        bindRowActions: function(state) {
-            state.tableBody.querySelectorAll('tr').forEach(row => {
-                const deleteBtn = row.querySelector('.btn-delete-single');
-                if (deleteBtn) {
-                    deleteBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const userId = row.dataset.userId;
-                        const userName = row.querySelector('.user-data')?.textContent.trim() || 'cet enseignant';
-                        const message = `Êtes-vous sûr de vouloir supprimer "${userName}" (${userId}) ?`;
-
-                        state.deleteForm.setAttribute('data-warning', message);
-
-                        const hiddenContainer = state.deleteForm.querySelector(`div[id^="hidden-inputs-for-delete-"]`);
-                        hiddenContainer.innerHTML = '';
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = 'ids[]';
-                        input.value = userId;
-                        hiddenContainer.appendChild(input);
-
-                        state.deleteForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-                    });
-                }
-
-                const editBtn = row.querySelector('.btn-edit');
-                if (editBtn) {
-                    editBtn.addEventListener('click', () => formHandler.populateForEdit(row));
-                }
-
-                const checkbox = row.querySelector('input[type="checkbox"]');
-                if (checkbox) {
-                    checkbox.addEventListener('change', () => {
-                        this.updateSelectAllCheckbox(state);
-                        this.updateDeleteForm(state);
-                    });
-                }
-            });
+        if (row.querySelector('.annee-academique')) {
+            form.querySelector('#id-annee-academique').value = row.querySelector('.annee-academique')?.dataset.anneeId || '';
         }
-    };
 
-    function initializeEnseignantModule() {
-        formHandler.init();
-        tableHandler.init('enseignantTable');
+        // Récupérer le montant d'inscription s'il existe
+        if (row.querySelector('.montant-inscription')) {
+            form.querySelector('#montant-inscription').value = row.querySelector('.montant-inscription').textContent.trim().replace(/[^\d]/g, '') || '';
+        }
     }
 
-    document.addEventListener('DOMContentLoaded', initializeEnseignantModule);
+    function initializeEtudiantModule() {
+        // Initialiser le gestionnaire de formulaire
+        formInstance = window.formHandler.create({
+            formSelector: 'form[action="/traitement-etudiant"]',
+            idFieldSelector: '#id-etudiant-form',
+            generateLogin: true,
+            nomSelector: '#nom-etudiant',
+            prenomSelector: '#prenom-etudiant',
+            addTitle: 'Ajouter un nouvel étudiant',
+            editTitle: 'Modifier les informations de l\'étudiant',
+            onPopulate: populateEtudiantForm
+        });
+
+        // Initialiser le gestionnaire de tableau
+        window.tableHandler.init('etudiantTable', {
+            entityName: 'étudiant',
+            onEdit: row => formInstance?.populateForEdit(row)
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', initializeEtudiantModule);
     window.ajaxRebinders = window.ajaxRebinders || [];
-    window.ajaxRebinders.push(initializeEnseignantModule);
+    window.ajaxRebinders.push(initializeEtudiantModule);
 
 })();

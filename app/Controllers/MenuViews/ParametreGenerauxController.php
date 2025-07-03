@@ -36,6 +36,9 @@ class ParametreGenerauxController extends Controller
     public function chargerFormulaireParametreGeneraux(): Response
     {
         $parametre = $this->request->getPostParams('parametre-specifique');
+        $action = $this->request->getPostParams('action') ?? 'lister';
+        $nouveauParametre = $this->request->getPostParams('nouveau-parametre');
+        $parametreId = $this->request->getPostParams('parametre-id');
 
         if (!$parametre) {
             return Response::view('menu_views/utilisateurs',
@@ -43,6 +46,44 @@ class ParametreGenerauxController extends Controller
                     'statut' => 'succes',
                     'message' => 'Aucune catégorie selectionnée.'
                 ]);
+        }
+
+        // Traiter l'ajout d'un nouveau paramètre
+        if ($action === 'ajouter' && !empty($nouveauParametre)) {
+            $result = $this->ajouterParametre($parametre, $nouveauParametre);
+
+            // Enregistrer l'audit
+            \App\Models\Audit::enregistrer(
+                "Ajout d'un nouveau paramètre '$nouveauParametre' dans la table '$parametre'",
+                'AJOUT_PARAMETRE',
+                null
+            );
+
+            if (!$result) {
+                return Response::json([
+                    'statut' => 'error',
+                    'message' => 'Erreur lors de l\'ajout du paramètre.'
+                ]);
+            }
+        }
+
+        // Traiter la suppression d'un paramètre
+        if ($action === 'supprimer' && !empty($parametreId)) {
+            $result = $this->supprimerParametre($parametre, $parametreId);
+
+            // Enregistrer l'audit
+            \App\Models\Audit::enregistrer(
+                "Suppression du paramètre ID '$parametreId' dans la table '$parametre'",
+                'SUPPRESSION_PARAMETRE',
+                null
+            );
+
+            if (!$result) {
+                return Response::json([
+                    'statut' => 'error',
+                    'message' => 'Erreur lors de la suppression du paramètre.'
+                ]);
+            }
         }
 
         // Récupérer les données du paramètre sélectionné
@@ -75,12 +116,55 @@ class ParametreGenerauxController extends Controller
             view: $viewName,
             data: [
                 'parametre' => ucfirst($parametre),
-                'donnees' => $parametreData
+                'donnees' => $parametreData,
+                'action' => $action
             ],
             json: [
                 'statut' => 'succes',
+                'message' => $action === 'ajouter' ? 'Paramètre ajouté avec succès.' : 
+                             ($action === 'supprimer' ? 'Paramètre supprimé avec succès.' : 'Paramètres chargés avec succès.')
             ]
         );
+    }
+
+    /**
+     * Ajoute un nouveau paramètre dans la table spécifiée
+     * @param string $table Nom de la table
+     * @param string $libelle Libellé du nouveau paramètre
+     * @return bool Succès de l'opération
+     */
+    private function ajouterParametre(string $table, string $libelle): bool
+    {
+        try {
+            $sql = "INSERT INTO $table (libelle) VALUES (:libelle)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':libelle', $libelle);
+            return $stmt->execute();
+        } catch (\PDOException $e) {
+            // Log l'erreur
+            error_log("Erreur lors de l'ajout du paramètre: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Supprime un paramètre de la table spécifiée
+     * @param string $table Nom de la table
+     * @param string $id ID du paramètre à supprimer
+     * @return bool Succès de l'opération
+     */
+    private function supprimerParametre(string $table, string $id): bool
+    {
+        try {
+            $sql = "DELETE FROM $table WHERE id = :id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':id', $id);
+            return $stmt->execute();
+        } catch (\PDOException $e) {
+            // Log l'erreur
+            error_log("Erreur lors de la suppression du paramètre: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
