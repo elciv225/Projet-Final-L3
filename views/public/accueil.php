@@ -15,8 +15,8 @@
         <nav class="main-nav">
             <div class="container nav-container">
                 <a href="#" class="nav-brand">
-                    <span class="logo-icon"></span>
-                    <span></span>
+                    <span class="logo-icon">U</span>
+                    <span>University</span>
                 </a>
                 <!-- Structure du bouton modifiée pour l'animation -->
                 <button class="menu-toggle" id="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
