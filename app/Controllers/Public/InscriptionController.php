@@ -6,7 +6,7 @@ use App\Controllers\Controller;
 use System\Http\Response;
 use System\Mail\Mail;
 
-class AuthentificationPublicController extends Controller
+class InscriptionController extends Controller
 {
 
     private Mail $mail;
@@ -50,7 +50,7 @@ class AuthentificationPublicController extends Controller
                 return $this->creerCompte();
         }
 
-        return $this->error("A faire : $etapeActuelle");
+        return $this->error("Étape non reconnue: $etapeActuelle");
     }
 
     /**
@@ -69,13 +69,14 @@ class AuthentificationPublicController extends Controller
 
         $_SESSION['utilisateur']['ip'] = $identifiantPermanent; // Stocker l'IP en session
         // Passer à l'étape suivante
-        return Response::view('public/authentification', data: [
+        return Response::view('public/inscription', data: [
             'ip' => $identifiantPermanent,
             'etape' => 'envoi_email',
             'txtButton' => 'Envoyer le code'
         ], json: [
             'statut' => 'succes',
-            'message' => "Identifiant permanent valide : $identifiantPermanent"
+            'message' => "Identifiant permanent valide",
+            'etape' => 'envoi_email'
         ]);
     }
 
@@ -103,9 +104,23 @@ class AuthentificationPublicController extends Controller
     private function envoyerCodeEmail(): Response
     {
         $emailUtilisateur = $this->request->getPostParams('email');
-        // Génération d'un code de vérification
+
+        // Validation de l'email
+        if (empty($emailUtilisateur)) {
+            return $this->error("L'adresse email ne peut pas être vide");
+        }
+
+        if (!filter_var($emailUtilisateur, FILTER_VALIDATE_EMAIL)) {
+            return $this->error("L'adresse email n'est pas valide");
+        }
+
+        // Génération d'un code de vérification à 6 chiffres
         $_SESSION['code_verification'] = $this->genererCodeVerification();
-        // envoyer le code de vérification par email
+
+        // Configuration de l'expiration du code (10 minutes)
+        $_SESSION['code_expiration'] = time() + (10 * 60);
+
+        // Envoyer le code de vérification par email
         try {
             $this->mail->to($emailUtilisateur, $_SESSION['utilisateur']['ip'])
                 ->subject('Code de vérification')
@@ -115,19 +130,23 @@ class AuthentificationPublicController extends Controller
                 ])
                 ->send();
         } catch (\Exception $e) {
-            $this->error("Erreur lors de l'envoi de l'email : " . $e->getMessage());
+            return $this->error("Erreur lors de l'envoi de l'email : " . $e->getMessage());
         }
-        $_SESSION['utilisateur']['email'] = $emailUtilisateur; // Stocker l'email en session
-        return Response::view('public/authentification', data: [
+
+        // Stocker l'email en session
+        $_SESSION['utilisateur']['email'] = $emailUtilisateur;
+
+        // Passer à l'étape suivante
+        return Response::view('public/inscription', data: [
             'ip' => $_SESSION['utilisateur']['ip'],
             'email' => $emailUtilisateur,
             'etape' => 'verification_code',
             'txtButton' => 'Vérifier le code'
         ], json: [
             'statut' => 'succes',
-            'message' => "Un code de vérification a été envoyé à l'adresse : $emailUtilisateur"
+            'message' => "Un code de vérification a été envoyé à l'adresse : $emailUtilisateur",
+            'etape' => 'verification_code'
         ]);
-
     }
 
     /**
@@ -140,7 +159,6 @@ class AuthentificationPublicController extends Controller
 
     /**
      * ÉTAPE 3 : Vérifier le code saisi par l'utilisateur
-     * @throws \Exception
      */
     private function verifierCode(): Response
     {
@@ -148,25 +166,33 @@ class AuthentificationPublicController extends Controller
         $codeSaisiParUtilisateur = $this->request->getPostParams('code');
         // Récupérer le code de vérification envoyé par email
         $codeVerification = $_SESSION['code_verification'] ?? null;
+        $codeExpiration = $_SESSION['code_expiration'] ?? null;
+
+        // Vérifier si le code a expiré
+        if ($codeExpiration && time() > $codeExpiration) {
+            return $this->error("Le code de vérification a expiré. Veuillez recommencer le processus.");
+        }
 
         $erreur = $this->verifierCodeSaisi($codeSaisiParUtilisateur);
         if ($erreur !== null) {
             return $erreur; // Retourne l'erreur si le code saisi est invalide
         }
-        // Vérifier que le code saisi correspond au code envoyé
 
+        // Vérifier que le code saisi correspond au code envoyé
         if ($codeSaisiParUtilisateur !== $codeVerification) {
             return $this->error("Le code de vérification saisi ne correspond pas au code envoyé");
         }
 
-        return Response::view('public/authentification', data: [
+        // Passer à l'étape suivante
+        return Response::view('public/inscription', data: [
             'ip' => $_SESSION['utilisateur']['ip'],
             'email' => $_SESSION['utilisateur']['email'],
             'etape' => 'enregistrement',
             'txtButton' => 'Créer le compte'
         ], json: [
             'statut' => 'succes',
-            'message' => "Code de vérification validé avec succès"
+            'message' => "Code de vérification validé avec succès",
+            'etape' => 'enregistrement'
         ]);
     }
 
@@ -203,20 +229,36 @@ class AuthentificationPublicController extends Controller
             return $this->error("Les mots de passe ne correspondent pas");
         }
 
-        // TODO: Enregistrer l'utilisateur en base de données
+        // Vérifier la complexité du mot de passe
+        if (strlen($motDePasse) < 8) {
+            return $this->error("Le mot de passe doit contenir au moins 8 caractères");
+        }
 
-        return $this->succes("Compte créé avec succès");
+        if (!preg_match('/[A-Z]/', $motDePasse) || !preg_match('/[a-z]/', $motDePasse) || !preg_match('/[0-9]/', $motDePasse)) {
+            return $this->error("Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre");
+        }
+
+
+        // On modifie juste le mot de passe qui lui ai assigné et l'email aussi.
+        // Et on créer la variable de sa session
+
+        // Rediriger vers l'espace utilisateur
+        return Response::success("Compte créé avec succès. Bienvenue dans votre espace personnel.", redirect: '/espace-utilisateur');
     }
 
     /**
      * Page d'accueil - première visite
      */
-    public
-    function index(): Response
+    public function index(): Response
     {
-        return Response::view('public/authentification', [
-            'etape' => 'verification',
-            'txtButton' => 'Vérifier le statut'
+        // Par défaut, on affiche la vue par étapes
+        if ($this->request->getPostParams('mode') === 'standard') {
+            // Si le mode standard est demandé, on montre le formulaire classique
+            return Response::view('public/inscription');
+        }
+
+        return Response::view('public/inscription', [
+            'etape' => 'verification'
         ]);
     }
 

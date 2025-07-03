@@ -116,8 +116,8 @@ Une route simple est définie par un tableau contenant la méthode HTTP, le chem
 return [
     // ... autres routes
     ['GET', '/', [App\Controllers\Public\AccueilController::class, 'index']],
-    ['GET', '/authentification', [\App\Controllers\Public\AuthentificationPublicController::class, 'index']],
-    ['POST', '/authentification', [\App\Controllers\Public\AuthentificationPublicController::class, 'authentification']],
+    ['GET', '/authentification', [\App\Controllers\Public\InscriptionController::class, 'index']],
+    ['POST', '/authentification', [\App\Controllers\Public\InscriptionController::class, 'authentification']],
     // ...
 ];
 ```

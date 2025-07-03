@@ -55,8 +55,8 @@ class Request
         return $this->post;
     }
 
-    public function getGetParams(string $name): string
+    public function getGetParams(string $name, ?string $default = null): ?string
     {
-        return $this->get[$name];
+        return $this->get[$name] ?? $default;
     }
 }

@@ -16,8 +16,12 @@ use App\Controllers\MenuViews\EnseignantController;
 use App\Controllers\MenuViews\EtudiantsController;
 use App\Controllers\IndexController;
 use App\Controllers\Public\AccueilController;
-use App\Controllers\Public\AuthentificationPublicController;
+use App\Controllers\Public\EspaceUtilisateurController;
+use App\Controllers\Public\InscriptionController;
 use App\Controllers\Public\SoumissionRapportController;
+
+// Routes pour l'authentification publique
+// Note: Les routes d'authentification publique sont définies dans la section "Routes publiques"
 
 /**
  * Configuration des modules disponibles dans l'application.
@@ -132,10 +136,11 @@ if (!defined('MODULES_CONFIG')) {
  * Définition des routes de l'application.
  */
 $routes = [
-    /* === Routes publiques === */
+    /* === Routes publiques (GET) === */
     ['GET', '/', [AccueilController::class, 'index']],
-    ['GET', '/authentification', [AuthentificationPublicController::class, 'index']],
-    ['GET', '/authentification-administration', [AuthentificationController::class, 'index']],
+    ['GET', '/espace-utilisateur', [EspaceUtilisateurController::class, 'index']],
+    ['GET', '/inscription', [InscriptionController::class, 'index']],
+    ['GET', '/authentification', [AuthentificationController::class, 'index']],
     ['GET', '/soumission-rapport', [SoumissionRapportController::class, 'index']],
     ['GET', '/espace-commission', [CommissionController::class, 'index']],
     ['GET', '/espace-commission/commission/discussion', [DiscussionController::class, 'index']],
@@ -157,8 +162,16 @@ foreach ($configurationModules as $categorie => $modulesParCategorie) {
  * Routes de traitement des formulaires (POST).
  */
 $routes = array_merge($routes, [
-    ['POST', '/authentification', [AuthentificationPublicController::class, 'authentification']],
-    ['POST', '/authentification-administration', [AuthentificationController::class, 'authentification']],
+    /* === Routes d'authentification (POST) === */
+    // Authentification par étapes (nouvelle méthode)
+    ['POST', '/inscription', [InscriptionController::class, 'authentification']],
+
+    // Routes pour l'authentification traditionnelle (formulaires standards)
+
+    // Authentification administration
+    ['POST', '/authentification', [AuthentificationController::class, 'authentification']],
+    ['POST', '/mot-de-passe-oublie', [AuthentificationController::class, 'motDePasseOublie']],
+    ['POST', '/reinitialiser-mot-de-passe', [AuthentificationController::class, 'reinitialiserMotDePasse']],
 
     // CORRIGÉ: Routes de traitement spécifiques
     ['POST', '/traitement-etudiant', [EtudiantsController::class, 'executerAction']],
@@ -167,7 +180,7 @@ $routes = array_merge($routes, [
 
     // Autres routes de traitement
     ['POST', '/charger-donnee-historique-utilisateur', [HistoriquePersonnelController::class, 'chargerPersonnelPourDonneeHistorique']],
-    ['POST', '/charger-historique-personnel', [HistoriquePersonnelController::class, 'chargerDonneeHistoriquePersonnel']],
+    ['POST', '/charger-historique-personnel', [HistoriquePersonnelController::class, 'chargerDonneeHistoriquePersonnel']]
 ]);
 
 return $routes;

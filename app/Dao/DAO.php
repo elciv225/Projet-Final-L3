@@ -167,11 +167,16 @@ abstract class DAO
 
         foreach ($properties as $property) {
             $propertyName = $property->getName();
-            $getter = 'get' . ucfirst($propertyName);
-            if ($reflection->hasMethod($getter)) {
-                $value = $model->$getter();
+            // Utiliser directement le nom de la propriété comme nom de colonne
+            // au lieu de faire une conversion camelCase -> snake_case
+            $columnName = $propertyName;
+        
+            // Construire le nom du getter en convertissant snake_case -> camelCase
+            $getterName = 'get' . str_replace(' ', '', ucwords(str_replace('_', ' ', $propertyName)));
+        
+            if ($reflection->hasMethod($getterName)) {
+                $value = $model->$getterName();
                 if (!is_object($value) && !is_array($value) && $value !== null) {
-                    $columnName = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $propertyName));
                     $data[$columnName] = $value;
                 }
             }

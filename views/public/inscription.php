@@ -6,60 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Assurez-vous que les chemins sont corrects -->
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="stylesheet" href="/assets/css/authentification.css">
     <link rel="stylesheet" href="/assets/css/ajax.css">
+    <link rel="stylesheet" href="/assets/css/inscription.css">
     <link rel="icon" href="data:,">
 </head>
 <body id="content-area">
 
-<div class="auth-container">
-    <aside class="sidebar">
-        <!-- Le contenu du sidebar reste le même -->
-        <button type="button" class="close-btn" id="close-steps-trigger">&times;</button>
-
-        <div class="sidebar-header">
-            <h1 class="logo">Projet XXX</h1>
-        </div>
-        <nav class="etapes-nav">
-            <ol>
-                <li class="etape-item complete">
-                    <div class="etape-marker">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20 6L9 17L4 12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="etape-details">
-                        <span class="etape-number">etape 1</span>
-                        <span class="etape-title">Vérification de l'étudiant</span>
-                    </div>
-                </li>
-                <li class="etape-item in-progress">
-                    <div class="etape-marker"></div>
-                    <div class="etape-details">
-                        <span class="etape-number">etape 2</span>
-                        <span class="etape-title">Envoi de l'email</span>
-                    </div>
-                </li>
-                <li class="etape-item">
-                    <div class="etape-marker"></div>
-                    <div class="etape-details">
-                        <span class="etape-number">etape 3</span>
-                        <span class="etape-title">Vérification du code</span>
-                    </div>
-                </li>
-                <li class="etape-item">
-                    <div class="etape-marker"></div>
-                    <div class="etape-details">
-                        <span class="etape-number">etape 4</span>
-                        <span class="etape-title">Création du mot de passe</span>
-                    </div>
-                </li>
-            </ol>
-        </nav>
-        <div class="sidebar-footer">
-            <p>Déjà un compte? <a href="#">Se Connecter</a></p>
-        </div>
-    </aside>
+<div class="inscription-container">
 
     <div class="main-content-wrapper">
         <main class="form-content">
@@ -95,8 +48,30 @@
             <!-- Conteneur pour les animations GSAP -->
             <div class="form-container-anim">
                 <div class="form-header">
-                    <a href="/authentification" class="back-link">&larr; Recommencer</a>
-                    <button type="button" class="form-etape-counter" id="open-steps-trigger">Etapes 1/4</button>
+                    <a href="/inscription" class="back-link">&larr; Recommencer</a>
+                    <span class="form-etape-counter">
+                        <?php
+                        $etapes = [
+                            'verification' => "Vérification",
+                            'envoi_email' => "Email",
+                            'verification_code' => "Code",
+                            'enregistrement' => "Mot de passe"
+                        ];
+                        $current_etape_key = $etape ?? 'verification';
+                        $etape_keys = array_keys($etapes);
+                        $current_index = array_search($current_etape_key, $etape_keys);
+                        echo "Étape " . ($current_index + 1) . "/" . count($etapes);
+
+                        // Construction du contenu du tooltip
+                        $tooltip_content = "<strong>" . htmlspecialchars($etapes[$current_etape_key]) . "</strong><br>";
+                        $tooltip_content .= "Étapes du processus:<br>";
+                        foreach ($etapes as $key => $name) {
+                            $marker = ($key === $current_etape_key) ? "→ " : "";
+                            $tooltip_content .= $marker . htmlspecialchars($name) . "<br>";
+                        }
+                        ?>
+                        <span class="tooltip"><?= $tooltip_content ?></span>
+                    </span>
                 </div>
 
                 <div class="form-title-group">
@@ -104,7 +79,7 @@
                     <p><?php echo htmlspecialchars($formDescription); ?></p>
                 </div>
 
-                <form action="/authentification" method="post" class="ajax-form">
+                <form action="/inscription" method="post" class="ajax-form">
                     <?php if ($etape === 'verification'): ?>
                         <div class="form-group">
                             <input type="text" name="ip" class="form-input" placeholder=" " id="ip" required>
@@ -159,10 +134,8 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="modal-overlay"></div>
-
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-<script src="/assets/js/authentification.js" defer></script>
+<script src="/assets/js/inscription.js" defer></script>
 <script src="/assets/js/ajax.js" defer></script>
 
 </body>

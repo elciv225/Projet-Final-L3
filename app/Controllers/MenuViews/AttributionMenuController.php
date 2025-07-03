@@ -24,6 +24,9 @@ class AttributionMenuController extends Controller
      */
     public function index(): Response
     {
+        // Récupérer le paramètre d'opération s'il existe
+        $operation = $this->request->getGetParams('operation');
+
         $groupeDAO = new GroupeUtilisateurDAO($this->pdo);
         $attributionDAO = new AttributionMenuDAO($this->pdo);
 
@@ -39,8 +42,15 @@ class AttributionMenuController extends Controller
         $data = [
             'title' => 'Gestion des Menus et Permissions',
             'groupes' => $groupeDAO->recupererTous(),
-            'menus' => $menusStructures
+            'menus' => $menusStructures,
+            'operation' => $operation // Passer le paramètre à la vue
         ];
+
+        // Traiter les opérations spécifiques si nécessaire
+        if ($operation) {
+            // Logique pour différentes opérations GET
+            // À implémenter selon les besoins
+        }
 
         return Response::view('menu_views/attribution-menu', $data);
     }
