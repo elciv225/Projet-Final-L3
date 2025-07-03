@@ -89,6 +89,7 @@ VALUES ('TYPE_ETUDIANT_L1', 'Étudiant en Licence 1', 'CAT_ETUDIANT'),
 INSERT INTO groupe_utilisateur (id, libelle)
 VALUES ('GRP_ETUDIANTS', 'Groupe des étudiants'),
        ('GRP_VALID_RAPPORT', 'Validateur de rapports'),
+       ('GRP_COMMISsION', 'Membre de la Commission'),
        ('GRP_ADMIN_PEDAGO', 'Administration Pédagogique');
 
 

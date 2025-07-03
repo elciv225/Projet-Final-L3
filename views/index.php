@@ -152,7 +152,8 @@ use System\Http\Response;
         const userMenu = document.querySelector('.user-menu');
         if (userMenu) {
             userMenu.addEventListener('click', function () {
-                showPopup('Menu utilisateur - À implémenter', 'info');
+                // Rediriger vers la page de déconnexion
+                window.location.href = '/espace-utilisateur/deconnexion';
             });
         }
 

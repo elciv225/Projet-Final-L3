@@ -39,7 +39,7 @@
                     <div class="hero-grid">
                         <div class="hero-content">
                             <p class="label">Portail de Soutenance</p>
-                            <h1 class="hero-title serif-title" id="hero-title">Projet ✖️✖️✖️️ Ouiiii</h1>
+                            <h1 class="hero-title serif-title" id="hero-title">Portail de Soutenance Master 2</h1>
                             <p class="hero-subtitle">La plateforme officielle pour le dépôt de votre mémoire et de vos documents de soutenance.</p>
                             <a href="/authentification" class="btn btn-primary hero-actions">Soumettre mon dossier</a>
                         </div>
@@ -62,7 +62,7 @@
                                 <p>Vérifiez votre éligibilité et préparez tous les documents requis au format PDF. C'est l'étape la plus importante.</p>
                             </div>
                             <div class="timeline-visual">
-                                <img src="https://images.pexels.com/photos/313563/sand-pattern-wave-texture-313563.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Étudiants préparant des documents dans une bibliothèque.">
+                                <img src="https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Étudiants préparant des documents dans une bibliothèque.">
                             </div>
                         </div>
                         <div class="timeline-item">
@@ -72,7 +72,7 @@
                                 <p>Remplissez le formulaire de soumission en ligne avec précision et téléversez vos documents.</p>
                             </div>
                             <div class="timeline-visual">
-                                <img src="https://images.pexels.com/photos/313563/sand-pattern-wave-texture-313563.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Personne soumettant un dossier en ligne sur un ordinateur.">
+                                <img src="https://images.pexels.com/photos/4050315/pexels-photo-4050315.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Personne soumettant un dossier en ligne sur un ordinateur.">
                             </div>
                         </div>
                         <div class="timeline-item">
@@ -82,7 +82,7 @@
                                 <p>Recevez un email de confirmation une fois votre dossier validé par l'administration.</p>
                             </div>
                             <div class="timeline-visual">
-                                <img src="https://images.pexels.com/photos/313563/sand-pattern-wave-texture-313563.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Célébration d'une réussite ou d'une validation.">
+                                <img src="https://images.pexels.com/photos/7129713/pexels-photo-7129713.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Célébration d'une réussite ou d'une validation.">
                             </div>
                         </div>
                     </div>

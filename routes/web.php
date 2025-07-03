@@ -200,6 +200,10 @@ $routes = array_merge($routes, [
     // Routes pour la soumission de rapport
     ['POST', '/soumission-rapport/soumettre', [SoumissionRapportController::class, 'soumettre']],
 
+    // Routes pour l'espace utilisateur
+    ['POST', '/espace-utilisateur/mettre-a-jour', [EspaceUtilisateurController::class, 'mettreAJour']],
+    ['GET', '/espace-utilisateur/deconnexion', [EspaceUtilisateurController::class, 'deconnexion']],
+
     // Autres routes de traitement
     ['POST', '/charger-donnee-historique-utilisateur', [HistoriquePersonnelController::class, 'chargerPersonnelPourDonneeHistorique']],
     ['POST', '/charger-historique-personnel', [HistoriquePersonnelController::class, 'chargerDonneeHistoriquePersonnel']],

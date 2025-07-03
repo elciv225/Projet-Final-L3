@@ -31,9 +31,39 @@
                         <div class="user-avatar">
                             <?= htmlspecialchars($utilisateur['initiales'] ?? 'U') ?>
                         </div>
-                        <div class="user-info">
+                        <div class="user-info" style="cursor: pointer;">
                             <div class="user-name"><?= htmlspecialchars($utilisateur['nom_complet'] ?? 'Utilisateur') ?></div>
                             <div class="user-email"><?= htmlspecialchars($utilisateur['email'] ?? '') ?></div>
+                        </div>
+                        <!-- Menu utilisateur -->
+                        <div class="user-menu">
+                            <ul class="user-menu-list">
+                                <li class="user-menu-item">
+                                    <a href="/espace-utilisateur" class="user-menu-link">
+                                        <span class="user-menu-icon">👤</span>
+                                        <span>Mon Profil</span>
+                                    </a>
+                                </li>
+                                <li class="user-menu-item">
+                                    <a href="/soumission-rapport" class="user-menu-link">
+                                        <span class="user-menu-icon">📝</span>
+                                        <span>Soumettre un rapport</span>
+                                    </a>
+                                </li>
+                                <li class="user-menu-item">
+                                    <a href="#" class="user-menu-link" id="btn-modifier-profil">
+                                        <span class="user-menu-icon">⚙️</span>
+                                        <span>Modifier mes informations</span>
+                                    </a>
+                                </li>
+                                <li class="user-menu-item user-menu-separator"></li>
+                                <li class="user-menu-item">
+                                    <a href="#" class="user-menu-link user-menu-logout" id="btn-deconnexion">
+                                        <span class="user-menu-icon">🚪</span>
+                                        <span>Se déconnecter</span>
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -46,7 +76,7 @@
                     <h2>Rapport de Stage</h2>
                     <p>Bonjour <?= htmlspecialchars($utilisateur['prenoms'] ?? 'Étudiant') ?>, 
                        gérez votre rapport de stage et suivez son avancement.</p>
-                    <a class="nav-link-ajax" href="/soumission-rapport">Soumettre le rapport</a>
+                    <a class="btn btn-light" href="/soumission-rapport">Soumettre le rapport</a>
                 </div>
 
                 <!-- Widget de soutenance -->
@@ -82,7 +112,7 @@
                         <h3 class="widget-title">Progression de mon rapport</h3>
                     </div>
                     <div class="status-tracker">
-                        <div class="status-line" style="width: 60%;"></div>
+                        <div id="status-line" class="status-line"></div>
                         <div class="status-step completed">
                             <div class="status-dot"></div>
                             <span>Dépôt</span>
@@ -120,7 +150,7 @@
                         <h3 class="widget-title">Actions Rapides</h3>
                     </div>
                     <div class="quick-actions">
-                        <button class="btn btn-primary">Modifier mes informations</button>
+                        <button id="btn-modifier-infos" class="btn btn-primary">Modifier mes informations</button>
                         <button class="btn btn-secondary">Télécharger mon rapport</button>
                         <button class="btn btn-outline">Contacter un encadrant</button>
                     </div>
@@ -128,5 +158,55 @@
             </div>
         </div>
     </main>
+
+    <!-- Modal pour modifier les informations utilisateur -->
+    <div id="modal-modifier-infos" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Modifier mes informations</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="form-modifier-infos" action="/espace-utilisateur/mettre-a-jour" method="post">
+                    <div class="form-group">
+                        <label for="nom">Nom</label>
+                        <input type="text" id="nom" name="nom" value="<?= htmlspecialchars($utilisateur['nom'] ?? '') ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prenoms">Prénoms</label>
+                        <input type="text" id="prenoms" name="prenoms" value="<?= htmlspecialchars($utilisateur['prenoms'] ?? '') ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="<?= htmlspecialchars($utilisateur['email'] ?? '') ?>" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="btn-annuler">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation de déconnexion -->
+    <div id="modal-deconnexion" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirmation de déconnexion</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="btn-annuler-deconnexion">Annuler</button>
+                    <a href="/espace-utilisateur/deconnexion" class="btn btn-primary">Se déconnecter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/assets/js/espace-utilisateur.js"></script>
 </body>
 </html>
