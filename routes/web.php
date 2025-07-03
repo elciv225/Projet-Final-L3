@@ -3,7 +3,6 @@
 use App\Controllers\AuthentificationController;
 use App\Controllers\Commission\DiscussionController;
 use App\Controllers\Commission\HistoriqueApprobationController;
-use App\Controllers\CommissionController;
 use App\Controllers\MenuViews\AttributionMenuController;
 use App\Controllers\MenuViews\EvaluationEtudiantController;
 use App\Controllers\MenuViews\HistoriquePersonnelController;
@@ -14,6 +13,7 @@ use App\Controllers\MenuViews\EnseignantController;
 
 // Ajout du contrôleur Enseignant
 use App\Controllers\MenuViews\EtudiantsController;
+use App\Controllers\MenuViews\AuditsController;
 use App\Controllers\IndexController;
 use App\Controllers\Public\AccueilController;
 use App\Controllers\Public\EspaceUtilisateurController;
@@ -87,7 +87,7 @@ $configurationModules = [
             'controleur' => EvaluationEtudiantController::class,
             'methodePrincipale' => 'index',
             'label' => 'Évaluation Étudiants',
-            'icone' => '�',
+            'icone' => '📝',
             'description' => 'Gestion des notes et évaluations',
             // ... traitements
         ],
@@ -99,13 +99,30 @@ $configurationModules = [
             'description' => 'Attribution des accès aux menus',
             // ... traitements
         ],
-        'reglement-inscription' => [
-            'controleur' => ReglementInscriptionController::class,
+        'audits' => [
+            'controleur' => AuditsController::class,
             'methodePrincipale' => 'index',
-            'label' => 'Règlement Inscription',
-            'icone' => '💲',
-            'description' => 'Suivi des paiements des frais d\'inscription',
-            // ... traitements
+            'label' => 'Audits du Système',
+            'icone' => '🔍',
+            'description' => 'Journal des activités du système',
+            'traitements' => [
+                'get-audits' => ['methodeHttp' => 'POST', 'description' => 'Récupérer les données d\'audit'],
+                'get-utilisateurs' => ['methodeHttp' => 'POST', 'description' => 'Récupérer la liste des utilisateurs'],
+                'export-pdf' => ['methodeHttp' => 'POST', 'description' => 'Exporter les données au format PDF'],
+                'export-excel' => ['methodeHttp' => 'POST', 'description' => 'Exporter les données au format Excel'],
+            ]
+        ],
+        'confirmation-rapports' => [
+            'controleur' => \App\Controllers\MenuViews\ConfirmationRapportsController::class,
+            'methodePrincipale' => 'index',
+            'label' => 'Confirmation des Rapports',
+            'icone' => '✓',
+            'description' => 'Validation et approbation des rapports de stage',
+            'traitements' => [
+                'get-rapports' => ['methodeHttp' => 'POST', 'description' => 'Récupérer les rapports avec pagination'],
+                'get-etudiants' => ['methodeHttp' => 'POST', 'description' => 'Récupérer la liste des étudiants'],
+                'executer-action' => ['methodeHttp' => 'POST', 'description' => 'Exécuter une action sur les rapports'],
+            ]
         ],
     ],
     'commission' => [
@@ -142,8 +159,10 @@ $routes = [
     ['GET', '/inscription', [InscriptionController::class, 'index']],
     ['GET', '/authentification', [AuthentificationController::class, 'index']],
     ['GET', '/soumission-rapport', [SoumissionRapportController::class, 'index']],
-    ['GET', '/espace-commission', [CommissionController::class, 'index']],
-    ['GET', '/espace-commission/commission/discussion', [DiscussionController::class, 'index']],
+    ['GET', '/commission/discussions', [DiscussionController::class, 'index']],
+    ['GET', '/commission/discussion', [DiscussionController::class, 'afficherDiscussion']],
+    ['POST', '/commission/ajouter-message', [DiscussionController::class, 'ajouterMessage']],
+    ['POST', '/commission/voter', [DiscussionController::class, 'voter']],
 
     /* === Route principale de l'espace administrateur === */
     ['GET', '/index', [IndexController::class, 'index']],
@@ -178,9 +197,25 @@ $routes = array_merge($routes, [
     ['POST', '/traitement-enseignant', [EnseignantController::class, 'executerAction']],
     ['POST', '/traitement-personnel-admin', [PersonnelAdministratifController::class, 'executerAction']],
 
+    // Routes pour la soumission de rapport
+    ['POST', '/soumission-rapport/soumettre', [SoumissionRapportController::class, 'soumettre']],
+
     // Autres routes de traitement
     ['POST', '/charger-donnee-historique-utilisateur', [HistoriquePersonnelController::class, 'chargerPersonnelPourDonneeHistorique']],
-    ['POST', '/charger-historique-personnel', [HistoriquePersonnelController::class, 'chargerDonneeHistoriquePersonnel']]
+    ['POST', '/charger-historique-personnel', [HistoriquePersonnelController::class, 'chargerDonneeHistoriquePersonnel']],
+    ['POST', '/charger-permissions-groupe', [AttributionMenuController::class, 'chargerPermissionsGroupe']],
+    ['POST', '/charger-formulaire-paramatre-specifique', [ParametreGenerauxController::class, 'chargerFormulaireParametreGeneraux']],
+
+    // Routes pour la confirmation des rapports
+    ['POST', '/confirmation-rapports/get-rapports', [\App\Controllers\MenuViews\ConfirmationRapportsController::class, 'getRapports']],
+    ['POST', '/confirmation-rapports/get-etudiants', [\App\Controllers\MenuViews\ConfirmationRapportsController::class, 'getEtudiants']],
+    ['POST', '/confirmation-rapports/executer-action', [\App\Controllers\MenuViews\ConfirmationRapportsController::class, 'executerAction']],
+
+    // Routes pour les audits
+    ['POST', '/audits/get-audits', [AuditsController::class, 'getAudits']],
+    ['POST', '/audits/get-utilisateurs', [AuditsController::class, 'getUtilisateurs']],
+    ['POST', '/audits/export-pdf', [AuditsController::class, 'exportPDF']],
+    ['POST', '/audits/export-excel', [AuditsController::class, 'exportExcel']]
 ]);
 
 return $routes;

@@ -65,7 +65,65 @@ class Controller
         if (!defined('MODULES_CONFIG')) {
             return [];
         }
-        return MODULES_CONFIG;
+
+        // Si l'utilisateur n'est pas connecté, retourner tous les modules
+        if (!isset($_SESSION['utilisateur_connecte'])) {
+            return MODULES_CONFIG;
+        }
+
+        // Récupérer le groupe de l'utilisateur connecté
+        $groupeUtilisateurId = $_SESSION['utilisateur_connecte']['groupe_utilisateur_id'];
+
+        // Récupérer les menus accessibles pour ce groupe
+        $attributionMenuDAO = new \App\Dao\AttributionMenuDAO($this->pdo);
+        $menusAccessibles = $attributionMenuDAO->recupererMenusParGroupe($groupeUtilisateurId);
+
+        // Si aucun menu n'est accessible, retourner un tableau vide
+        // Cela garantit que les utilisateurs ne voient que les menus auxquels ils ont accès
+        if (empty($menusAccessibles)) {
+            // Retourner un tableau vide pour ne pas afficher de menus non autorisés
+            return [];
+        }
+
+        // Filtrer les modules en fonction des menus accessibles
+        $modulesFiltered = [];
+        $allModules = MODULES_CONFIG;
+
+        // Organiser les menus accessibles par catégorie
+        $menusByCategory = [];
+        foreach ($menusAccessibles as $menu) {
+            $menusByCategory[$menu['categorie_libelle']][] = $menu;
+        }
+
+        // Pour chaque catégorie de modules
+        foreach ($allModules as $categoryName => $categoryModules) {
+            // Pour chaque module dans cette catégorie
+            foreach ($categoryModules as $moduleName => $moduleConfig) {
+                // Vérifier si le module correspond à un menu accessible
+                foreach ($menusAccessibles as $menu) {
+                    // Si le nom du module correspond à la vue du menu
+                    if ($moduleName === $menu['menu_vue'] || 
+                        // Ou si le libellé du module correspond au libellé du menu
+                        strtolower($moduleConfig['label']) === strtolower($menu['menu_libelle'])) {
+
+                        // Ajouter le module à la liste filtrée
+                        if (!isset($modulesFiltered[$categoryName])) {
+                            $modulesFiltered[$categoryName] = [];
+                        }
+                        $modulesFiltered[$categoryName][$moduleName] = $moduleConfig;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Si aucun module n'a été filtré, retourner un tableau vide
+        // Cela garantit que les utilisateurs ne voient que les menus auxquels ils ont accès
+        if (empty($modulesFiltered)) {
+            return [];
+        }
+
+        return $modulesFiltered;
     }
 
     /**
@@ -74,6 +132,9 @@ class Controller
      */
     public function gestionMenuModules(string $view): Response
     {
+        // Augmenter la limite de mémoire pour cette fonction
+        ini_set('memory_limit', '2048M');
+
         $uri = $_SERVER['REQUEST_URI'];
         // Supprime le slash de début/fin et découpe l'URI en parties
         $pathParts = explode('/', trim($uri, '/'));
@@ -85,6 +146,34 @@ class Controller
         // Les parties pertinentes sont à l'index 1 (catégorie) et 2 (nom du module)
         $category = $pathParts[1];
         $moduleName = $pathParts[2];
+
+        // Vérifier si l'utilisateur est connecté pour les modules qui ne sont pas publics
+        // Sauf pour le module 'audits' qui doit être accessible sans connexion
+        if (!isset($_SESSION['utilisateur_connecte']) && $moduleName !== 'audits' && $category !== 'public') {
+            // Rediriger vers la page d'authentification
+            return Response::redirect('/authentification');
+        }
+
+        // Vérifier si l'utilisateur a accès à ce module spécifique
+        if (isset($_SESSION['utilisateur_connecte'])) {
+            $groupeUtilisateurId = $_SESSION['utilisateur_connecte']['groupe_utilisateur_id'];
+            $attributionMenuDAO = new \App\Dao\AttributionMenuDAO($this->pdo);
+            $menusAccessibles = $attributionMenuDAO->recupererMenusParGroupe($groupeUtilisateurId);
+
+            // Vérifier si le module demandé est dans la liste des menus accessibles
+            $moduleAccessible = false;
+            foreach ($menusAccessibles as $menu) {
+                if ($menu['menu_vue'] === $moduleName) {
+                    $moduleAccessible = true;
+                    break;
+                }
+            }
+
+            // Si le module n'est pas accessible et n'est pas public, rediriger vers la page d'accueil
+            if (!$moduleAccessible && $category !== 'public' && $moduleName !== 'audits') {
+                return Response::redirect('/index');
+            }
+        }
 
         // Récupère la configuration du module en utilisant la nouvelle méthode francisée
         $moduleConfig = $this->getModuleConfig($category, $moduleName);

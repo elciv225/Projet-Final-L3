@@ -227,6 +227,120 @@ VALUES ('ENS002', '21INF001', 'DISC_ENS002_21INF001',
         '2024-05-10 09:00:15');
 
 -- =================================================================
+--      AJOUT DES MENUS ET TRAITEMENTS POUR L'APPLICATION
+-- =================================================================
+
+-- Catégories de menu
+INSERT INTO categorie_menu (id, libelle)
+VALUES ('CAT_MENU_GESTION', 'Gestion'),
+       ('CAT_MENU_AUTRES', 'Autres'),
+       ('CAT_MENU_COMMISSION', 'Commission'),
+       ('CAT_MENU_PUBLIC', 'Public');
+
+-- Menus
+INSERT INTO menu (id, categorie_menu_id, libelle, vue)
+VALUES ('MENU_ETUDIANTS', 'CAT_MENU_GESTION', 'Étudiants', 'etudiants'),
+       ('MENU_ENSEIGNANTS', 'CAT_MENU_GESTION', 'Enseignants', 'enseignants'),
+       ('MENU_PERSONNEL_ADMIN', 'CAT_MENU_GESTION', 'Personnel Administratif', 'personnel-administratif'),
+       ('MENU_PARAMETRES', 'CAT_MENU_GESTION', 'Paramètres Généraux', 'parametres-generaux'),
+       ('MENU_HISTORIQUE_PERSONNEL', 'CAT_MENU_GESTION', 'Historique du Personnel', 'historique-personnel'),
+       ('MENU_EVALUATION', 'CAT_MENU_AUTRES', 'Évaluation Étudiants', 'evaluation-etudiant'),
+       ('MENU_ATTRIBUTION', 'CAT_MENU_AUTRES', 'Gestion des menus', 'attribution-menu'),
+       ('MENU_REGLEMENT', 'CAT_MENU_AUTRES', 'Règlement Inscription', 'reglement-inscription'),
+       ('MENU_AUDITS', 'CAT_MENU_AUTRES', 'Audits du Système', 'audits'),
+       ('MENU_CONFIRMATION_RAPPORTS', 'CAT_MENU_AUTRES', 'Confirmation des Rapports', 'confirmation-rapports'),
+       ('MENU_MESSAGERIE', 'CAT_MENU_COMMISSION', 'Discussion', 'messagerie-commission'),
+       ('MENU_HISTORIQUE_APPROBATION', 'CAT_MENU_COMMISSION', 'Historique des approbations', 'historique-approbation'),
+       ('MENU_ACCUEIL', 'CAT_MENU_PUBLIC', 'Accueil', 'accueil'),
+       ('MENU_ESPACE_UTILISATEUR', 'CAT_MENU_PUBLIC', 'Espace Utilisateur', 'espace-utilisateur'),
+       ('MENU_INSCRIPTION', 'CAT_MENU_PUBLIC', 'Inscription', 'inscription'),
+       ('MENU_SOUMISSION_RAPPORT', 'CAT_MENU_PUBLIC', 'Soumission Rapport', 'soumission-rapport');
+
+-- Traitements
+INSERT INTO traitement (id, libelle)
+VALUES ('TRT_GESTION_ETUDIANTS', 'Gestion des étudiants'),
+       ('TRT_GESTION_ENSEIGNANTS', 'Gestion des enseignants'),
+       ('TRT_GESTION_PERSONNEL', 'Gestion du personnel administratif'),
+       ('TRT_PARAMETRES', 'Gestion des paramètres'),
+       ('TRT_HISTORIQUE_PERSONNEL', 'Consultation historique personnel'),
+       ('TRT_EVALUATION', 'Évaluation des étudiants'),
+       ('TRT_ATTRIBUTION_MENU', 'Attribution des menus'),
+       ('TRT_REGLEMENT', 'Gestion des règlements'),
+       ('TRT_AUDITS', 'Consultation des audits'),
+       ('TRT_CONFIRMATION_RAPPORTS', 'Confirmation des rapports'),
+       ('TRT_MESSAGERIE', 'Messagerie commission'),
+       ('TRT_HISTORIQUE_APPROBATION', 'Historique des approbations'),
+       ('TRT_ACCUEIL', 'Accueil public'),
+       ('TRT_ESPACE_UTILISATEUR', 'Espace utilisateur'),
+       ('TRT_INSCRIPTION_PUBLIC', 'Inscription publique'),
+       ('TRT_SOUMISSION_RAPPORT', 'Soumission de rapport');
+
+-- Menu-Traitement
+INSERT INTO menu_traitement (menu_id, traitement_id)
+VALUES ('MENU_ETUDIANTS', 'TRT_GESTION_ETUDIANTS'),
+       ('MENU_ENSEIGNANTS', 'TRT_GESTION_ENSEIGNANTS'),
+       ('MENU_PERSONNEL_ADMIN', 'TRT_GESTION_PERSONNEL'),
+       ('MENU_PARAMETRES', 'TRT_PARAMETRES'),
+       ('MENU_HISTORIQUE_PERSONNEL', 'TRT_HISTORIQUE_PERSONNEL'),
+       ('MENU_EVALUATION', 'TRT_EVALUATION'),
+       ('MENU_ATTRIBUTION', 'TRT_ATTRIBUTION_MENU'),
+       ('MENU_REGLEMENT', 'TRT_REGLEMENT'),
+       ('MENU_AUDITS', 'TRT_AUDITS'),
+       ('MENU_CONFIRMATION_RAPPORTS', 'TRT_CONFIRMATION_RAPPORTS'),
+       ('MENU_MESSAGERIE', 'TRT_MESSAGERIE'),
+       ('MENU_HISTORIQUE_APPROBATION', 'TRT_HISTORIQUE_APPROBATION'),
+       ('MENU_ACCUEIL', 'TRT_ACCUEIL'),
+       ('MENU_ESPACE_UTILISATEUR', 'TRT_ESPACE_UTILISATEUR'),
+       ('MENU_INSCRIPTION', 'TRT_INSCRIPTION_PUBLIC'),
+       ('MENU_SOUMISSION_RAPPORT', 'TRT_SOUMISSION_RAPPORT');
+
+-- =================================================================
+--      CRÉATION DES UTILISATEURS DE TEST
+-- =================================================================
+
+-- Création des utilisateurs de test avec les procédures stockées
+
+-- 1. Assy Eliel (Super Admin avec accès à toutes les fonctions)
+CALL sp_creer_compte_utilisateur(
+    'ASSY', 'Eliel', 'assy.eliel@email.com', 'eassy', 'rappliq', '1985-03-15', 'CAT_ADMIN', @user_id
+);
+-- Attribution du groupe Super Admin
+UPDATE utilisateur SET groupe_utilisateur_id = 'GRP_ADMIN_PEDAGO' WHERE id = @user_id;
+
+-- 2. Ouattara Katie (Prof, membre de la commission)
+CALL sp_creer_compte_utilisateur(
+    'OUATTARA', 'Katie', 'ouattara.katie@email.com', 'kouattara', 'rappliq', '1980-07-22', 'CAT_ENSEIGNANT', @user_id
+);
+-- Attribution du groupe Validateur de rapports
+UPDATE utilisateur SET groupe_utilisateur_id = 'GRP_VALID_RAPPORT' WHERE id = @user_id;
+
+-- 3. Bahou Stéphane (Étudiant de M2 pour tester la partie publique)
+CALL sp_inscrire_etudiant(
+    'BAHOU', 'Stéphane', 'bahou.stephane@email.com', 'rappliq', '1998-11-05',
+    'NIVEAU_MASTER2', '2023-2024', 350000, @user_id
+);
+
+-- 4. Akahoua Syntiche (Personnel Administratif, valider rapport, inscription,...)
+CALL sp_creer_compte_utilisateur(
+    'AKAHOUA', 'Syntiche', 'akahoua.syntiche@email.com', 'sakahoua', 'rappliq', '1990-04-18', 'CAT_ADMIN', @user_id
+);
+-- Attribution du groupe Admin Pédago
+UPDATE utilisateur SET groupe_utilisateur_id = 'GRP_ADMIN_PEDAGO' WHERE id = @user_id;
+
+-- Attribution des autorisations pour les traitements
+INSERT INTO autorisation_action (groupe_utilisateur_id, traitement_id, action_id)
+VALUES 
+-- Super Admin (Assy Eliel) a accès à tous les traitements et actions
+('GRP_ADMIN_PEDAGO', 'TRT_GESTION_ETUDIANTS', 'ACT_VERIF_PAIE'),
+('GRP_ADMIN_PEDAGO', 'TRT_GESTION_ETUDIANTS', 'ACT_VALID_INSCR'),
+('GRP_ADMIN_PEDAGO', 'TRT_VALID_RAPPORT', 'ACT_DEPOT_NOTE'),
+('GRP_ADMIN_PEDAGO', 'TRT_VALID_RAPPORT', 'ACT_VALID_NOTE'),
+
+-- Validateur de rapports (Ouattara Katie) a accès aux traitements de validation
+('GRP_VALID_RAPPORT', 'TRT_VALID_RAPPORT', 'ACT_DEPOT_NOTE'),
+('GRP_VALID_RAPPORT', 'TRT_VALID_RAPPORT', 'ACT_VALID_NOTE');
+
+-- =================================================================
 --      AJOUT DE VALEURS PAR DÉFAUT POUR LA ROBUSTESSE
 -- =================================================================
 

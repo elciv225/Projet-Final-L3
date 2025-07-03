@@ -759,7 +759,79 @@ END//
 DELIMITER ;
 
 -- =================================================================
---  4. INDEXES
+-- 4. PROCEDURES POUR CORRIGER LES BUGS
+-- =================================================================
+
+DELIMITER //
+
+-- Procédure pour enregistrer un dépôt de rapport avec validation
+CREATE PROCEDURE sp_enregistrer_depot_rapport(
+    IN p_utilisateur_id VARCHAR(30),
+    IN p_rapport_etudiant_id VARCHAR(40),
+    IN p_date_depot DATE,
+    OUT p_success BOOLEAN,
+    OUT p_message VARCHAR(255)
+)
+BEGIN
+    DECLARE v_est_etudiant INT DEFAULT 0;
+    DECLARE v_rapport_existe INT DEFAULT 0;
+    DECLARE v_deja_depose INT DEFAULT 0;
+
+    -- Vérifier si l'utilisateur est un étudiant
+    SELECT COUNT(*) INTO v_est_etudiant FROM etudiant WHERE utilisateur_id = p_utilisateur_id;
+
+    -- Vérifier si le rapport existe
+    SELECT COUNT(*) INTO v_rapport_existe FROM rapport_etudiant WHERE id = p_rapport_etudiant_id;
+
+    -- Vérifier si un dépôt existe déjà
+    SELECT COUNT(*) INTO v_deja_depose 
+    FROM depot_rapport 
+    WHERE utilisateur_id = p_utilisateur_id AND rapport_etudiant_id = p_rapport_etudiant_id;
+
+    -- Validation des données
+    IF v_est_etudiant = 0 THEN
+        SET p_success = FALSE;
+        SET p_message = CONCAT('L\'utilisateur ', p_utilisateur_id, ' n\'est pas un étudiant');
+    ELSEIF v_rapport_existe = 0 THEN
+        SET p_success = FALSE;
+        SET p_message = CONCAT('Le rapport ', p_rapport_etudiant_id, ' n\'existe pas');
+    ELSEIF v_deja_depose > 0 THEN
+        SET p_success = FALSE;
+        SET p_message = 'Ce rapport a déjà été déposé par cet étudiant';
+    ELSE
+        -- Insérer le dépôt
+        INSERT INTO depot_rapport (utilisateur_id, rapport_etudiant_id, date_depot)
+        VALUES (p_utilisateur_id, p_rapport_etudiant_id, p_date_depot);
+
+        SET p_success = TRUE;
+        SET p_message = 'Dépôt enregistré avec succès';
+    END IF;
+END//
+
+-- Procédure pour récupérer les activités récentes
+CREATE PROCEDURE sp_get_recent_activities(
+    IN p_limit INT
+)
+BEGIN
+    SELECT 
+        u.id as utilisateur_id,
+        u.nom,
+        u.prenoms,
+        tu.libelle as type_utilisateur,
+        'Activité récente' as action,
+        'Module' as module,
+        NOW() as date_activite,
+        'Terminé' as statut
+    FROM utilisateur u
+    JOIN type_utilisateur tu ON u.type_utilisateur_id = tu.id
+    ORDER BY u.id DESC
+    LIMIT p_limit;
+END//
+
+DELIMITER ;
+
+-- =================================================================
+-- 5. INDEXES
 -- =================================================================
 
 -- Création des indexes

@@ -3,10 +3,23 @@
 namespace App\Controllers\MenuViews;
 
 use App\Controllers\Controller;
+use App\Dao\HistoriquePersonnelDAO;
+use System\Database\Database;
 use System\Http\Response;
+use PDO;
 
 class HistoriquePersonnelController extends Controller
 {
+    protected PDO $pdo;
+    protected HistoriquePersonnelDAO $historiqueDAO;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->pdo = Database::getConnection();
+        $this->historiqueDAO = new HistoriquePersonnelDAO($this->pdo);
+    }
+
     public function index(): Response
     {
         $data = [
@@ -22,35 +35,17 @@ class HistoriquePersonnelController extends Controller
     public function chargerPersonnelPourDonneeHistorique(): Response
     {
         $typeUtilisateur = $this->request->getPostParams('type-utilisateur');
+        $listeUtilisateur = [];
 
         switch ($typeUtilisateur) {
             case 'enseignant':
-                $listeUtilisateur = [
-                    [
-                        'utilisateur_id' => 1,
-                        'nom-prenom' => 'Enseignant 1'
-                    ],
-                    [
-                        'utilisateur_id' => 2,
-                        'nom-prenom' => 'Enseignant 2'
-                    ]
-                ];
+                $listeUtilisateur = $this->historiqueDAO->recupererEnseignants();
                 break;
             case 'personnel_administratif':
-                $listeUtilisateur = [
-                    [
-                        'utilisateur_id' => 1,
-                        'nom-prenom' => 'Personnel 1'
-                    ],
-                    [
-                        'utilisateur_id' => 2,
-                        'nom-prenom' => 'Personnel 2'
-                    ]
-                ];
+                $listeUtilisateur = $this->historiqueDAO->recupererPersonnelAdministratif();
                 break;
             default:
-                $listeUtilisateur = [];
-                $this->error("Aucun type d'utilisateur");
+                return $this->error("Aucun type d'utilisateur sélectionné");
         }
 
         $data = [
@@ -68,7 +63,7 @@ class HistoriquePersonnelController extends Controller
             $data,
             json: [
                 'statut' => 'succes',
-                'message' => 'Données chargé'
+                'message' => 'Données chargées avec succès'
             ]
         );
     }
@@ -90,33 +85,31 @@ class HistoriquePersonnelController extends Controller
         $corps = [];
         $donneesChargees = true; // Indicateur que des données ont été recherchées
 
-        // Simuler la récupération des données en fonction du type d'historique
+        // Récupérer les données en fonction du type d'historique
         switch ($typeHistorique) {
             case 'fonction':
                 $entete = ['Fonction', 'Date de début', 'Date de fin'];
-                // Données d'exemple pour l'historique des fonctions de l'utilisateur $utilisateurId
-                if ($utilisateurId == 1) { // Utiliser == au lieu de === pour la comparaison
-                    $corps = [
-                        ['Enseignant de Mathématiques', '01/09/2020', '31/08/2023'],
-                        ['Responsable de niveau', '01/09/2023', 'Actuel']
-                    ];
+                $historiqueData = $this->historiqueDAO->recupererHistoriqueFonctions($utilisateurId);
+
+                foreach ($historiqueData as $row) {
+                    $corps[] = [$row['fonction'], $row['date_debut'], $row['date_fin']];
                 }
                 break;
 
             case 'grade':
-                $entete = ['Grade', 'Date de début', 'Date de fin'];
-                // Données d'exemple pour l'historique des grades de l'utilisateur $utilisateurId
-                if ($utilisateurId == 1) {
-                    $corps = [
-                        ['Master en Éducation', '15/06/2020', 'diplome_master.pdf'],
-                        ['Agrégation', '10/07/2023', 'agregation_2023.pdf']
-                    ];
-                } else if ($utilisateurId == 2) {
-                    $corps = [
-                        ['Licence en Histoire', '20/06/2018', 'diplome_licence.pdf']
-                    ];
+                $entete = ['Grade', 'Date d\'obtention', 'Document'];
+                $historiqueData = $this->historiqueDAO->recupererHistoriqueGrades($utilisateurId);
+
+                foreach ($historiqueData as $row) {
+                    $corps[] = [$row['grade'], $row['date_debut'], $row['document']];
                 }
                 break;
+
+            default:
+                return Response::json([
+                    'statut' => 'error',
+                    'message' => 'Type d\'historique non reconnu'
+                ]);
         }
 
         $data = [
@@ -125,12 +118,12 @@ class HistoriquePersonnelController extends Controller
             'content' => 'Gestion du corps enseignant de l\'établissement.',
             'entete' => $entete,
             'corps' => $corps,
-            'donneesChargees' => $donneesChargees // Ajouter cet indicateur
+            'donneesChargees' => $donneesChargees
         ];
 
         return Response::view('menu_views/historique-personnel', $data, json: [
             'statut' => 'succes',
-            'message' => 'Données chargées'
+            'message' => 'Données chargées avec succès'
         ]);
     }
 }

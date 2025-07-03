@@ -212,6 +212,7 @@
         <div class="actions">
             <button id="download-html-btn" class="secondary"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>Télécharger HTML</button>
             <button id="download-pdf-btn"><div id="pdf-loader"></div><svg id="pdf-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg><span id="pdf-text">Télécharger PDF</span></button>
+            <button id="submit-report-btn" class="primary" style="background-color: #4CAF50; border-color: #4CAF50;"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Soumettre le rapport</button>
         </div>
     </header>
     <main class="main-content">
@@ -541,5 +542,90 @@
     });
 </script>
 
+<!-- Formulaire caché pour la soumission du rapport -->
+<form id="report-submission-form" action="/soumission-rapport/soumettre" method="post" style="display: none;">
+    <input type="hidden" name="report-title" id="hidden-report-title">
+    <input type="hidden" name="report-html" id="hidden-report-html">
+</form>
+
+<script>
+    // Ajouter la gestion du bouton de soumission
+    document.getElementById('submit-report-btn').addEventListener('click', function() {
+        // Vérifier si le titre est rempli
+        const reportTitle = document.getElementById('report-title').value.trim();
+        if (!reportTitle) {
+            alert('Veuillez saisir un titre pour votre rapport.');
+            return;
+        }
+
+        // Vérifier si le rapport a du contenu
+        const previewBody = document.getElementById('preview-body');
+        if (!previewBody.innerHTML.trim()) {
+            alert('Votre rapport est vide. Veuillez ajouter du contenu avant de soumettre.');
+            return;
+        }
+
+        // Confirmation de soumission
+        if (!confirm('Êtes-vous sûr de vouloir soumettre ce rapport ? Cette action est définitive.')) {
+            return;
+        }
+
+        // Préparer le contenu HTML complet
+        const previewContent = document.querySelector('.preview-content').cloneNode(true);
+
+        // Créer un document HTML complet
+        const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <title>${reportTitle}</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+                .preview-page { padding: 4rem 3rem; max-width: 800px; margin: 0 auto; }
+                #preview-cover-page { display: flex; flex-direction: column; justify-content: space-between; text-align: center; min-height: 800px; }
+                .cover-header { display: flex; justify-content: space-between; align-items: flex-start; text-align: left; width: 100%; }
+                .cover-main { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+                #preview-report-title { font-size: 2.5rem; font-weight: 700; margin: 1rem 0; line-height: 1.2; }
+                .cover-footer { text-align: center; font-size: 0.9rem; }
+                #preview-body h1, #preview-body h2, #preview-body h3 { color: #1A5E63; margin-bottom: 1.5rem; margin-top: 2.5rem; }
+                #preview-body h1 { font-size: 1.8rem; border-bottom: 2px solid #1A5E63; padding-bottom: 0.5rem; }
+                #preview-body h2 { font-size: 1.5rem; }
+                #preview-body h3 { font-size: 1.2rem; font-weight: 600; color: #444; }
+                #preview-body p { font-size: 1rem; line-height: 1.7; margin-bottom: 1rem; }
+            </style>
+        </head>
+        <body>
+            ${previewContent.outerHTML}
+        </body>
+        </html>
+        `;
+
+        // Remplir le formulaire caché
+        document.getElementById('hidden-report-title').value = reportTitle;
+        document.getElementById('hidden-report-html').value = htmlContent;
+
+        // Soumettre le formulaire
+        document.getElementById('report-submission-form').submit();
+    });
+
+    <?php if (isset($rapport_existant)): ?>
+    // Afficher un message si l'utilisateur a déjà soumis un rapport
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusMessage = document.createElement('div');
+        statusMessage.style.cssText = 'background-color: #f8d7da; color: #721c24; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; text-align: center;';
+        statusMessage.innerHTML = `
+            <h3>Vous avez déjà soumis un rapport</h3>
+            <p>Statut actuel: <?= isset($statut_rapport['statut']) ? ucfirst($statut_rapport['statut']) : 'En attente' ?></p>
+            <p>Date de soumission: <?= isset($statut_rapport['date_depot']) ? $statut_rapport['date_depot'] : 'Non disponible' ?></p>
+        `;
+        document.querySelector('.form-panel').prepend(statusMessage);
+
+        // Désactiver le bouton de soumission
+        document.getElementById('submit-report-btn').disabled = true;
+        document.getElementById('submit-report-btn').title = 'Vous avez déjà soumis un rapport';
+    });
+    <?php endif; ?>
+</script>
 </body>
 </html>

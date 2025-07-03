@@ -1,0 +1,42 @@
+
+        <!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <title>La race condition</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+                .preview-page { padding: 4rem 3rem; max-width: 800px; margin: 0 auto; }
+                #preview-cover-page { display: flex; flex-direction: column; justify-content: space-between; text-align: center; min-height: 800px; }
+                .cover-header { display: flex; justify-content: space-between; align-items: flex-start; text-align: left; width: 100%; }
+                .cover-main { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+                #preview-report-title { font-size: 2.5rem; font-weight: 700; margin: 1rem 0; line-height: 1.2; }
+                .cover-footer { text-align: center; font-size: 0.9rem; }
+                #preview-body h1, #preview-body h2, #preview-body h3 { color: #1A5E63; margin-bottom: 1.5rem; margin-top: 2.5rem; }
+                #preview-body h1 { font-size: 1.8rem; border-bottom: 2px solid #1A5E63; padding-bottom: 0.5rem; }
+                #preview-body h2 { font-size: 1.5rem; }
+                #preview-body h3 { font-size: 1.2rem; font-weight: 600; color: #444; }
+                #preview-body p { font-size: 1rem; line-height: 1.7; margin-bottom: 1rem; }
+            </style>
+        </head>
+        <body>
+            <div class="preview-content">
+                <div class="preview-page" id="preview-cover-page">
+                    <header class="cover-header">
+                        <div id="preview-logo-container">
+                            <img src="https://logo.clearbit.com/ens-lyon.fr" alt="Logo École">
+                        </div>
+                        <div id="preview-submission-date">Le 15 Juin 2025</div>
+                    </header>
+                    <main class="cover-main"><h1 id="preview-report-title">La race condition</h1><p id="preview-formation-year" style="margin-top:1rem; font-size: 1.2rem;">M2 Informatique</p></main>
+                    <footer class="cover-footer">
+                        <p><strong><span id="preview-company-name">Société AgriFourni</span></strong></p>
+                        <p>Rapport préparé par : <strong id="preview-student-name">Bahou</strong></p>
+                        <p>Tuteurs : <span id="preview-school-tutor">M. Martin</span> &amp; <span id="preview-company-tutor">Mme. Garcia</span></p>
+                    </footer>
+                </div>
+                <div class="preview-page" id="preview-body"><h1>a</h1></div>
+            </div>
+        </body>
+        </html>
+        

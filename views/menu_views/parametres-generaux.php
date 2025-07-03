@@ -3,7 +3,7 @@
         <div class="header-left">
             <h1>Gestion des Paramètres spécifique</h1>
         </div>
-        <div class="form-group small-width right-align  mb-20">
+        <div class="form-group small-width right-align mb-20">
             <form action="/charger-formulaire-paramatre-specifique" method="post" class="ajax-form"
                   data-target="#zone-dynamique">
                 <select class="form-input select-submit" id="paramatre-specifique" name="parametre-specifique">
@@ -30,15 +30,27 @@
     </header>
 
     <div id="zone-dynamique">
-        <!-- Tout les éléments ont des stats-grid -->
+        <!-- Affichage des statistiques pour chaque type de paramètre -->
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-title">UE</span>
-                    <span class="stat-icon blue"></span>
+            <?php if (isset($stats) && !empty($stats)): ?>
+                <?php foreach ($stats as $stat): ?>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title"><?= htmlspecialchars($stat['label']) ?></span>
+                            <span class="stat-icon blue"></span>
+                        </div>
+                        <div class="stat-value"><?= htmlspecialchars($stat['count']) ?></div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Aucune donnée</span>
+                        <span class="stat-icon blue"></span>
+                    </div>
+                    <div class="stat-value">0</div>
                 </div>
-                <div class="stat-value">29</div>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
 </main>

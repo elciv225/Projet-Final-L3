@@ -12,17 +12,19 @@
             </div>
             <div class="section-content">
                 <div class="form-group-inline" style="margin-bottom: 32px;">
-                    <label for="userGroupSelect">Groupe utilisateur:</label>
-                    <div class="select-wrapper">
-                        <select id="userGroupSelect" class="custom-select">
-                            <option value="">Sélectionner un groupe...</option>
-                            <?php if (isset($groupes)): foreach ($groupes as $groupe): ?>
-                                <option value="<?= htmlspecialchars($groupe->getId()) ?>">
-                                    <?= htmlspecialchars($groupe->getLibelle()) ?>
-                                </option>
-                            <?php endforeach; endif; ?>
-                        </select>
-                    </div>
+                    <form action="/charger-permissions-groupe" method="post" class="ajax-form" data-target="#permissionsTableBody">
+                        <label for="userGroupSelect">Groupe utilisateur:</label>
+                        <div class="select-wrapper">
+                            <select id="userGroupSelect" name="groupe_id" class="custom-select select-submit">
+                                <option value="">Sélectionner un groupe...</option>
+                                <?php if (isset($groupes)): foreach ($groupes as $groupe): ?>
+                                    <option value="<?= htmlspecialchars($groupe->getId()) ?>">
+                                        <?= htmlspecialchars($groupe->getLibelle()) ?>
+                                    </option>
+                                <?php endforeach; endif; ?>
+                            </select>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="permissions-table-container">

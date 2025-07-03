@@ -11,11 +11,28 @@ class IndexController extends Controller
      */
     public function index(): Response
     {
+        // Charger les données dynamiques pour le tableau de bord
+        $dashboardDAO = new \App\Dao\DashboardDAO($this->pdo);
+
+        // Récupérer les statistiques
+        $stats = $dashboardDAO->getStatistics();
+
+        // Récupérer les activités récentes
+        $recentActivities = $dashboardDAO->getRecentActivities(3);
+
+        // Récupérer les informations système
+        $systemInfo = $dashboardDAO->getSystemInfo();
+
+        // Préparer les données pour la vue
         $data = [
             'title' => 'Espace Administrateur',
             'heading' => 'Bienvenue dans l\'Espace Administrateur',
             'content' => 'Tableau de bord principal de l\'espace administrateur.',
-            'modules' => $this->getAvailableModules()
+            'modules' => $this->getAvailableModules(),
+            'stats' => $stats,
+            'recentActivities' => $recentActivities,
+            'systemInfo' => $systemInfo,
+            'currentUser' => $_SESSION['utilisateur_connecte'] ?? null
         ];
 
         // Si c'est une requête AJAX, retourner seulement le contenu du dashboard

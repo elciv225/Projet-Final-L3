@@ -92,6 +92,53 @@ class AttributionMenuController extends Controller
     }
 
     /**
+     * Charge les permissions pour un groupe donné et renvoie le HTML du tableau de permissions.
+     */
+    public function chargerPermissionsGroupe(): Response
+    {
+        $groupeId = $this->request->getPostParams('groupe_id');
+        if (!$groupeId) {
+            return Response::json(['error' => 'ID de groupe manquant'], 400);
+        }
+
+        $attributionDAO = new AttributionMenuDAO($this->pdo);
+        $menusBruts = $attributionDAO->recupererMenusAvecActions();
+        $permissions = $attributionDAO->recupererPermissionsParGroupe($groupeId);
+
+        // Structurer les données pour un affichage facile dans la vue
+        $menusStructures = [];
+        foreach ($menusBruts as $row) {
+            $menusStructures[$row['menu_libelle']][$row['traitement_id']]['libelle'] = $row['traitement_libelle'];
+            $menusStructures[$row['menu_libelle']][$row['traitement_id']]['actions'][$row['action_id']] = $row['action_libelle'];
+        }
+
+        // Formater les permissions pour une utilisation simple
+        $formattedPermissions = [];
+        foreach ($permissions as $perm) {
+            $formattedPermissions[$perm['traitement_id']][$perm['action_id']] = true;
+        }
+
+        // Récupérer les actions uniques
+        $actionsUniques = [];
+        foreach ($menusStructures as $traitements) {
+            foreach ($traitements as $details) {
+                foreach ($details['actions'] as $actionId => $actionLibelle) {
+                    $actionsUniques[$actionId] = $actionLibelle;
+                }
+            }
+        }
+        ksort($actionsUniques);
+
+        $data = [
+            'menus' => $menusStructures,
+            'permissions' => $formattedPermissions,
+            'actionsUniques' => $actionsUniques
+        ];
+
+        return Response::view('menu_views/partials/permissions-table', $data);
+    }
+
+    /**
      * Sauvegarde les nouvelles permissions envoyées depuis le client.
      */
     private function sauvegarderPermissions(): Response

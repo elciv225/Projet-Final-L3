@@ -50,6 +50,53 @@ class AttributionMenuDAO extends DAO
     }
 
     /**
+     * Récupère les menus auxquels un groupe d'utilisateurs a accès.
+     * @param string $groupeId
+     * @return array Un tableau des menus accessibles.
+     */
+    public function recupererMenusParGroupe(string $groupeId): array
+    {
+        $sql = "
+            SELECT DISTINCT
+                cm.id as categorie_id,
+                cm.libelle as categorie_libelle,
+                m.id as menu_id,
+                m.libelle as menu_libelle,
+                m.vue as menu_vue
+            FROM autorisation_action aa
+            JOIN traitement_action ta ON aa.traitement_id = ta.traitement_id AND aa.action_id = ta.action_id
+            JOIN menu_traitement mt ON ta.traitement_id = mt.traitement_id
+            JOIN menu m ON mt.menu_id = m.id
+            JOIN categorie_menu cm ON m.categorie_menu_id = cm.id
+            WHERE aa.groupe_utilisateur_id = ?
+            ORDER BY cm.libelle, m.libelle
+        ";
+
+        return $this->executerSelect($sql, [$groupeId]);
+    }
+
+    /**
+     * Récupère tous les menus disponibles dans la base de données.
+     * @return array Un tableau de tous les menus.
+     */
+    public function recupererTousLesMenus(): array
+    {
+        $sql = "
+            SELECT DISTINCT
+                cm.id as categorie_id,
+                cm.libelle as categorie_libelle,
+                m.id as menu_id,
+                m.libelle as menu_libelle,
+                m.vue as menu_vue
+            FROM menu m
+            JOIN categorie_menu cm ON m.categorie_menu_id = cm.id
+            ORDER BY cm.libelle, m.libelle
+        ";
+
+        return $this->executerSelect($sql);
+    }
+
+    /**
      * Met à jour les permissions pour un groupe d'utilisateurs donné.
      * @param string $groupeId
      * @param array $permissions Un tableau associatif des permissions.

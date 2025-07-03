@@ -64,11 +64,25 @@ use System\Http\Response;
 
         <div class="user-section">
             <div class="user-info">
-                <div class="user-avatar">KL</div>
-                <div class="user-details">
-                    <div class="username">KOUAKOU Laurent</div>
-                    <div class="user-role">Administrateur</div>
-                </div>
+                <?php if (isset($_SESSION['utilisateur_connecte'])): ?>
+                    <?php 
+                        $user = $_SESSION['utilisateur_connecte'];
+                        $initials = mb_substr($user['nom'], 0, 1) . mb_substr($user['prenoms'], 0, 1);
+                        $fullName = $user['nom'] . ' ' . $user['prenoms'];
+                        $role = isset($user['type_utilisateur_libelle']) ? $user['type_utilisateur_libelle'] : 'Utilisateur';
+                    ?>
+                    <div class="user-avatar"><?= $initials ?></div>
+                    <div class="user-details">
+                        <div class="username"><?= $fullName ?></div>
+                        <div class="user-role"><?= $role ?></div>
+                    </div>
+                <?php else: ?>
+                    <div class="user-avatar">--</div>
+                    <div class="user-details">
+                        <div class="username">Non connecté</div>
+                        <div class="user-role">Invité</div>
+                    </div>
+                <?php endif; ?>
                 <div class="user-menu">⋯</div>
             </div>
         </div>
